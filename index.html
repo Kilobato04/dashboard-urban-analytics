@@ -658,7 +658,7 @@
                 <div class="progress-inputs">
                     <div class="progress-input-group">
                         <label for="exercisedAmount">Exercised (USD)</label>
-                        <input type="number" id="exercisedAmount" value="50000" onchange="updateProgress()">
+                        <input type="number" id="exercisedAmount" value="48152" readonly style="background: #f8f9fa;" title="Auto-calculated from ongoing projects total">
                     </div>
                     <div class="progress-input-group">
                         <label for="potentialAmount">Potential (USD)</label>
@@ -666,7 +666,7 @@
                     </div>
                     <div class="progress-input-group">
                         <label for="gapAmount">Gap (USD)</label>
-                        <input type="number" id="gapAmount" value="130500" readonly style="background: #f8f9fa;" title="Target - (Exercised + Potential)">
+                        <input type="number" id="gapAmount" value="132348" readonly style="background: #f8f9fa;" title="Target - (Exercised + Potential)">
                     </div>
                     <div class="progress-input-group">
                         <label for="targetAmount" style="color: #FF6600; font-weight: 700;">Target (USD)</label>
@@ -1399,17 +1399,39 @@
             return total;
         }
 
+        function getOngoingTotal() {
+            const rows = document.querySelectorAll('#ongoingTable tbody tr:not(.total-row)');
+            let total = 0;
+            rows.forEach(row => {
+                const amountInput = row.querySelector('.amount-input');
+                if (amountInput) {
+                    total += parseFloat(amountInput.value) || 0;
+                }
+            });
+            return total;
+        }
+
         function updateProgress() {
+            // Get totals automatically
             const pipelineTotal = getPipelineTotal();
+            const ongoingTotal = getOngoingTotal();
+            
+            // Update fields
             const potentialField = document.getElementById('potentialAmount');
+            const exercisedField = document.getElementById('exercisedAmount');
+            
             if (potentialField) {
                 potentialField.value = pipelineTotal;
             }
+            if (exercisedField) {
+                exercisedField.value = ongoingTotal;
+            }
             
-            const exercised = parseInt(document.getElementById('exercisedAmount').value) || 0;
+            const exercised = ongoingTotal;
             const potential = pipelineTotal;
             const target = 300000;
             
+            // Calculate gap
             const gap = target - (exercised + potential);
             const gapField = document.getElementById('gapAmount');
             if (gapField) {
@@ -1588,8 +1610,11 @@
 
             const totalOngoingElement = document.getElementById('totalOngoing');
             if (totalOngoingElement) {
-                totalOngoingElement.innerHTML = `<strong>$${total.toLocaleString()}</strong>`;
+                totalOngoingElement.innerHTML = `<strong>${total.toLocaleString()}</strong>`;
             }
+            
+            // Update progress bar with new exercised amount
+            updateProgress();
         }
 
         function addPipelineRow() {
