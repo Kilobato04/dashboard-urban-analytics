@@ -723,9 +723,9 @@
                             <div class="quarter-progress-indicator" id="q2-progress" style="font-size: 2rem;">😱</div>
                         </div>
                         <ul class="quarter-objectives">
-                            <li>5 key proposals worth $20K+ each (remainder of June)</li>
-                            <li>Focus on immediate deliverables</li>
-                            <li>Quick wins and momentum building</li>
+                            <li>10 key proposals worth $20K+ each (remainder of June)</li>
+                            <li>5 conference presentations and workshops</li>
+                            <li>Focus on immediate deliverables and visibility</li>
                         </ul>
                         <div class="quarter-countdown">
                             Time remaining: Rest of June 2025
@@ -778,6 +778,10 @@
                         <ul class="tactics-list">
                             <li>
                                 <span class="tactic-text">Lead 2 proposals worth $25K each for urban analytics clients</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Participate in at least 1 key conference presentation or panel</span>
                                 <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
                             </li>
                         </ul>
@@ -840,6 +844,10 @@
                                 <span class="tactic-text">Lead 2 technical proposals for urban mobility projects ($22K each)</span>
                                 <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
                             </li>
+                            <li>
+                                <span class="tactic-text">Participate in at least 1 technical conference or transport symposium</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
+                            </li>
                         </ul>
                     </div>
                     <div class="quarter-section">
@@ -898,6 +906,10 @@
                         <ul class="tactics-list">
                             <li>
                                 <span class="tactic-text">Lead 2 environmental assessment proposals ($25K each)</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Participate in at least 1 sustainability or environmental conference</span>
                                 <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
                             </li>
                         </ul>
@@ -960,6 +972,10 @@
                                 <span class="tactic-text">Implement new project management software and training</span>
                                 <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
                             </li>
+                            <li>
+                                <span class="tactic-text">Deliver at least 1 key workshop or presentation on project management</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
+                            </li>
                         </ul>
                     </div>
                     <div class="quarter-section">
@@ -1018,6 +1034,10 @@
                         <ul class="tactics-list">
                             <li>
                                 <span class="tactic-text">Lead 2 business development proposals ($20K each)</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Deliver at least 1 key presentation on market strategy and business development</span>
                                 <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
                             </li>
                         </ul>
@@ -1481,10 +1501,12 @@
                     
                     if (quarterIndicator) {
                         if (quarter === 'q2') {
-                            // Q2 has only 1 task per person
+                            // Q2 has 2 tasks per person
                             if (quarterCheckedCount === 0) {
                                 quarterIndicator.textContent = '😱';
-                            } else if (quarterCheckedCount >= 1) {
+                            } else if (quarterCheckedCount === 1) {
+                                quarterIndicator.textContent = '😰';
+                            } else if (quarterCheckedCount >= 2) {
                                 quarterIndicator.textContent = '😊';
                             }
                         } else {
@@ -1534,9 +1556,11 @@
                     const quarterCheckedCount = Array.from(quarterCheckboxes).filter(cb => cb.checked).length;
                     
                     if (quarter === 'q2') {
-                        // Q2 has only 1 task per person
-                        if (quarterCheckedCount >= 1) {
+                        // Q2 has 2 tasks per person
+                        if (quarterCheckedCount >= 2) {
                             membersWithAllCompleted++;
+                        } else if (quarterCheckedCount > 0) {
+                            membersWithSomeCompleted++;
                         }
                     } else {
                         // Q3 and Q4 have 3 tasks per person
