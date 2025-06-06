@@ -676,8 +676,8 @@
                         <input type="number" id="exercisedAmount" value="48152" readonly style="background: #f8f9fa;" title="Auto-calculated from ongoing projects total">
                     </div>
                     <div class="progress-input-group">
-                        <label for="potentialAmount">Potential (USD)</label>
-                        <input type="number" id="potentialAmount" value="119500" readonly style="background: #f8f9fa;" title="Auto-calculated from pipeline total">
+                        <label for="potentialAmount">Potential Weighted (USD)</label>
+                        <input type="number" id="potentialAmount" value="183557" readonly style="background: #f8f9fa;" title="Auto-calculated from pipeline weighted total">
                     </div>
                     <div class="progress-input-group">
                         <label for="gapAmount">Gap (USD)</label>
@@ -1113,7 +1113,8 @@
                             <tr>
                                 <th>Project</th>
                                 <th>Client</th>
-                                <th>Lead/Support</th>
+                                <th>Lead</th>
+                                <th>Support</th>
                                 <th>Date</th>
                                 <th>Price (USD)</th>
                                 <th>Probability (%)</th>
@@ -1132,6 +1133,14 @@
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
+                                <td><select class="editable">
+                                    <option value="None">None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
                                 <td><input type="date" class="editable date-input" value="2025-07-15"></td>
                                 <td><input type="number" class="editable amount-input" value="55000" onchange="updatePipeline()"></td>
                                 <td><input type="number" class="editable probability-input" value="60" min="0" max="100" onchange="updatePipeline()"></td>
@@ -1143,6 +1152,14 @@
                                 <td><input type="text" class="editable" value="UVG"></td>
                                 <td><select class="editable">
                                     <option value="Octavio" selected>Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None" selected>None</option>
+                                    <option value="Octavio">Octavio</option>
                                     <option value="Roberto">Roberto</option>
                                     <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
@@ -1164,6 +1181,14 @@
                                     <option value="Noé" selected>Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
+                                <td><select class="editable">
+                                    <option value="None">None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme" selected>Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
                                 <td><input type="date" class="editable date-input" value="2025-07-30"></td>
                                 <td><input type="number" class="editable amount-input" value="10000" onchange="updatePipeline()"></td>
                                 <td><input type="number" class="editable probability-input" value="70" min="0" max="100" onchange="updatePipeline()"></td>
@@ -1180,6 +1205,14 @@
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
+                                <td><select class="editable">
+                                    <option value="None" selected>None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
                                 <td><input type="date" class="editable date-input" value="2025-09-15"></td>
                                 <td><input type="number" class="editable amount-input" value="1780" onchange="updatePipeline()"></td>
                                 <td><input type="number" class="editable probability-input" value="65" min="0" max="100" onchange="updatePipeline()"></td>
@@ -1192,6 +1225,14 @@
                                 <td><select class="editable">
                                     <option value="Octavio" selected>Octavio</option>
                                     <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None">None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto" selected>Roberto</option>
                                     <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
@@ -1212,6 +1253,14 @@
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo" selected>Ricardo</option>
                                 </select></td>
+                                <td><select class="editable">
+                                    <option value="None">None</option>
+                                    <option value="Octavio" selected>Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
                                 <td><input type="date" class="editable date-input" value="2025-08-15"></td>
                                 <td><input type="number" class="editable amount-input" value="29000" onchange="updatePipeline()"></td>
                                 <td><input type="number" class="editable probability-input" value="60" min="0" max="100" onchange="updatePipeline()"></td>
@@ -1224,6 +1273,14 @@
                                 <td><select class="editable">
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto" selected>Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None" selected>None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
                                     <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
@@ -1244,6 +1301,14 @@
                                     <option value="Noé" selected>Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
+                                <td><select class="editable">
+                                    <option value="None">None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto" selected>Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
                                 <td><input type="date" class="editable date-input" value="2025-10-15"></td>
                                 <td><input type="number" class="editable amount-input" value="13400" onchange="updatePipeline()"></td>
                                 <td><input type="number" class="editable probability-input" value="60" min="0" max="100" onchange="updatePipeline()"></td>
@@ -1255,6 +1320,14 @@
                                 <td><input type="text" class="editable" value="CrossColab"></td>
                                 <td><select class="editable">
                                     <option value="Octavio" selected>Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None" selected>None</option>
+                                    <option value="Octavio">Octavio</option>
                                     <option value="Roberto">Roberto</option>
                                     <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
@@ -1276,6 +1349,14 @@
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo" selected>Ricardo</option>
                                 </select></td>
+                                <td><select class="editable">
+                                    <option value="None" selected>None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
                                 <td><input type="date" class="editable date-input" value="2025-08-31"></td>
                                 <td><input type="number" class="editable amount-input" value="5000" onchange="updatePipeline()"></td>
                                 <td><input type="number" class="editable probability-input" value="50" min="0" max="100" onchange="updatePipeline()"></td>
@@ -1288,6 +1369,14 @@
                                 <td><select class="editable">
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto" selected>Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None" selected>None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
                                     <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
@@ -1308,6 +1397,14 @@
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
+                                <td><select class="editable">
+                                    <option value="None">None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto" selected>Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
                                 <td><input type="date" class="editable date-input" value="2025-12-31"></td>
                                 <td><input type="number" class="editable amount-input" value="60000" onchange="updatePipeline()"></td>
                                 <td><input type="number" class="editable probability-input" value="40" min="0" max="100" onchange="updatePipeline()"></td>
@@ -1320,6 +1417,14 @@
                                 <td><select class="editable">
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto" selected>Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None" selected>None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
                                     <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
@@ -1340,6 +1445,14 @@
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
+                                <td><select class="editable">
+                                    <option value="None">None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme" selected>Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
                                 <td><input type="date" class="editable date-input" value="2025-11-30"></td>
                                 <td><input type="number" class="editable amount-input" value="54000" onchange="updatePipeline()"></td>
                                 <td><input type="number" class="editable probability-input" value="35" min="0" max="100" onchange="updatePipeline()"></td>
@@ -1354,6 +1467,14 @@
                                     <option value="Roberto">Roberto</option>
                                     <option value="Cossme">Cossme</option>
                                     <option value="Noé" selected>Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None" selected>None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
                                 <td><input type="date" class="editable date-input" value="2025-12-15"></td>
@@ -1372,6 +1493,14 @@
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo" selected>Ricardo</option>
                                 </select></td>
+                                <td><select class="editable">
+                                    <option value="None">None</option>
+                                    <option value="Octavio" selected>Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
                                 <td><input type="date" class="editable date-input" value="2026-01-15"></td>
                                 <td><input type="number" class="editable amount-input" value="20000" onchange="updatePipeline()"></td>
                                 <td><input type="number" class="editable probability-input" value="0" min="0" max="100" onchange="updatePipeline()"></td>
@@ -1380,6 +1509,7 @@
                             </tr>
                             <tr class="total-row">
                                 <td><strong>TOTAL PIPELINE</strong></td>
+                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -1483,7 +1613,8 @@
                             <tr>
                                 <th>Project</th>
                                 <th>Client</th>
-                                <th>Lead/Support</th>
+                                <th>Lead</th>
+                                <th>Support</th>
                                 <th>Date Lost</th>
                                 <th>Value (USD)</th>
                                 <th>Lost Motive</th>
@@ -1498,6 +1629,14 @@
                                 <td><select class="editable">
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto" selected>Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None">None</option>
+                                    <option value="Octavio" selected>Octavio</option>
+                                    <option value="Roberto">Roberto</option>
                                     <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
@@ -1529,6 +1668,14 @@
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
+                                <td><select class="editable">
+                                    <option value="None" selected>None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
                                 <td><input type="date" class="editable date-input" value="2025-04-20"></td>
                                 <td><input type="number" class="editable amount-input" value="45000" onchange="updateLost()"></td>
                                 <td><select class="editable" onchange="updateLossAnalysis()">
@@ -1548,6 +1695,7 @@
                             </tr>
                             <tr class="total-row">
                                 <td><strong>TOTAL LOST VALUE</strong></td>
+                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -1577,41 +1725,41 @@
                 <h3 style="color: #FF6600; margin-bottom: 20px;">🎯 Urban Analytics Mexico Practice Group Decision Framework</h3>
                 
                 <div class="evaluation-instructions">
-                    <h3>Instrucciones para Completar la Evaluación</h3>
+                    <h3>Instructions for Completing the Evaluation</h3>
                     <ul>
-                        <li><strong>Enfoque Prioritario:</strong> Esta evaluación está específicamente diseñada para las metas y objetivos del grupo Urban Analytics Mexico de Arcadis</li>
-                        <li><strong>Peso (%):</strong> Asignar un porcentaje de peso a cada criterio basado en su importancia para nuestros objetivos específicos del grupo (total debe sumar 100%)</li>
-                        <li><strong>Puntuación (1-10):</strong> Calificar cada criterio de 1 (muy pobre) a 10 (excelente) según qué tan bien la oportunidad cumple con este criterio para nuestro grupo</li>
-                        <li><strong>Puntuación Ponderada:</strong> Se calcula automáticamente como (Peso × Puntuación) ÷ 100</li>
-                        <li><strong>Puntuación Final:</strong> Suma de todas las puntuaciones ponderadas; 7.5+ = GO, 6.0-7.4 = GO CONDICIONAL, <6.0 = NO GO</li>
+                        <li><strong>Priority Focus:</strong> This evaluation is designed to balance Urban Analytics Mexico group objectives with broader Arcadis strategic goals</li>
+                        <li><strong>Weight (%):</strong> Assign a percentage weight to each criterion based on its importance to our decision (total should equal 100%)</li>
+                        <li><strong>Score (1-10):</strong> Rate each criterion from 1 (very poor) to 10 (excellent) based on how well the opportunity meets this criterion</li>
+                        <li><strong>Weighted Score:</strong> Automatically calculated as (Weight × Score) ÷ 100</li>
+                        <li><strong>Final Score:</strong> Sum of all weighted scores; 7.5+ = GO, 6.0-7.4 = CONDITIONAL GO, <6.0 = NO GO</li>
                     </ul>
                 </div>
                 
                 <div class="opportunity-header">
-                    <label for="opportunityName"><strong>Nombre de la Oportunidad:</strong></label>
-                    <input type="text" id="opportunityName" class="opportunity-name" placeholder="Ingrese el nombre de la oportunidad..." value="Evaluación de Oportunidad - Urban Analytics Mexico">
+                    <label for="opportunityName"><strong>Opportunity Name:</strong></label>
+                    <input type="text" id="opportunityName" class="opportunity-name" placeholder="Enter opportunity name..." value="Sample Opportunity - Urban Analytics Mexico">
                 </div>
 
                 <div class="evaluation-form">
                     <div class="evaluation-headers">
-                        <div>Criterios de Evaluación - Urban Analytics Mexico</div>
-                        <div>Peso (%)</div>
-                        <div>Puntuación (1-10)</div>
+                        <div>Evaluation Criteria - Urban Analytics Mexico</div>
+                        <div>Weight (%)</div>
+                        <div>Score (1-10)</div>
                     </div>
 
                     <div class="evaluation-item">
                         <div>
-                            <div class="criterion">Alineación con metas específicas del grupo Urban Analytics Mexico</div>
-                            <div class="criterion-description">¿Qué tan bien se alinea esta oportunidad con nuestros objetivos específicos de crecimiento y desarrollo técnico en urban analytics en México?</div>
+                            <div class="criterion">Strategic alignment with Urban Analytics Mexico objectives</div>
+                            <div class="criterion-description">How well does this opportunity align with our specific growth targets and technical development goals in urban analytics?</div>
                         </div>
-                        <input type="number" class="weight-input" value="25" min="0" max="100" onchange="calculateScore()">
+                        <input type="number" class="weight-input" value="22" min="0" max="100" onchange="calculateScore()">
                         <input type="number" class="score-input" value="8" min="1" max="10" onchange="calculateScore()">
                     </div>
 
                     <div class="evaluation-item">
                         <div>
-                            <div class="criterion">Contribución directa a nuestra meta de $300K anuales</div>
-                            <div class="criterion-description">Impacto directo en el cumplimiento de nuestras metas específicas de revenue para Urban Analytics Mexico.</div>
+                            <div class="criterion">Financial viability and contribution to revenue targets</div>
+                            <div class="criterion-description">Expected profitability, budget adequacy, and direct contribution to our $300K annual revenue goal.</div>
                         </div>
                         <input type="number" class="weight-input" value="20" min="0" max="100" onchange="calculateScore()">
                         <input type="number" class="score-input" value="7" min="1" max="10" onchange="calculateScore()">
@@ -1619,35 +1767,35 @@
 
                     <div class="evaluation-item">
                         <div>
-                            <div class="criterion">Fortalecimiento de capacidades técnicas del equipo México</div>
-                            <div class="criterion-description">¿Este proyecto desarrollará las competencias específicas que necesita nuestro equipo de Urban Analytics en México?</div>
+                            <div class="criterion">Technical capability and team expertise available</div>
+                            <div class="criterion-description">Team's technical competence and availability of required skills for successful delivery within our practice group.</div>
                         </div>
-                        <input type="number" class="weight-input" value="18" min="0" max="100" onchange="calculateScore()">
+                        <input type="number" class="weight-input" value="16" min="0" max="100" onchange="calculateScore()">
                         <input type="number" class="score-input" value="9" min="1" max="10" onchange="calculateScore()">
                     </div>
 
                     <div class="evaluation-item">
                         <div>
-                            <div class="criterion">Posicionamiento competitivo en mercado mexicano</div>
-                            <div class="criterion-description">¿Cómo mejora nuestra posición específica en el mercado de urban analytics en México frente a competidores locales?</div>
+                            <div class="criterion">Alignment with broader Arcadis strategic objectives</div>
+                            <div class="criterion-description">Coherence with Arcadis global strategy and potential for cross-office collaboration and knowledge sharing.</div>
                         </div>
-                        <input type="number" class="weight-input" value="15" min="0" max="100" onchange="calculateScore()">
-                        <input type="number" class="score-input" value="6" min="1" max="10" onchange="calculateScore()">
-                    </div>
-
-                    <div class="evaluation-item">
-                        <div>
-                            <div class="criterion">Desarrollo de red de contactos y partnerships en México</div>
-                            <div class="criterion-description">Potencial para expandir nuestra red estratégica específica en México (universidades, gobierno, sector privado local).</div>
-                        </div>
-                        <input type="number" class="weight-input" value="10" min="0" max="100" onchange="calculateScore()">
+                        <input type="number" class="weight-input" value="14" min="0" max="100" onchange="calculateScore()">
                         <input type="number" class="score-input" value="7" min="1" max="10" onchange="calculateScore()">
                     </div>
 
                     <div class="evaluation-item">
                         <div>
-                            <div class="criterion">Alineación con objetivos generales de Arcadis</div>
-                            <div class="criterion-description">Coherencia con la estrategia general de Arcadis, pero evaluada en segunda prioridad después de nuestros objetivos específicos.</div>
+                            <div class="criterion">Client relationship strength and market positioning</div>
+                            <div class="criterion-description">Quality of existing relationship, past performance, and opportunity to strengthen our position in the Mexican market.</div>
+                        </div>
+                        <input type="number" class="weight-input" value="12" min="0" max="100" onchange="calculateScore()">
+                        <input type="number" class="score-input" value="6" min="1" max="10" onchange="calculateScore()">
+                    </div>
+
+                    <div class="evaluation-item">
+                        <div>
+                            <div class="criterion">Cross-collaboration potential and revenue sharing</div>
+                            <div class="criterion-description">Opportunity for meaningful collaboration with other Arcadis offices generating significant shared revenue (>30% collaboration).</div>
                         </div>
                         <input type="number" class="weight-input" value="8" min="0" max="100" onchange="calculateScore()">
                         <input type="number" class="score-input" value="7" min="1" max="10" onchange="calculateScore()">
@@ -1655,26 +1803,26 @@
 
                     <div class="evaluation-item">
                         <div>
-                            <div class="criterion">Disponibilidad de recursos del equipo México</div>
-                            <div class="criterion-description">Capacidad específica de nuestro equipo de Urban Analytics Mexico para entregar sin comprometer otros proyectos prioritarios.</div>
+                            <div class="criterion">Resource availability and capacity management</div>
+                            <div class="criterion-description">Availability of required human resources and capacity to deliver without compromising other priority projects.</div>
                         </div>
-                        <input type="number" class="weight-input" value="4" min="0" max="100" onchange="calculateScore()">
+                        <input type="number" class="weight-input" value="8" min="0" max="100" onchange="calculateScore()">
                         <input type="number" class="score-input" value="5" min="1" max="10" onchange="calculateScore()">
                     </div>
 
                     <div class="weight-total" id="weightTotal">
-                        Peso Total: <span id="totalWeight">100</span>%
+                        Total Weight: <span id="totalWeight">100</span>%
                     </div>
 
                     <div class="final-score score-conditional" id="finalScoreContainer">
-                        <div>Puntuación Total Ponderada: <span id="finalScore">7.13</span> / 10</div>
+                        <div>Total Weighted Score: <span id="finalScore">7.16</span> / 10</div>
                         <div style="margin-top: 10px; font-size: 1rem;">
-                            Recomendación para Urban Analytics Mexico: <span id="recommendation">GO CONDICIONAL - Buena oportunidad alineada con nuestros objetivos</span>
+                            Recommendation: <span id="recommendation">CONDITIONAL GO - Good opportunity worth pursuing with some considerations</span>
                         </div>
                     </div>
                     
-                    <button class="save-button" onclick="saveEvaluation()">Guardar Evaluación</button>
-                    <button class="save-button" onclick="generatePDF()" style="background: #28a745; margin-left: 15px;">Generar Reporte PDF</button>
+                    <button class="save-button" onclick="saveEvaluation()">Save Evaluation</button>
+                    <button class="save-button" onclick="generatePDF()" style="background: #28a745; margin-left: 15px;">Generate PDF Report</button>
                 </div>
             </div>
         </div>
@@ -1698,18 +1846,6 @@
             }
         }
 
-        function getPipelineTotal() {
-            const rows = document.querySelectorAll('#pipelineTable tbody tr:not(.total-row)');
-            let total = 0;
-            rows.forEach(row => {
-                const amountInput = row.querySelector('.amount-input');
-                if (amountInput) {
-                    total += parseFloat(amountInput.value) || 0;
-                }
-            });
-            return total;
-        }
-
         function getOngoingTotal() {
             const rows = document.querySelectorAll('#ongoingTable tbody tr:not(.total-row)');
             let total = 0;
@@ -1722,9 +1858,24 @@
             return total;
         }
 
+        function getPipelineWeighted() {
+            const rows = document.querySelectorAll('#pipelineTable tbody tr:not(.total-row)');
+            let totalWeighted = 0;
+            rows.forEach(row => {
+                const amountInput = row.querySelector('.amount-input');
+                const probabilityInput = row.querySelector('.probability-input');
+                if (amountInput && probabilityInput) {
+                    const amount = parseFloat(amountInput.value) || 0;
+                    const probability = parseFloat(probabilityInput.value) || 0;
+                    totalWeighted += (amount * probability) / 100;
+                }
+            });
+            return totalWeighted;
+        }
+
         function updateProgress() {
             // Get totals automatically
-            const pipelineTotal = getPipelineTotal();
+            const pipelineWeighted = getPipelineWeighted();
             const ongoingTotal = getOngoingTotal();
             
             // Update fields
@@ -1732,21 +1883,21 @@
             const exercisedField = document.getElementById('exercisedAmount');
             
             if (potentialField) {
-                potentialField.value = pipelineTotal;
+                potentialField.value = Math.round(pipelineWeighted);
             }
             if (exercisedField) {
                 exercisedField.value = ongoingTotal;
             }
             
             const exercised = ongoingTotal;
-            const potential = pipelineTotal;
+            const potential = pipelineWeighted;
             const target = 300000;
             
             // Calculate gap
             const gap = target - (exercised + potential);
             const gapField = document.getElementById('gapAmount');
             if (gapField) {
-                gapField.value = gap;
+                gapField.value = Math.round(gap);
             }
 
             const total = exercised + potential;
@@ -1960,6 +2111,14 @@
                     <option value="Noé">Noé</option>
                     <option value="Ricardo">Ricardo</option>
                 </select></td>
+                <td><select class="editable">
+                    <option value="None" selected>None</option>
+                    <option value="Octavio">Octavio</option>
+                    <option value="Roberto">Roberto</option>
+                    <option value="Cossme">Cossme</option>
+                    <option value="Noé">Noé</option>
+                    <option value="Ricardo">Ricardo</option>
+                </select></td>
                 <td><input type="date" class="editable date-input" value="2025-06-05"></td>
                 <td><input type="number" class="editable amount-input" value="0" onchange="updateLost()"></td>
                 <td><select class="editable" onchange="updateLossAnalysis()">
@@ -2061,6 +2220,14 @@
                     <option value="Noé">Noé</option>
                     <option value="Ricardo">Ricardo</option>
                 </select></td>
+                <td><select class="editable">
+                    <option value="None" selected>None</option>
+                    <option value="Octavio">Octavio</option>
+                    <option value="Roberto">Roberto</option>
+                    <option value="Cossme">Cossme</option>
+                    <option value="Noé">Noé</option>
+                    <option value="Ricardo">Ricardo</option>
+                </select></td>
                 <td><input type="date" class="editable date-input" value="2025-12-31"></td>
                 <td><input type="number" class="editable amount-input" value="0" onchange="updatePipeline()"></td>
                 <td><input type="number" class="editable probability-input" value="0" min="0" max="100" onchange="updatePipeline()"></td>
@@ -2151,17 +2318,17 @@
                 
                 if (finalScore >= 7.5) {
                     if (recommendationElement) {
-                        recommendationElement.textContent = "GO - Excelente oportunidad para Urban Analytics Mexico";
+                        recommendationElement.textContent = "GO - Excellent opportunity with strong alignment";
                     }
                     containerElement.classList.add('score-go');
                 } else if (finalScore >= 6.0) {
                     if (recommendationElement) {
-                        recommendationElement.textContent = "GO CONDICIONAL - Buena oportunidad alineada con nuestros objetivos";
+                        recommendationElement.textContent = "CONDITIONAL GO - Good opportunity worth pursuing with some considerations";
                     }
                     containerElement.classList.add('score-conditional');
                 } else {
                     if (recommendationElement) {
-                        recommendationElement.textContent = "NO GO - Alto riesgo, pobre alineación con objetivos del grupo";
+                        recommendationElement.textContent = "NO GO - High risk, poor alignment";
                     }
                     containerElement.classList.add('score-no-go');
                 }
@@ -2189,7 +2356,7 @@
             const finalScore = finalScoreElement ? finalScoreElement.textContent : '0';
             const totalWeight = totalWeightElement ? totalWeightElement.textContent : '0';
             
-            alert(`Evaluación para "${opportunityName}" guardada exitosamente!\nPuntuación Final: ${finalScore}/10\nPeso Total: ${totalWeight}%`);
+            alert(`Evaluation for "${opportunityName}" saved successfully!\nFinal Score: ${finalScore}/10\nTotal Weight: ${totalWeight}%`);
         }
 
         function generatePDF() {
@@ -2212,32 +2379,32 @@
             
             doc.setFontSize(12);
             doc.setTextColor(0, 0, 0);
-            doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 20, 60);
+            doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 60);
             
             // Opportunity Info
             doc.setFontSize(14);
             doc.setTextColor(255, 102, 0);
-            doc.text('Información de la Oportunidad', 20, 80);
+            doc.text('Opportunity Information', 20, 80);
             
             doc.setFontSize(11);
             doc.setTextColor(0, 0, 0);
-            doc.text(`Nombre de la Oportunidad: ${opportunityName}`, 20, 95);
+            doc.text(`Opportunity Name: ${opportunityName}`, 20, 95);
             
             // Evaluation Results
             doc.setFontSize(14);
             doc.setTextColor(255, 102, 0);
-            doc.text('Resultados de la Evaluación', 20, 115);
+            doc.text('Evaluation Results', 20, 115);
             
             doc.setFontSize(11);
             doc.setTextColor(0, 0, 0);
-            doc.text(`Puntuación Final: ${finalScore}/10`, 20, 130);
-            doc.text(`Peso Total: ${totalWeight}%`, 20, 140);
-            doc.text(`Recomendación: ${recommendation}`, 20, 150);
+            doc.text(`Final Score: ${finalScore}/10`, 20, 130);
+            doc.text(`Total Weight: ${totalWeight}%`, 20, 140);
+            doc.text(`Recommendation: ${recommendation}`, 20, 150);
             
             // Evaluation Criteria
             doc.setFontSize(14);
             doc.setTextColor(255, 102, 0);
-            doc.text('Criterios de Evaluación - Urban Analytics Mexico', 20, 170);
+            doc.text('Evaluation Criteria - Urban Analytics Mexico', 20, 170);
             
             // Get all evaluation items
             const items = document.querySelectorAll('.evaluation-item');
@@ -2262,9 +2429,9 @@
                 doc.text(splitText, 20, yPosition);
                 
                 const textHeight = splitText.length * 4;
-                doc.text(`Peso: ${weight}%`, 130, yPosition);
-                doc.text(`Punt: ${score}/10`, 160, yPosition);
-                doc.text(`Pond: ${weightedScore}`, 180, yPosition);
+                doc.text(`Weight: ${weight}%`, 130, yPosition);
+                doc.text(`Score: ${score}/10`, 160, yPosition);
+                doc.text(`Weighted: ${weightedScore}`, 180, yPosition);
                 
                 yPosition += Math.max(12, textHeight + 4);
             });
@@ -2277,8 +2444,8 @@
             
             doc.setFontSize(8);
             doc.setTextColor(128, 128, 128);
-            doc.text('Generado por Arcadis Practice Group Urban Analytics Mexico Dashboard', 20, yPosition + 20);
-            doc.text(`Documento generado el ${new Date().toLocaleString()}`, 20, yPosition + 30);
+            doc.text('Generated by Arcadis Practice Group Urban Analytics Mexico Dashboard', 20, yPosition + 20);
+            doc.text(`Document generated on ${new Date().toLocaleString()}`, 20, yPosition + 30);
             
             // Save the PDF
             const fileName = `GoNoGo_Evaluation_UrbanAnalyticsMX_${opportunityName.replace(/[^a-z0-9]/gi, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
