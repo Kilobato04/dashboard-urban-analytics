@@ -1,0 +1,2672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice Group Urban Analytics Mexico Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #FF6600 0%, #e55a00 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(255, 102, 0, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .revenue-progress {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-left: 5px solid #FF6600;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .progress-inputs {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .progress-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .progress-input-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .progress-input-group input {
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            width: 120px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .progress-input-group input:focus {
+            outline: none;
+            border-color: #FF6600;
+        }
+
+        .progress-container {
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            background: #e9ecef;
+            height: 25px;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+        }
+
+        .progress-exercised {
+            background: #28a745;
+            transition: width 0.5s ease;
+        }
+
+        .progress-potential {
+            background: #FF6600;
+            transition: width 0.5s ease;
+        }
+
+        .progress-remaining {
+            background: #6c757d;
+            transition: width 0.5s ease;
+        }
+
+        .progress-indicator {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background: #dc3545;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+
+        .progress-months {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .quarterly-summary {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .quarterly-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .quarter-card {
+            background: linear-gradient(135deg, #FF6600 0%, #e55a00 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(255, 102, 0, 0.2);
+        }
+
+        .quarter-card h3 {
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .quarter-objectives {
+            margin-bottom: 15px;
+        }
+
+        .quarter-objectives li {
+            margin-bottom: 5px;
+        }
+
+        .quarter-countdown {
+            background: rgba(255,255,255,0.2);
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: 12px 12px 0 0;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            background: #FF6600;
+            color: white;
+            border-bottom-color: #e55a00;
+        }
+
+        .tab:hover:not(.active) {
+            background: #e9ecef;
+            color: #FF6600;
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            min-height: 600px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tactics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .team-member {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .team-member:hover {
+            border-color: #FF6600;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 102, 0, 0.15);
+        }
+
+        .member-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .member-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #FF6600;
+            flex-grow: 1;
+        }
+
+        .completion-indicator {
+            font-size: 2rem;
+            margin-left: 15px;
+        }
+
+        .quarter-section {
+            margin-bottom: 20px;
+        }
+
+        .quarter-title {
+            background: #FF6600;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .tactics-list {
+            list-style: none;
+        }
+
+        .tactics-list li {
+            background: white;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            border-left: 4px solid #FF6600;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tactics-list li:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(255, 102, 0, 0.2);
+        }
+
+        .tactic-text {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+
+        .tactic-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .save-button {
+            background: #FF6600;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .save-button:hover {
+            background: #e55a00;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 102, 0, 0.3);
+        }
+
+        .pipeline-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #FF6600;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        th {
+            background: #FF6600;
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .editable {
+            background: transparent;
+            border: 1px solid transparent;
+            padding: 8px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .editable:focus {
+            outline: none;
+            border-color: #FF6600;
+            background: white;
+            box-shadow: 0 0 0 2px rgba(255, 102, 0, 0.2);
+        }
+
+        .editable[type="text"] {
+            min-width: 150px;
+        }
+
+        select.editable {
+            cursor: pointer;
+            background: white;
+            border: 1px solid #e9ecef;
+        }
+
+        select.editable:focus {
+            border-color: #FF6600;
+        }
+
+        .amount-input {
+            text-align: right;
+            width: 100px;
+        }
+
+        .probability-input {
+            text-align: center;
+            width: 80px;
+        }
+
+        .date-input {
+            width: 120px;
+        }
+
+        .total-row {
+            background: #FF6600 !important;
+            color: white;
+            font-weight: 600;
+        }
+
+        .total-row td {
+            border-bottom: none;
+        }
+
+        .add-row-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 10px 0;
+            font-weight: 600;
+        }
+
+        .add-row-button:hover {
+            background: #218838;
+        }
+
+        .delete-button {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .delete-button:hover {
+            background: #c82333;
+        }
+
+        .evaluation-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .evaluation-instructions {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #FF6600;
+        }
+
+        .evaluation-instructions h3 {
+            color: #FF6600;
+            margin-bottom: 10px;
+        }
+
+        .evaluation-instructions ul {
+            margin-left: 20px;
+        }
+
+        .evaluation-instructions li {
+            margin-bottom: 5px;
+        }
+
+        .evaluation-form {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .evaluation-headers {
+            display: grid;
+            grid-template-columns: 2fr 150px 150px;
+            gap: 15px;
+            padding: 15px 20px;
+            background: #FF6600;
+            color: white;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .evaluation-item {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #FF6600;
+            display: grid;
+            grid-template-columns: 2fr 150px 150px;
+            gap: 15px;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .criterion {
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .criterion-description {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .weight-input, .score-input {
+            padding: 10px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .weight-input:focus, .score-input:focus {
+            outline: none;
+            border-color: #FF6600;
+            box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.1);
+        }
+
+        .weight-total {
+            background: #e9ecef;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .final-score {
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 30px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .score-go {
+            background: #28a745;
+            color: white;
+        }
+
+        .score-conditional {
+            background: #ffc107;
+            color: #1a1a1a;
+        }
+
+        .score-no-go {
+            background: #dc3545;
+            color: white;
+        }
+
+        .opportunity-header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .opportunity-name {
+            width: 100%;
+            max-width: 500px;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .opportunity-name:focus {
+            outline: none;
+            border-color: #FF6600;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .tactics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .evaluation-headers,
+            .evaluation-item {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                text-align: left;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .progress-inputs {
+                justify-content: center;
+            }
+
+            .quarterly-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .member-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Practice Group Urban Analytics Mexico</h1>
+            <p>Strategic Planning & Project Pipeline Dashboard - 2025</p>
+        </div>
+
+        <!-- Revenue Progress Bar -->
+        <div class="revenue-progress">
+            <div class="progress-header">
+                <h3>Revenue Progress 2025 (USD)</h3>
+                <div class="progress-inputs">
+                    <div class="progress-input-group">
+                        <label for="exercisedAmount">Exercised (USD)</label>
+                        <input type="number" id="exercisedAmount" value="48152" readonly style="background: #f8f9fa;" title="Auto-calculated from ongoing projects total">
+                    </div>
+                    <div class="progress-input-group">
+                        <label for="potentialAmount">Potential Weighted (USD)</label>
+                        <input type="number" id="potentialAmount" value="183557" readonly style="background: #f8f9fa;" title="Auto-calculated from pipeline weighted total">
+                    </div>
+                    <div class="progress-input-group">
+                        <label for="gapAmount">Gap (USD)</label>
+                        <input type="number" id="gapAmount" value="132348" readonly style="background: #f8f9fa;" title="Target - (Exercised + Potential)">
+                    </div>
+                    <div class="progress-input-group">
+                        <label for="targetAmount" style="color: #FF6600; font-weight: 700;">Target (USD)</label>
+                        <input type="number" id="targetAmount" value="300000" readonly style="background: #FF6600; color: white; font-weight: 700; border: 2px solid #e55a00;">
+                    </div>
+                </div>
+
+                <!-- Wildcard - Transversal Responsibilities -->
+                <div class="team-member" style="background: linear-gradient(135deg, #FF6600 0%, #e55a00 100%); color: white; border: 2px solid #e55a00;">
+                    <div class="member-header">
+                        <div class="member-name" style="color: white; border-bottom: 2px solid white;">🎯 Transversal Responsibilities</div>
+                    </div>
+                    
+                    <div class="quarter-section">
+                        <div class="quarter-title" style="background: rgba(255,255,255,0.2); color: white;">Octavio Jiménez - Cross-Office Leadership</div>
+                        <ul class="tactics-list">
+                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
+                                <span class="tactic-text">Enhance cross-collaboration among Arcadis offices</span>
+                            </li>
+                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
+                                <span class="tactic-text">Provide necessary tools and communication with the rest of the team</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="quarter-section">
+                        <div class="quarter-title" style="background: rgba(255,255,255,0.2); color: white;">Roberto Ascencio - Mobility Demand Practice</div>
+                        <ul class="tactics-list">
+                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
+                                <span class="tactic-text">Lead the mobility demand practice development</span>
+                            </li>
+                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
+                                <span class="tactic-text">Review and monitor European Union procurement platforms</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="quarter-section">
+                        <div class="quarter-title" style="background: rgba(255,255,255,0.2); color: white;">Cossme Padilla - Proposal Management Practice</div>
+                        <ul class="tactics-list">
+                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
+                                <span class="tactic-text">Lead the proposal management practice and standards</span>
+                            </li>
+                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
+                                <span class="tactic-text">Review Devex/IADB/BCIE procurement platforms</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="quarter-section">
+                        <div class="quarter-title" style="background: rgba(255,255,255,0.2); color: white;">Ricardo Sánchez - Mobility Tech Practice</div>
+                        <ul class="tactics-list">
+                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
+                                <span class="tactic-text">Lead the Mobility Tech practice development</span>
+                            </li>
+                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
+                                <span class="tactic-text">Review WB, Compras MX/CDMX/EDOMEX procurement platforms</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="quarter-section">
+                        <div class="quarter-title" style="background: rgba(255,255,255,0.2); color: white;">Noé Osorio - AI/LLM/BigData Practice</div>
+                        <ul class="tactics-list">
+                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
+                                <span class="tactic-text">Lead the AI/LLM/BigData practice development</span>
+                            </li>
+                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
+                                <span class="tactic-text">Develop mobility models with AI capabilities</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-exercised" id="progressExercised"></div>
+                    <div class="progress-potential" id="progressPotential"></div>
+                    <div class="progress-remaining" id="progressRemaining"></div>
+                </div>
+                <div class="progress-indicator" id="progressIndicator"></div>
+            </div>
+            <div class="progress-months">
+                <span>Jan-25</span>
+                <span>Feb-25</span>
+                <span>Mar-25</span>
+                <span>Apr-25</span>
+                <span>May-25</span>
+                <span>Jun-25</span>
+                <span>Jul-25</span>
+                <span>Aug-25</span>
+                <span>Sep-25</span>
+                <span>Oct-25</span>
+                <span>Nov-25</span>
+                <span>Dec-25</span>
+            </div>
+            <div class="progress-labels">
+                <span style="color: #28a745;">● Exercised</span>
+                <span style="color: #FF6600;">● Potential</span>
+                <span style="color: #6c757d;">● Remaining</span>
+                <span style="color: #dc3545;">● Current Month</span>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="openTab('tactics')">Quarterly Tactics</button>
+            <button class="tab" onclick="openTab('pipeline')">Project Pipeline</button>
+            <button class="tab" onclick="openTab('evaluation')">Go/No Go Evaluation</button>
+        </div>
+
+        <!-- Tab Contents -->
+        <div id="tactics" class="tab-content active">
+            <!-- Quarterly Summary -->
+            <div class="quarterly-summary">
+                <h2>2025 Quarterly Objectives Summary</h2>
+                <div class="quarterly-cards">
+                    <div class="quarter-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h3>Q2 2025</h3>
+                            <div class="quarter-progress-indicator" id="q2-progress" style="font-size: 2rem;">😱</div>
+                        </div>
+                        <ul class="quarter-objectives">
+                            <li>10 key proposals worth $20K+ each (remainder of June)</li>
+                            <li>5 conference presentations and workshops</li>
+                            <li>Focus on immediate deliverables and visibility</li>
+                        </ul>
+                        <div class="quarter-countdown">
+                            Time remaining: Rest of June 2025
+                        </div>
+                    </div>
+                    <div class="quarter-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h3>Q3 2025</h3>
+                            <div class="quarter-progress-indicator" id="q3-progress" style="font-size: 2rem;">😱</div>
+                        </div>
+                        <ul class="quarter-objectives">
+                            <li>8 strategic proposals ($30K+ each)</li>
+                            <li>Conference presentations</li>
+                            <li>Partnership development</li>
+                        </ul>
+                        <div class="quarter-countdown">
+                            Starts: July 1, 2025
+                        </div>
+                    </div>
+                    <div class="quarter-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h3>Q4 2025</h3>
+                            <div class="quarter-progress-indicator" id="q4-progress" style="font-size: 2rem;">😱</div>
+                        </div>
+                        <ul class="quarter-objectives">
+                            <li>8 major proposals ($40K+ each)</li>
+                            <li>2026 strategic planning</li>
+                            <li>Annual assessments</li>
+                        </ul>
+                        <div class="quarter-countdown">
+                            Starts: October 1, 2025
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2>2025 Quarterly Tactics by Team Member</h2>
+            <div class="tactics-grid">
+                <!-- Octavio Jiménez -->
+                <div class="team-member">
+                    <div class="member-header">
+                        <div class="member-name">Octavio Jiménez</div>
+                        <div class="completion-indicator" data-member="octavio">😱</div>
+                    </div>
+                    <div class="quarter-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="quarter-title">Q2 2025</div>
+                            <div class="quarter-individual-indicator" data-member="octavio" data-quarter="q2" style="font-size: 1.5rem;">😱</div>
+                        </div>
+                        <ul class="tactics-list">
+                            <li>
+                                <span class="tactic-text">Lead 2 proposals worth $25K each for urban analytics clients</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Participate in at least 1 key conference presentation or panel</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="quarter-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="quarter-title">Q3 2025</div>
+                            <div class="quarter-individual-indicator" data-member="octavio" data-quarter="q3" style="font-size: 1.5rem;">😱</div>
+                        </div>
+                        <ul class="tactics-list">
+                            <li>
+                                <span class="tactic-text">Develop 2 major urban analytics proposals ($30K each)</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Establish partnership with local universities for research</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Conduct workshop on smart city solutions</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="quarter-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="quarter-title">Q4 2025</div>
+                            <div class="quarter-individual-indicator" data-member="octavio" data-quarter="q4" style="font-size: 1.5rem;">😱</div>
+                        </div>
+                        <ul class="tactics-list">
+                            <li>
+                                <span class="tactic-text">Complete 2 strategic proposals for 2026 projects ($40K each)</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Organize team training on emerging urban technologies</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Prepare 2026 business development roadmap</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Roberto Ascencio -->
+                <div class="team-member">
+                    <div class="member-header">
+                        <div class="member-name">Roberto Ascencio</div>
+                        <div class="completion-indicator" data-member="roberto">😱</div>
+                    </div>
+                    <div class="quarter-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="quarter-title">Q2 2025</div>
+                            <div class="quarter-individual-indicator" data-member="roberto" data-quarter="q2" style="font-size: 1.5rem;">😱</div>
+                        </div>
+                        <ul class="tactics-list">
+                            <li>
+                                <span class="tactic-text">Lead 2 technical proposals for urban mobility projects ($22K each)</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Participate in at least 1 technical conference or transport symposium</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="quarter-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="quarter-title">Q3 2025</div>
+                            <div class="quarter-individual-indicator" data-member="roberto" data-quarter="q3" style="font-size: 1.5rem;">😱</div>
+                        </div>
+                        <ul class="tactics-list">
+                            <li>
+                                <span class="tactic-text">Develop 2 transportation analysis proposals ($35K each)</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Present at International Urban Planning Conference</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Initiate collaboration with European Arcadis offices</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="quarter-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="quarter-title">Q4 2025</div>
+                            <div class="quarter-individual-indicator" data-member="roberto" data-quarter="q4" style="font-size: 1.5rem;">😱</div>
+                        </div>
+                        <ul class="tactics-list">
+                            <li>
+                                <span class="tactic-text">Submit 2 integrated transport proposals ($45K each)</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Conduct year-end technical capabilities assessment</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Develop training curriculum for 2026</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Cossme Padilla -->
+                <div class="team-member">
+                    <div class="member-header">
+                        <div class="member-name">Cossme Padilla</div>
+                        <div class="completion-indicator" data-member="cossme">😱</div>
+                    </div>
+                    <div class="quarter-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="quarter-title">Q2 2025</div>
+                            <div class="quarter-individual-indicator" data-member="cossme" data-quarter="q2" style="font-size: 1.5rem;">😱</div>
+                        </div>
+                        <ul class="tactics-list">
+                            <li>
+                                <span class="tactic-text">Lead 2 environmental assessment proposals ($25K each)</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Participate in at least 1 sustainability or environmental conference</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="quarter-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="quarter-title">Q3 2025</div>
+                            <div class="quarter-individual-indicator" data-member="cossme" data-quarter="q3" style="font-size: 1.5rem;">😱</div>
+                        </div>
+                        <ul class="tactics-list">
+                            <li>
+                                <span class="tactic-text">Develop 2 climate resilience planning proposals ($30K each)</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Participate in UN-Habitat Mexico City forum</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Develop partnerships with environmental NGOs</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="quarter-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="quarter-title">Q4 2025</div>
+                            <div class="quarter-individual-indicator" data-member="cossme" data-quarter="q4" style="font-size: 1.5rem;">😱</div>
+                        </div>
+                        <ul class="tactics-list">
+                            <li>
+                                <span class="tactic-text">Submit 2 urban sustainability proposals ($40K each)</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Complete certification in carbon footprint analysis</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Plan 2026 sustainability initiatives</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Noé Osorio -->
+                <div class="team-member">
+                    <div class="member-header">
+                        <div class="member-name">Noé Osorio</div>
+                        <div class="completion-indicator" data-member="noe">😱</div>
+                    </div>
+                    <div class="quarter-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="quarter-title">Q2 2025</div>
+                            <div class="quarter-individual-indicator" data-member="noe" data-quarter="q2" style="font-size: 1.5rem;">😱</div>
+                        </div>
+                        <ul class="tactics-list">
+                            <li>
+                                <span class="tactic-text">Implement new project management software and training</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Deliver at least 1 key workshop or presentation on project management</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="quarter-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="quarter-title">Q3 2025</div>
+                            <div class="quarter-individual-indicator" data-member="noe" data-quarter="q3" style="font-size: 1.5rem;">😱</div>
+                        </div>
+                        <ul class="tactics-list">
+                            <li>
+                                <span class="tactic-text">Establish quality assurance protocols for all deliverables</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Coordinate cross-functional team integration activities</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Develop client satisfaction measurement system</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="quarter-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="quarter-title">Q4 2025</div>
+                            <div class="quarter-individual-indicator" data-member="noe" data-quarter="q4" style="font-size: 1.5rem;">😱</div>
+                        </div>
+                        <ul class="tactics-list">
+                            <li>
+                                <span class="tactic-text">Complete annual team performance evaluation</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Plan 2026 staffing and resource requirements</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Implement knowledge management system</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Ricardo Sánchez -->
+                <div class="team-member">
+                    <div class="member-header">
+                        <div class="member-name">Ricardo Sánchez</div>
+                        <div class="completion-indicator" data-member="ricardo">😱</div>
+                    </div>
+                    <div class="quarter-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="quarter-title">Q2 2025</div>
+                            <div class="quarter-individual-indicator" data-member="ricardo" data-quarter="q2" style="font-size: 1.5rem;">😱</div>
+                        </div>
+                        <ul class="tactics-list">
+                            <li>
+                                <span class="tactic-text">Lead 2 business development proposals ($20K each)</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Deliver at least 1 key presentation on market strategy and business development</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="quarter-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="quarter-title">Q3 2025</div>
+                            <div class="quarter-individual-indicator" data-member="ricardo" data-quarter="q3" style="font-size: 1.5rem;">😱</div>
+                        </div>
+                        <ul class="tactics-list">
+                            <li>
+                                <span class="tactic-text">Develop 2 strategic consulting proposals ($35K each)</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Organize client appreciation events in key markets</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Establish thought leadership through industry publications</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="quarter-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="quarter-title">Q4 2025</div>
+                            <div class="quarter-individual-indicator" data-member="ricardo" data-quarter="q4" style="font-size: 1.5rem;">😱</div>
+                        </div>
+                        <ul class="tactics-list">
+                            <li>
+                                <span class="tactic-text">Submit 2 major strategic proposals ($50K each)</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Finalize strategic alliances and partnership agreements</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                            </li>
+                            <li>
+                                <span class="tactic-text">Prepare marketing strategy and budget for 2026</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <button class="save-button" onclick="saveTactics()">Save Tactics Progress</button>
+        </div>
+
+        <div id="pipeline" class="tab-content">
+            <!-- Current Proposal Pipeline -->
+            <div class="pipeline-section">
+                <h2 class="section-title">Current Proposal Pipeline</h2>
+                <button class="add-row-button" onclick="addPipelineRow()">+ Add New Proposal</button>
+                <div class="table-container">
+                    <table id="pipelineTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Project</th>
+                                <th>Client</th>
+                                <th>Lead</th>
+                                <th>Support</th>
+                                <th>Date</th>
+                                <th>Price (USD)</th>
+                                <th>Probability (%)</th>
+                                <th>Weighted Value (USD)</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td><input type="text" class="editable" value="Seattle - WSF" onchange="updatePipeline()"></td>
+                                <td><input type="text" class="editable" value="CrossColab"></td>
+                                <td><select class="editable">
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto" selected>Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None">None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><input type="date" class="editable date-input" value="2025-07-15"></td>
+                                <td><input type="number" class="editable amount-input" value="55000" onchange="updatePipeline()"></td>
+                                <td><input type="number" class="editable probability-input" value="60" min="0" max="100" onchange="updatePipeline()"></td>
+                                <td class="weighted-value">$33,000</td>
+                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><input type="text" class="editable" value="UVG Study - Guatemala City" onchange="updatePipeline()"></td>
+                                <td><input type="text" class="editable" value="UVG"></td>
+                                <td><select class="editable">
+                                    <option value="Octavio" selected>Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None" selected>None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><input type="date" class="editable date-input" value="2025-08-30"></td>
+                                <td><input type="number" class="editable amount-input" value="12000" onchange="updatePipeline()"></td>
+                                <td><input type="number" class="editable probability-input" value="70" min="0" max="100" onchange="updatePipeline()"></td>
+                                <td class="weighted-value">$8,400</td>
+                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td><input type="text" class="editable" value="BMS - PM" onchange="updatePipeline()"></td>
+                                <td><input type="text" class="editable" value="BMS"></td>
+                                <td><select class="editable">
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé" selected>Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None">None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme" selected>Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><input type="date" class="editable date-input" value="2025-07-30"></td>
+                                <td><input type="number" class="editable amount-input" value="10000" onchange="updatePipeline()"></td>
+                                <td><input type="number" class="editable probability-input" value="70" min="0" max="100" onchange="updatePipeline()"></td>
+                                <td class="weighted-value">$7,000</td>
+                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td><input type="text" class="editable" value="HP - ENERGY ASSESSMENT - CD JUAREZ" onchange="updatePipeline()"></td>
+                                <td><input type="text" class="editable" value="CrossColab"></td>
+                                <td><select class="editable">
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme" selected>Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None" selected>None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><input type="date" class="editable date-input" value="2025-09-15"></td>
+                                <td><input type="number" class="editable amount-input" value="1780" onchange="updatePipeline()"></td>
+                                <td><input type="number" class="editable probability-input" value="65" min="0" max="100" onchange="updatePipeline()"></td>
+                                <td class="weighted-value">$1,157</td>
+                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td><input type="text" class="editable" value="Desarrollar Geovisor en temas mineros con AI" onchange="updatePipeline()"></td>
+                                <td><input type="text" class="editable" value="CrossColab"></td>
+                                <td><select class="editable">
+                                    <option value="Octavio" selected>Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None">None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto" selected>Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><input type="date" class="editable date-input" value="2025-10-01"></td>
+                                <td><input type="number" class="editable amount-input" value="15000" onchange="updatePipeline()"></td>
+                                <td><input type="number" class="editable probability-input" value="60" min="0" max="100" onchange="updatePipeline()"></td>
+                                <td class="weighted-value">$9,000</td>
+                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td><input type="text" class="editable" value="Grupo BIMBO" onchange="updatePipeline()"></td>
+                                <td><input type="text" class="editable" value="BIMBO"></td>
+                                <td><select class="editable">
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo" selected>Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None">None</option>
+                                    <option value="Octavio" selected>Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><input type="date" class="editable date-input" value="2025-08-15"></td>
+                                <td><input type="number" class="editable amount-input" value="29000" onchange="updatePipeline()"></td>
+                                <td><input type="number" class="editable probability-input" value="60" min="0" max="100" onchange="updatePipeline()"></td>
+                                <td class="weighted-value">$17,400</td>
+                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td><input type="text" class="editable" value="META - Traffic (Equipo Gastón)" onchange="updatePipeline()"></td>
+                                <td><input type="text" class="editable" value="META"></td>
+                                <td><select class="editable">
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto" selected>Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None" selected>None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><input type="date" class="editable date-input" value="2025-11-30"></td>
+                                <td><input type="number" class="editable amount-input" value="20000" onchange="updatePipeline()"></td>
+                                <td><input type="number" class="editable probability-input" value="60" min="0" max="100" onchange="updatePipeline()"></td>
+                                <td class="weighted-value">$12,000</td>
+                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td><input type="text" class="editable" value="META - PM + Geospatial analysis (Michael)" onchange="updatePipeline()"></td>
+                                <td><input type="text" class="editable" value="META"></td>
+                                <td><select class="editable">
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé" selected>Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None">None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto" selected>Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><input type="date" class="editable date-input" value="2025-10-15"></td>
+                                <td><input type="number" class="editable amount-input" value="13400" onchange="updatePipeline()"></td>
+                                <td><input type="number" class="editable probability-input" value="60" min="0" max="100" onchange="updatePipeline()"></td>
+                                <td class="weighted-value">$8,040</td>
+                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td><input type="text" class="editable" value="San Francisco - TOD Analysis" onchange="updatePipeline()"></td>
+                                <td><input type="text" class="editable" value="CrossColab"></td>
+                                <td><select class="editable">
+                                    <option value="Octavio" selected>Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None" selected>None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><input type="date" class="editable date-input" value="2025-09-30"></td>
+                                <td><input type="number" class="editable amount-input" value="25000" onchange="updatePipeline()"></td>
+                                <td><input type="number" class="editable probability-input" value="50" min="0" max="100" onchange="updatePipeline()"></td>
+                                <td class="weighted-value">$12,500</td>
+                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>10</td>
+                                <td><input type="text" class="editable" value="LEGO" onchange="updatePipeline()"></td>
+                                <td><input type="text" class="editable" value="LEGO"></td>
+                                <td><select class="editable">
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo" selected>Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None" selected>None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><input type="date" class="editable date-input" value="2025-08-31"></td>
+                                <td><input type="number" class="editable amount-input" value="5000" onchange="updatePipeline()"></td>
+                                <td><input type="number" class="editable probability-input" value="50" min="0" max="100" onchange="updatePipeline()"></td>
+                                <td class="weighted-value">$2,500</td>
+                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>11</td>
+                                <td><input type="text" class="editable" value="BORDER CROSSING MESA DE OTAY" onchange="updatePipeline()"></td>
+                                <td><input type="text" class="editable" value="CrossColab"></td>
+                                <td><select class="editable">
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto" selected>Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None" selected>None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><input type="date" class="editable date-input" value="2025-11-15"></td>
+                                <td><input type="number" class="editable amount-input" value="15000" onchange="updatePipeline()"></td>
+                                <td><input type="number" class="editable probability-input" value="50" min="0" max="100" onchange="updatePipeline()"></td>
+                                <td class="weighted-value">$7,500</td>
+                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>12</td>
+                                <td><input type="text" class="editable" value="L.A. 511" onchange="updatePipeline()"></td>
+                                <td><input type="text" class="editable" value="CrossColab"></td>
+                                <td><select class="editable">
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme" selected>Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None">None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto" selected>Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><input type="date" class="editable date-input" value="2025-12-31"></td>
+                                <td><input type="number" class="editable amount-input" value="60000" onchange="updatePipeline()"></td>
+                                <td><input type="number" class="editable probability-input" value="40" min="0" max="100" onchange="updatePipeline()"></td>
+                                <td class="weighted-value">$24,000</td>
+                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>13</td>
+                                <td><input type="text" class="editable" value="DD Traffic Study - France" onchange="updatePipeline()"></td>
+                                <td><input type="text" class="editable" value="France Client"></td>
+                                <td><select class="editable">
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto" selected>Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None" selected>None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><input type="date" class="editable date-input" value="2025-10-30"></td>
+                                <td><input type="number" class="editable amount-input" value="24400" onchange="updatePipeline()"></td>
+                                <td><input type="number" class="editable probability-input" value="40" min="0" max="100" onchange="updatePipeline()"></td>
+                                <td class="weighted-value">$9,760</td>
+                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>14</td>
+                                <td><input type="text" class="editable" value="Estudio Movilidad Sección 2 - Bosque de Chapultepec" onchange="updatePipeline()"></td>
+                                <td><input type="text" class="editable" value="MOTA-ENGIL"></td>
+                                <td><select class="editable">
+                                    <option value="Octavio" selected>Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None">None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme" selected>Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><input type="date" class="editable date-input" value="2025-11-30"></td>
+                                <td><input type="number" class="editable amount-input" value="54000" onchange="updatePipeline()"></td>
+                                <td><input type="number" class="editable probability-input" value="35" min="0" max="100" onchange="updatePipeline()"></td>
+                                <td class="weighted-value">$18,900</td>
+                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>15</td>
+                                <td><input type="text" class="editable" value="PMU - monitoring platform - Lima" onchange="updatePipeline()"></td>
+                                <td><input type="text" class="editable" value="ATU"></td>
+                                <td><select class="editable">
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé" selected>Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None" selected>None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><input type="date" class="editable date-input" value="2025-12-15"></td>
+                                <td><input type="number" class="editable amount-input" value="62000" onchange="updatePipeline()"></td>
+                                <td><input type="number" class="editable probability-input" value="20" min="0" max="100" onchange="updatePipeline()"></td>
+                                <td class="weighted-value">$12,400</td>
+                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>16</td>
+                                <td><input type="text" class="editable" value="Advisory Services on Mobility Issues for the 2026 World Cup; Focus on Mexico" onchange="updatePipeline()"></td>
+                                <td><input type="text" class="editable" value="FIFA/CrossColab"></td>
+                                <td><select class="editable">
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo" selected>Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None">None</option>
+                                    <option value="Octavio" selected>Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><input type="date" class="editable date-input" value="2026-01-15"></td>
+                                <td><input type="number" class="editable amount-input" value="20000" onchange="updatePipeline()"></td>
+                                <td><input type="number" class="editable probability-input" value="0" min="0" max="100" onchange="updatePipeline()"></td>
+                                <td class="weighted-value">$0</td>
+                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                            <tr class="total-row">
+                                <td><strong>#</strong></td>
+                                <td><strong>TOTAL PIPELINE</strong></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td id="totalPipeline"><strong>$421,580</strong></td>
+                                <td></td>
+                                <td id="totalWeighted"><strong>$183,557</strong></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button class="save-button" onclick="savePipeline()">Save Pipeline Changes</button>
+                
+                <!-- Pipeline Lead Summary -->
+                <div style="margin-top: 20px; background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #FF6600;">
+                    <h3 style="color: #FF6600; margin-bottom: 15px;">👥 Pipeline Lead Summary</h3>
+                    <div id="pipelineLeadAnalysis" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ongoing Projects -->
+            <div class="pipeline-section">
+                <h2 class="section-title">Ongoing Projects</h2>
+                <button class="add-row-button" onclick="addOngoingRow()">+ Add New Project</button>
+                <div class="table-container">
+                    <table id="ongoingTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Project</th>
+                                <th>Client</th>
+                                <th>Date</th>
+                                <th>Value (USD)</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td><input type="text" class="editable" value="Urban Mobility Plan - Lima and Callao"></td>
+                                <td><input type="text" class="editable" value="Embassy of the Netherlands in Mexico"></td>
+                                <td><input type="date" class="editable date-input" value="2025-08-15"></td>
+                                <td><input type="number" class="editable amount-input" value="19000" onchange="updateOngoing()"></td>
+                                <td><select class="editable">
+                                    <option value="In Progress" selected>In Progress</option>
+                                    <option value="On Hold">On Hold</option>
+                                    <option value="Completed">Completed</option>
+                                </select></td>
+                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><input type="text" class="editable" value="Oaxaca Cycling Workshop"></td>
+                                <td><input type="text" class="editable" value="Local Government"></td>
+                                <td><input type="date" class="editable date-input" value="2025-07-30"></td>
+                                <td><input type="number" class="editable amount-input" value="2652" onchange="updateOngoing()"></td>
+                                <td><select class="editable">
+                                    <option value="In Progress" selected>In Progress</option>
+                                    <option value="On Hold">On Hold</option>
+                                    <option value="Completed">Completed</option>
+                                </select></td>
+                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td><input type="text" class="editable" value="San José VTA Accessibility Analysis"></td>
+                                <td><input type="text" class="editable" value="VTA"></td>
+                                <td><input type="date" class="editable date-input" value="2025-09-30"></td>
+                                <td><input type="number" class="editable amount-input" value="1500" onchange="updateOngoing()"></td>
+                                <td><select class="editable">
+                                    <option value="In Progress" selected>In Progress</option>
+                                    <option value="On Hold">On Hold</option>
+                                    <option value="Completed">Completed</option>
+                                </select></td>
+                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td><input type="text" class="editable" value="El Naranjo - Model update"></td>
+                                <td><input type="text" class="editable" value="IDC"></td>
+                                <td><input type="date" class="editable date-input" value="2025-12-15"></td>
+                                <td><input type="number" class="editable amount-input" value="25000" onchange="updateOngoing()"></td>
+                                <td><select class="editable">
+                                    <option value="In Progress" selected>In Progress</option>
+                                    <option value="On Hold">On Hold</option>
+                                    <option value="Completed">Completed</option>
+                                </select></td>
+                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                            <tr class="total-row">
+                                <td><strong>#</strong></td>
+                                <td><strong>TOTAL ONGOING</strong></td>
+                                <td></td>
+                                <td></td>
+                                <td id="totalOngoing"><strong>$48,152</strong></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button class="save-button" onclick="saveOngoing()">Save Ongoing Projects</button>
+            </div>
+
+            <!-- Lost Opportunities -->
+            <div class="pipeline-section">
+                <h2 class="section-title">Lost Opportunities</h2>
+                <button class="add-row-button" onclick="addLostRow()">+ Add Lost Opportunity</button>
+                <div class="table-container">
+                    <table id="lostTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Project</th>
+                                <th>Client</th>
+                                <th>Lead</th>
+                                <th>Support</th>
+                                <th>Date Lost</th>
+                                <th>Value (USD)</th>
+                                <th>Lost Motive</th>
+                                <th>Competitor</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td><input type="text" class="editable" value="Mexico City Metro Analysis"></td>
+                                <td><input type="text" class="editable" value="CDMX Government"></td>
+                                <td><select class="editable">
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto" selected>Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None">None</option>
+                                    <option value="Octavio" selected>Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><input type="date" class="editable date-input" value="2025-05-15"></td>
+                                <td><input type="number" class="editable amount-input" value="85000" onchange="updateLost()"></td>
+                                <td><select class="editable" onchange="updateLossAnalysis()">
+                                    <option value="Price" selected>Price</option>
+                                    <option value="Technical">Technical</option>
+                                    <option value="Price/Technical">Price/Technical</option>
+                                    <option value="Deadline">Deadline</option>
+                                    <option value="Corruption">Corruption</option>
+                                    <option value="Lack of Funds">Lack of Funds</option>
+                                    <option value="Political Environment">Political Environment</option>
+                                    <option value="Client Stepback">Client Stepback</option>
+                                    <option value="Administrative Issues">Administrative Issues</option>
+                                    <option value="Others">Others</option>
+                                </select></td>
+                                <td><input type="text" class="editable" value="Local Consultant"></td>
+                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><input type="text" class="editable" value="Guadalajara Smart Traffic"></td>
+                                <td><input type="text" class="editable" value="Municipal Government"></td>
+                                <td><select class="editable">
+                                    <option value="Octavio" selected>Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None" selected>None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><input type="date" class="editable date-input" value="2025-04-20"></td>
+                                <td><input type="number" class="editable amount-input" value="45000" onchange="updateLost()"></td>
+                                <td><select class="editable" onchange="updateLossAnalysis()">
+                                    <option value="Price">Price</option>
+                                    <option value="Technical">Technical</option>
+                                    <option value="Price/Technical">Price/Technical</option>
+                                    <option value="Deadline" selected>Deadline</option>
+                                    <option value="Corruption">Corruption</option>
+                                    <option value="Lack of Funds">Lack of Funds</option>
+                                    <option value="Political Environment">Political Environment</option>
+                                    <option value="Client Stepback">Client Stepback</option>
+                                    <option value="Administrative Issues">Administrative Issues</option>
+                                    <option value="Others">Others</option>
+                                </select></td>
+                                <td><input type="text" class="editable" value="IBM"></td>
+                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                            <tr class="total-row">
+                                <td><strong>#</strong></td>
+                                <td><strong>TOTAL LOST VALUE</strong></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td id="totalLost"><strong>$130,000</strong></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button class="save-button" onclick="saveLost()">Save Lost Opportunities</button>
+                
+                <!-- Loss Analysis Summary -->
+                <div style="margin-top: 20px; background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #dc3545;">
+                    <h3 style="color: #dc3545; margin-bottom: 15px;">📊 Loss Analysis Summary</h3>
+                    <div id="lossAnalysis" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="evaluation" class="tab-content">
+            <div class="evaluation-container">
+                <h2>Go/No Go Opportunity Evaluation</h2>
+                <h3 style="color: #FF6600; margin-bottom: 20px;">🎯 Urban Analytics Mexico Practice Group Decision Framework</h3>
+                
+                <div class="evaluation-instructions">
+                    <h3>Instructions for Completing the Evaluation</h3>
+                    <ul>
+                        <li><strong>Priority Focus:</strong> This evaluation is designed to balance Urban Analytics Mexico group objectives with broader Arcadis strategic goals</li>
+                        <li><strong>Weight (%):</strong> Assign a percentage weight to each criterion based on its importance to our decision (total should equal 100%)</li>
+                        <li><strong>Score (1-10):</strong> Rate each criterion from 1 (very poor) to 10 (excellent) based on how well the opportunity meets this criterion</li>
+                        <li><strong>Weighted Score:</strong> Automatically calculated as (Weight × Score) ÷ 100</li>
+                        <li><strong>Final Score:</strong> Sum of all weighted scores; 7.5+ = GO, 6.0-7.4 = CONDITIONAL GO, <6.0 = NO GO</li>
+                    </ul>
+                </div>
+                
+                <div class="opportunity-header">
+                    <label for="opportunityName"><strong>Opportunity Name:</strong></label>
+                    <input type="text" id="opportunityName" class="opportunity-name" placeholder="Enter opportunity name..." value="Sample Opportunity - Urban Analytics Mexico">
+                </div>
+
+                <div class="evaluation-form">
+                    <div class="evaluation-headers">
+                        <div>Evaluation Criteria - Urban Analytics Mexico</div>
+                        <div>Weight (%)</div>
+                        <div>Score (1-10)</div>
+                    </div>
+
+                    <div class="evaluation-item">
+                        <div>
+                            <div class="criterion">1. Strategic alignment with Urban Analytics Mexico objectives</div>
+                            <div class="criterion-description">How well does this opportunity align with our specific growth targets and technical development goals in urban analytics?</div>
+                        </div>
+                        <input type="number" class="weight-input" value="18" min="0" max="100" onchange="calculateScore()">
+                        <input type="number" class="score-input" value="8" min="1" max="10" onchange="calculateScore()">
+                    </div>
+
+                    <div class="evaluation-item">
+                        <div>
+                            <div class="criterion">2. Financial viability and contribution to revenue targets</div>
+                            <div class="criterion-description">Expected profitability, budget adequacy, and direct contribution to our $300K annual revenue goal.</div>
+                        </div>
+                        <input type="number" class="weight-input" value="16" min="0" max="100" onchange="calculateScore()">
+                        <input type="number" class="score-input" value="7" min="1" max="10" onchange="calculateScore()">
+                    </div>
+
+                    <div class="evaluation-item">
+                        <div>
+                            <div class="criterion">3. Technical capability and team expertise available</div>
+                            <div class="criterion-description">Team's technical competence and availability of required skills for successful delivery within our practice group.</div>
+                        </div>
+                        <input type="number" class="weight-input" value="14" min="0" max="100" onchange="calculateScore()">
+                        <input type="number" class="score-input" value="9" min="1" max="10" onchange="calculateScore()">
+                    </div>
+
+                    <div class="evaluation-item">
+                        <div>
+                            <div class="criterion">4. Alignment with broader Arcadis strategic objectives</div>
+                            <div class="criterion-description">Coherence with Arcadis global strategy and potential for cross-office collaboration and knowledge sharing.</div>
+                        </div>
+                        <input type="number" class="weight-input" value="12" min="0" max="100" onchange="calculateScore()">
+                        <input type="number" class="score-input" value="7" min="1" max="10" onchange="calculateScore()">
+                    </div>
+
+                    <div class="evaluation-item">
+                        <div>
+                            <div class="criterion">5. Client relationship strength and market positioning</div>
+                            <div class="criterion-description">Quality of existing relationship, past performance, and opportunity to strengthen our position in the Mexican market.</div>
+                        </div>
+                        <input type="number" class="weight-input" value="10" min="0" max="100" onchange="calculateScore()">
+                        <input type="number" class="score-input" value="6" min="1" max="10" onchange="calculateScore()">
+                    </div>
+
+                    <div class="evaluation-item">
+                        <div>
+                            <div class="criterion">6. Cross-collaboration potential and revenue sharing</div>
+                            <div class="criterion-description">Opportunity for meaningful collaboration with other Arcadis offices generating significant shared revenue (>30% collaboration).</div>
+                        </div>
+                        <input type="number" class="weight-input" value="8" min="0" max="100" onchange="calculateScore()">
+                        <input type="number" class="score-input" value="7" min="1" max="10" onchange="calculateScore()">
+                    </div>
+
+                    <div class="evaluation-item">
+                        <div>
+                            <div class="criterion">7. Resource availability and capacity management</div>
+                            <div class="criterion-description">Availability of required human resources and capacity to deliver without compromising other priority projects.</div>
+                        </div>
+                        <input type="number" class="weight-input" value="8" min="0" max="100" onchange="calculateScore()">
+                        <input type="number" class="score-input" value="5" min="1" max="10" onchange="calculateScore()">
+                    </div>
+
+                    <div class="evaluation-item">
+                        <div>
+                            <div class="criterion">8. Market competitiveness and winning probability</div>
+                            <div class="criterion-description">Our competitive advantage and realistic probability of winning against other bidders in the market.</div>
+                        </div>
+                        <input type="number" class="weight-input" value="6" min="0" max="100" onchange="calculateScore()">
+                        <input type="number" class="score-input" value="6" min="1" max="10" onchange="calculateScore()">
+                    </div>
+
+                    <div class="evaluation-item">
+                        <div>
+                            <div class="criterion">9. Regional expertise and local knowledge requirements</div>
+                            <div class="criterion-description">Team's familiarity with local regulations, culture, and market conditions in the target region or country.</div>
+                        </div>
+                        <input type="number" class="weight-input" value="4" min="0" max="100" onchange="calculateScore()">
+                        <input type="number" class="score-input" value="8" min="1" max="10" onchange="calculateScore()">
+                    </div>
+
+                    <div class="evaluation-item">
+                        <div>
+                            <div class="criterion">10. Innovation and learning potential</div>
+                            <div class="criterion-description">Opportunity to develop new capabilities, technologies, or methodologies that benefit future projects and team growth.</div>
+                        </div>
+                        <input type="number" class="weight-input" value="4" min="0" max="100" onchange="calculateScore()">
+                        <input type="number" class="score-input" value="8" min="1" max="10" onchange="calculateScore()">
+                    </div>
+
+                    <div class="weight-total" id="weightTotal">
+                        Total Weight: <span id="totalWeight">100</span>%
+                    </div>
+
+                    <div class="final-score score-conditional" id="finalScoreContainer">
+                        <div>Total Weighted Score: <span id="finalScore">7.04</span> / 10</div>
+                        <div style="margin-top: 10px; font-size: 1rem;">
+                            Recommendation: <span id="recommendation">CONDITIONAL GO - Good opportunity worth pursuing with some considerations</span>
+                        </div>
+                    </div>
+                    
+                    <button class="save-button" onclick="saveEvaluation()">Save Evaluation</button>
+                    <button class="save-button" onclick="generatePDF()" style="background: #28a745; margin-left: 15px;">Generate PDF Report</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openTab(tabName) {
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            const targetTab = document.getElementById(tabName);
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
+            
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+        }
+
+        function getOngoingTotal() {
+            const rows = document.querySelectorAll('#ongoingTable tbody tr:not(.total-row)');
+            let total = 0;
+            rows.forEach(row => {
+                const amountInput = row.querySelector('.amount-input');
+                if (amountInput) {
+                    total += parseFloat(amountInput.value) || 0;
+                }
+            });
+            return total;
+        }
+
+        function getPipelineWeighted() {
+            const rows = document.querySelectorAll('#pipelineTable tbody tr:not(.total-row)');
+            let totalWeighted = 0;
+            rows.forEach(row => {
+                const amountInput = row.querySelector('.amount-input');
+                const probabilityInput = row.querySelector('.probability-input');
+                if (amountInput && probabilityInput) {
+                    const amount = parseFloat(amountInput.value) || 0;
+                    const probability = parseFloat(probabilityInput.value) || 0;
+                    totalWeighted += (amount * probability) / 100;
+                }
+            });
+            return totalWeighted;
+        }
+
+        function updateProgress() {
+            // Get totals automatically
+            const pipelineWeighted = getPipelineWeighted();
+            const ongoingTotal = getOngoingTotal();
+            
+            // Update fields
+            const potentialField = document.getElementById('potentialAmount');
+            const exercisedField = document.getElementById('exercisedAmount');
+            
+            if (potentialField) {
+                potentialField.value = Math.round(pipelineWeighted);
+            }
+            if (exercisedField) {
+                exercisedField.value = ongoingTotal;
+            }
+            
+            const exercised = ongoingTotal;
+            const potential = pipelineWeighted;
+            const target = 300000;
+            
+            // Calculate gap
+            const gap = target - (exercised + potential);
+            const gapField = document.getElementById('gapAmount');
+            if (gapField) {
+                gapField.value = Math.round(gap);
+            }
+
+            const total = exercised + potential;
+            const remaining = Math.max(0, target - total);
+
+            const exercisedPercent = (exercised / target) * 100;
+            const potentialPercent = (potential / target) * 100;
+            const remainingPercent = (remaining / target) * 100;
+
+            const progressExercised = document.getElementById('progressExercised');
+            const progressPotential = document.getElementById('progressPotential');
+            const progressRemaining = document.getElementById('progressRemaining');
+            
+            if (progressExercised) progressExercised.style.width = exercisedPercent + '%';
+            if (progressPotential) progressPotential.style.width = potentialPercent + '%';
+            if (progressRemaining) progressRemaining.style.width = remainingPercent + '%';
+
+            const currentMonthPercent = (5 / 12) * 100;
+            const progressIndicator = document.getElementById('progressIndicator');
+            if (progressIndicator) {
+                progressIndicator.style.left = currentMonthPercent + '%';
+            }
+        }
+
+        function updateCompletionIndicator() {
+            const teamMembers = ['octavio', 'roberto', 'cossme', 'noe', 'ricardo'];
+            const quarters = ['q2', 'q3', 'q4'];
+            
+            teamMembers.forEach(member => {
+                const memberDiv = document.querySelector(`[data-member="${member}"]`);
+                if (!memberDiv) return;
+                
+                const memberContainer = memberDiv.closest('.team-member');
+                if (!memberContainer) return;
+                
+                let totalCheckedCount = 0;
+                let totalCheckboxes = 0;
+                
+                quarters.forEach(quarter => {
+                    const quarterCheckboxes = memberContainer.querySelectorAll(`[data-quarter="${quarter}"]`);
+                    const quarterCheckedCount = Array.from(quarterCheckboxes).filter(cb => cb.checked).length;
+                    const quarterIndicator = memberContainer.querySelector(`[data-member="${member}"][data-quarter="${quarter}"]`);
+                    
+                    if (quarterIndicator) {
+                        if (quarter === 'q2') {
+                            // Q2 has 2 tasks per person
+                            if (quarterCheckedCount === 0) {
+                                quarterIndicator.textContent = '😱';
+                            } else if (quarterCheckedCount === 1) {
+                                quarterIndicator.textContent = '😰';
+                            } else if (quarterCheckedCount >= 2) {
+                                quarterIndicator.textContent = '😊';
+                            }
+                        } else {
+                            // Q3 and Q4 have 3 tasks per person
+                            if (quarterCheckedCount === 0) {
+                                quarterIndicator.textContent = '😱';
+                            } else if (quarterCheckedCount === 1) {
+                                quarterIndicator.textContent = '😰';
+                            } else if (quarterCheckedCount === 2) {
+                                quarterIndicator.textContent = '😐';
+                            } else if (quarterCheckedCount >= 3) {
+                                quarterIndicator.textContent = '😊';
+                            }
+                        }
+                    }
+                    
+                    totalCheckedCount += quarterCheckedCount;
+                    totalCheckboxes += quarterCheckboxes.length;
+                });
+                
+                const overallIndicator = memberContainer.querySelector('.completion-indicator');
+                if (overallIndicator) {
+                    if (totalCheckedCount === 0) {
+                        overallIndicator.textContent = '😱';
+                    } else if (totalCheckedCount <= totalCheckboxes / 4) {
+                        overallIndicator.textContent = '😰';
+                    } else if (totalCheckedCount <= totalCheckboxes / 2) {
+                        overallIndicator.textContent = '😐';
+                    } else {
+                        overallIndicator.textContent = '😊';
+                    }
+                }
+            });
+            
+            quarters.forEach(quarter => {
+                let membersWithAllCompleted = 0;
+                let membersWithSomeCompleted = 0;
+                
+                teamMembers.forEach(member => {
+                    const memberDiv = document.querySelector(`[data-member="${member}"]`);
+                    if (!memberDiv) return;
+                    
+                    const memberContainer = memberDiv.closest('.team-member');
+                    if (!memberContainer) return;
+                    
+                    const quarterCheckboxes = memberContainer.querySelectorAll(`[data-quarter="${quarter}"]`);
+                    const quarterCheckedCount = Array.from(quarterCheckboxes).filter(cb => cb.checked).length;
+                    
+                    if (quarter === 'q2') {
+                        // Q2 has 2 tasks per person
+                        if (quarterCheckedCount >= 2) {
+                            membersWithAllCompleted++;
+                        } else if (quarterCheckedCount > 0) {
+                            membersWithSomeCompleted++;
+                        }
+                    } else {
+                        // Q3 and Q4 have 3 tasks per person
+                        if (quarterCheckedCount >= 3) {
+                            membersWithAllCompleted++;
+                        } else if (quarterCheckedCount > 0) {
+                            membersWithSomeCompleted++;
+                        }
+                    }
+                });
+                
+                const quarterProgressIndicator = document.getElementById(`${quarter}-progress`);
+                if (quarterProgressIndicator) {
+                    if (membersWithAllCompleted === teamMembers.length) {
+                        quarterProgressIndicator.textContent = '😊';
+                    } else if (membersWithAllCompleted >= teamMembers.length / 2) {
+                        quarterProgressIndicator.textContent = '😐';
+                    } else if (membersWithSomeCompleted > 0 || membersWithAllCompleted > 0) {
+                        quarterProgressIndicator.textContent = '😰';
+                    } else {
+                        quarterProgressIndicator.textContent = '😱';
+                    }
+                }
+            });
+        }
+
+        function updateLost() {
+            const rows = document.querySelectorAll('#lostTable tbody tr:not(.total-row)');
+            let total = 0;
+
+            rows.forEach(row => {
+                const amountInput = row.querySelector('.amount-input');
+                if (amountInput) {
+                    total += parseFloat(amountInput.value) || 0;
+                }
+            });
+
+            const totalLostElement = document.getElementById('totalLost');
+            if (totalLostElement) {
+                totalLostElement.innerHTML = `<strong>$${total.toLocaleString()}</strong>`;
+            }
+            
+            updateLossAnalysis();
+        }
+
+        function updateLossAnalysis() {
+            const rows = document.querySelectorAll('#lostTable tbody tr:not(.total-row)');
+            const motives = {};
+            let totalValue = 0;
+
+            rows.forEach(row => {
+                const motivSelect = row.querySelector('select.editable');
+                const amountInput = row.querySelector('.amount-input');
+                
+                if (motivSelect && amountInput) {
+                    const motive = motivSelect.value;
+                    const amount = parseFloat(amountInput.value) || 0;
+                    
+                    if (!motives[motive]) {
+                        motives[motive] = { count: 0, value: 0 };
+                    }
+                    motives[motive].count++;
+                    motives[motive].value += amount;
+                    totalValue += amount;
+                }
+            });
+
+            const analysisContainer = document.getElementById('lossAnalysis');
+            if (analysisContainer) {
+                let html = '';
+                Object.keys(motives).sort((a, b) => motives[b].value - motives[a].value).forEach(motive => {
+                    const data = motives[motive];
+                    const percentage = totalValue > 0 ? ((data.value / totalValue) * 100).toFixed(1) : 0;
+                    html += `
+                        <div style="background: white; padding: 15px; border-radius: 6px; border-left: 3px solid #dc3545; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                            <div style="font-weight: 600; color: #dc3545; margin-bottom: 5px;">${motive}</div>
+                            <div style="font-size: 0.9rem; color: #6c757d;">
+                                ${data.count} opp${data.count !== 1 ? 's' : ''} • $${data.value.toLocaleString()} (${percentage}%)
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                if (html === '') {
+                    html = '<div style="text-align: center; color: #6c757d; font-style: italic;">No lost opportunities recorded yet</div>';
+                }
+                
+                analysisContainer.innerHTML = html;
+            }
+        }
+
+        function addLostRow() {
+            const tbody = document.querySelector('#lostTable tbody');
+            if (!tbody) return;
+            
+            const totalRow = tbody.querySelector('.total-row');
+            const existingRows = tbody.querySelectorAll('tr:not(.total-row)');
+            const nextNumber = existingRows.length + 1;
+            const newRow = document.createElement('tr');
+            
+            newRow.innerHTML = `
+                <td>${nextNumber}</td>
+                <td><input type="text" class="editable" value="New Lost Project"></td>
+                <td><input type="text" class="editable" value="New Client"></td>
+                <td><select class="editable">
+                    <option value="Octavio">Octavio</option>
+                    <option value="Roberto">Roberto</option>
+                    <option value="Cossme">Cossme</option>
+                    <option value="Noé">Noé</option>
+                    <option value="Ricardo">Ricardo</option>
+                </select></td>
+                <td><select class="editable">
+                    <option value="None" selected>None</option>
+                    <option value="Octavio">Octavio</option>
+                    <option value="Roberto">Roberto</option>
+                    <option value="Cossme">Cossme</option>
+                    <option value="Noé">Noé</option>
+                    <option value="Ricardo">Ricardo</option>
+                </select></td>
+                <td><input type="date" class="editable date-input" value="2025-06-05"></td>
+                <td><input type="number" class="editable amount-input" value="0" onchange="updateLost()"></td>
+                <td><select class="editable" onchange="updateLossAnalysis()">
+                    <option value="Price">Price</option>
+                    <option value="Technical">Technical</option>
+                    <option value="Price/Technical">Price/Technical</option>
+                    <option value="Deadline">Deadline</option>
+                    <option value="Corruption">Corruption</option>
+                    <option value="Lack of Funds">Lack of Funds</option>
+                    <option value="Political Environment">Political Environment</option>
+                    <option value="Client Stepback">Client Stepback</option>
+                    <option value="Administrative Issues">Administrative Issues</option>
+                    <option value="Others" selected>Others</option>
+                </select></td>
+                <td><input type="text" class="editable" value="Unknown"></td>
+                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+            `;
+            
+            if (totalRow) {
+                tbody.insertBefore(newRow, totalRow);
+            } else {
+                tbody.appendChild(newRow);
+            }
+            updateLost();
+        }
+
+        function saveLost() {
+            alert('Lost opportunities saved successfully!');
+        }
+
+        function updatePipeline() {
+            const rows = document.querySelectorAll('#pipelineTable tbody tr:not(.total-row)');
+            let totalAmount = 0;
+            let totalWeighted = 0;
+
+            rows.forEach(row => {
+                const amountInput = row.querySelector('.amount-input');
+                const probabilityInput = row.querySelector('.probability-input');
+                const weightedCell = row.querySelector('.weighted-value');
+
+                if (amountInput && probabilityInput && weightedCell) {
+                    const amount = parseFloat(amountInput.value) || 0;
+                    const probability = parseFloat(probabilityInput.value) || 0;
+                    const weighted = (amount * probability) / 100;
+
+                    weightedCell.textContent = `${weighted.toLocaleString()}`;
+                    totalAmount += amount;
+                    totalWeighted += weighted;
+                }
+            });
+
+            const totalPipelineElement = document.getElementById('totalPipeline');
+            const totalWeightedElement = document.getElementById('totalWeighted');
+            
+            if (totalPipelineElement) {
+                totalPipelineElement.innerHTML = `<strong>${totalAmount.toLocaleString()}</strong>`;
+            }
+            if (totalWeightedElement) {
+                totalWeightedElement.innerHTML = `<strong>${totalWeighted.toLocaleString()}</strong>`;
+            }
+            
+            updateProgress();
+            updatePipelineLeadAnalysis();
+        }
+
+        function updatePipelineLeadAnalysis() {
+            const rows = document.querySelectorAll('#pipelineTable tbody tr:not(.total-row)');
+            const teamStats = {};
+
+            rows.forEach(row => {
+                const leadSelect = row.querySelectorAll('select.editable')[0]; // First select is Lead
+                const supportSelect = row.querySelectorAll('select.editable')[1]; // Second select is Support
+                
+                if (leadSelect && supportSelect) {
+                    const lead = leadSelect.value;
+                    const support = supportSelect.value;
+                    
+                    // Count leads
+                    if (!teamStats[lead]) {
+                        teamStats[lead] = { lead: 0, support: 0 };
+                    }
+                    teamStats[lead].lead++;
+                    
+                    // Count support (if not "None")
+                    if (support !== "None") {
+                        if (!teamStats[support]) {
+                            teamStats[support] = { lead: 0, support: 0 };
+                        }
+                        teamStats[support].support++;
+                    }
+                }
+            });
+
+            const analysisContainer = document.getElementById('pipelineLeadAnalysis');
+            if (analysisContainer) {
+                let html = '';
+                const teamMembers = ['Octavio', 'Roberto', 'Cossme', 'Noé', 'Ricardo'];
+                
+                teamMembers.forEach(member => {
+                    const stats = teamStats[member] || { lead: 0, support: 0 };
+                    const total = stats.lead + stats.support;
+                    
+                    html += `
+                        <div style="background: white; padding: 15px; border-radius: 6px; border-left: 3px solid #FF6600; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                            <div style="font-weight: 600; color: #FF6600; margin-bottom: 8px;">${member}</div>
+                            <div style="font-size: 0.9rem; color: #6c757d;">
+                                <div>${stats.lead} Lead • ${stats.support} Support</div>
+                                <div style="font-weight: 600; color: #1a1a1a; margin-top: 4px;">Total: ${total} opportunities</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                analysisContainer.innerHTML = html;
+            }
+        }
+
+        function updateOngoing() {
+            const rows = document.querySelectorAll('#ongoingTable tbody tr:not(.total-row)');
+            let total = 0;
+
+            rows.forEach(row => {
+                const amountInput = row.querySelector('.amount-input');
+                if (amountInput) {
+                    total += parseFloat(amountInput.value) || 0;
+                }
+            });
+
+            const totalOngoingElement = document.getElementById('totalOngoing');
+            if (totalOngoingElement) {
+                totalOngoingElement.innerHTML = `<strong>$${total.toLocaleString()}</strong>`;
+            }
+            
+            // Update progress bar with new exercised amount
+            updateProgress();
+        }
+
+        function addPipelineRow() {
+            const tbody = document.querySelector('#pipelineTable tbody');
+            if (!tbody) return;
+            
+            const totalRow = tbody.querySelector('.total-row');
+            const existingRows = tbody.querySelectorAll('tr:not(.total-row)');
+            const nextNumber = existingRows.length + 1;
+            const newRow = document.createElement('tr');
+            
+            newRow.innerHTML = `
+                <td>${nextNumber}</td>
+                <td><input type="text" class="editable" value="New Project" onchange="updatePipeline()"></td>
+                <td><input type="text" class="editable" value="New Client"></td>
+                <td><select class="editable">
+                    <option value="Octavio">Octavio</option>
+                    <option value="Roberto">Roberto</option>
+                    <option value="Cossme">Cossme</option>
+                    <option value="Noé">Noé</option>
+                    <option value="Ricardo">Ricardo</option>
+                </select></td>
+                <td><select class="editable">
+                    <option value="None" selected>None</option>
+                    <option value="Octavio">Octavio</option>
+                    <option value="Roberto">Roberto</option>
+                    <option value="Cossme">Cossme</option>
+                    <option value="Noé">Noé</option>
+                    <option value="Ricardo">Ricardo</option>
+                </select></td>
+                <td><input type="date" class="editable date-input" value="2025-12-31"></td>
+                <td><input type="number" class="editable amount-input" value="0" onchange="updatePipeline()"></td>
+                <td><input type="number" class="editable probability-input" value="0" min="0" max="100" onchange="updatePipeline()"></td>
+                <td class="weighted-value">$0</td>
+                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+            `;
+            
+            if (totalRow) {
+                tbody.insertBefore(newRow, totalRow);
+            } else {
+                tbody.appendChild(newRow);
+            }
+            updatePipeline();
+        }
+
+        function addOngoingRow() {
+            const tbody = document.querySelector('#ongoingTable tbody');
+            if (!tbody) return;
+            
+            const totalRow = tbody.querySelector('.total-row');
+            const existingRows = tbody.querySelectorAll('tr:not(.total-row)');
+            const nextNumber = existingRows.length + 1;
+            const newRow = document.createElement('tr');
+            
+            newRow.innerHTML = `
+                <td>${nextNumber}</td>
+                <td><input type="text" class="editable" value="New Project"></td>
+                <td><input type="text" class="editable" value="New Client"></td>
+                <td><input type="date" class="editable date-input" value="2025-12-31"></td>
+                <td><input type="number" class="editable amount-input" value="0" onchange="updateOngoing()"></td>
+                <td><select class="editable">
+                    <option value="In Progress" selected>In Progress</option>
+                    <option value="On Hold">On Hold</option>
+                    <option value="Completed">Completed</option>
+                </select></td>
+                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+            `;
+            
+            if (totalRow) {
+                tbody.insertBefore(newRow, totalRow);
+            } else {
+                tbody.appendChild(newRow);
+            }
+            updateOngoing();
+        }
+
+        function deleteRow(button) {
+            const row = button.closest('tr');
+            if (row) {
+                const table = row.closest('table');
+                row.remove();
+                
+                // Renumber rows in the table
+                if (table) {
+                    const tbody = table.querySelector('tbody');
+                    const rows = tbody.querySelectorAll('tr:not(.total-row)');
+                    rows.forEach((row, index) => {
+                        const firstCell = row.querySelector('td');
+                        if (firstCell && !isNaN(firstCell.textContent)) {
+                            firstCell.textContent = index + 1;
+                        }
+                    });
+                }
+                
+                updatePipeline();
+                updateOngoing();
+                updateLost();
+            }
+        }
+
+        function calculateScore() {
+            const items = document.querySelectorAll('.evaluation-item');
+            let totalWeightedScore = 0;
+            let totalWeight = 0;
+
+            items.forEach(item => {
+                const weightInput = item.querySelector('.weight-input');
+                const scoreInput = item.querySelector('.score-input');
+                
+                if (weightInput && scoreInput) {
+                    const weight = parseFloat(weightInput.value) || 0;
+                    const score = parseFloat(scoreInput.value) || 0;
+                    
+                    totalWeightedScore += (weight * score);
+                    totalWeight += weight;
+                }
+            });
+
+            const totalWeightElement = document.getElementById('totalWeight');
+            if (totalWeightElement) {
+                totalWeightElement.textContent = totalWeight;
+            }
+            
+            const finalScore = totalWeight > 0 ? (totalWeightedScore / totalWeight).toFixed(2) : 0;
+            const finalScoreElement = document.getElementById('finalScore');
+            if (finalScoreElement) {
+                finalScoreElement.textContent = finalScore;
+            }
+
+            const recommendationElement = document.getElementById('recommendation');
+            const containerElement = document.getElementById('finalScoreContainer');
+            
+            if (containerElement) {
+                containerElement.classList.remove('score-go', 'score-conditional', 'score-no-go');
+                
+                if (finalScore >= 7.5) {
+                    if (recommendationElement) {
+                        recommendationElement.textContent = "GO - Excellent opportunity with strong alignment";
+                    }
+                    containerElement.classList.add('score-go');
+                } else if (finalScore >= 6.0) {
+                    if (recommendationElement) {
+                        recommendationElement.textContent = "CONDITIONAL GO - Good opportunity worth pursuing with some considerations";
+                    }
+                    containerElement.classList.add('score-conditional');
+                } else {
+                    if (recommendationElement) {
+                        recommendationElement.textContent = "NO GO - High risk, poor alignment";
+                    }
+                    containerElement.classList.add('score-no-go');
+                }
+            }
+        }
+
+        function saveTactics() {
+            alert('Tactics progress saved successfully!');
+        }
+
+        function savePipeline() {
+            alert('Pipeline changes saved successfully!');
+        }
+
+        function saveOngoing() {
+            alert('Ongoing projects saved successfully!');
+        }
+
+        function saveEvaluation() {
+            const opportunityNameElement = document.getElementById('opportunityName');
+            const finalScoreElement = document.getElementById('finalScore');
+            const totalWeightElement = document.getElementById('totalWeight');
+            
+            const opportunityName = opportunityNameElement ? opportunityNameElement.value : 'Unknown';
+            const finalScore = finalScoreElement ? finalScoreElement.textContent : '0';
+            const totalWeight = totalWeightElement ? totalWeightElement.textContent : '0';
+            
+            alert(`Evaluation for "${opportunityName}" saved successfully!\nFinal Score: ${finalScore}/10\nTotal Weight: ${totalWeight}%`);
+        }
+
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Get opportunity data
+            const opportunityName = document.getElementById('opportunityName').value || 'Unknown Opportunity';
+            const finalScore = document.getElementById('finalScore').textContent || '0';
+            const totalWeight = document.getElementById('totalWeight').textContent || '0';
+            const recommendation = document.getElementById('recommendation').textContent || 'No recommendation';
+            
+            // Header
+            doc.setFontSize(20);
+            doc.setTextColor(255, 102, 0); // Arcadis orange
+            doc.text('Go/No Go Opportunity Evaluation', 20, 30);
+            doc.setFontSize(14);
+            doc.setTextColor(255, 102, 0);
+            doc.text('Urban Analytics Mexico Practice Group', 20, 45);
+            
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 60);
+            
+            // Opportunity Info
+            doc.setFontSize(14);
+            doc.setTextColor(255, 102, 0);
+            doc.text('Opportunity Information', 20, 80);
+            
+            doc.setFontSize(11);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Opportunity Name: ${opportunityName}`, 20, 95);
+            
+            // Evaluation Results
+            doc.setFontSize(14);
+            doc.setTextColor(255, 102, 0);
+            doc.text('Evaluation Results', 20, 115);
+            
+            doc.setFontSize(11);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Final Score: ${finalScore}/10`, 20, 130);
+            doc.text(`Total Weight: ${totalWeight}%`, 20, 140);
+            doc.text(`Recommendation: ${recommendation}`, 20, 150);
+            
+            // Evaluation Criteria
+            doc.setFontSize(14);
+            doc.setTextColor(255, 102, 0);
+            doc.text('Evaluation Criteria - Urban Analytics Mexico', 20, 170);
+            
+            // Get all evaluation items
+            const items = document.querySelectorAll('.evaluation-item');
+            let yPosition = 185;
+            
+            doc.setFontSize(9);
+            doc.setTextColor(0, 0, 0);
+            
+            items.forEach((item, index) => {
+                if (yPosition > 270) {
+                    doc.addPage();
+                    yPosition = 20;
+                }
+                
+                const criterion = item.querySelector('.criterion').textContent;
+                const weight = item.querySelector('.weight-input').value;
+                const score = item.querySelector('.score-input').value;
+                const weightedScore = ((weight * score) / 100).toFixed(2);
+                
+                // Split long text if needed
+                const splitText = doc.splitTextToSize(criterion, 100);
+                doc.text(splitText, 20, yPosition);
+                
+                const textHeight = splitText.length * 4;
+                doc.text(`Weight: ${weight}%`, 130, yPosition);
+                doc.text(`Score: ${score}/10`, 160, yPosition);
+                doc.text(`Weighted: ${weightedScore}`, 180, yPosition);
+                
+                yPosition += Math.max(12, textHeight + 4);
+            });
+            
+            // Footer
+            if (yPosition > 250) {
+                doc.addPage();
+                yPosition = 20;
+            }
+            
+            doc.setFontSize(8);
+            doc.setTextColor(128, 128, 128);
+            doc.text('Generated by Arcadis Practice Group Urban Analytics Mexico Dashboard', 20, yPosition + 20);
+            doc.text(`Document generated on ${new Date().toLocaleString()}`, 20, yPosition + 30);
+            
+            // Save the PDF
+            const fileName = `GoNoGo_Evaluation_UrbanAnalyticsMX_${opportunityName.replace(/[^a-z0-9]/gi, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+            doc.save(fileName);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgress();
+            updatePipeline();
+            updateOngoing();
+            updateLost();
+            updatePipelineLeadAnalysis();
+            calculateScore();
+            updateCompletionIndicator();
+        });
+    </script>
+</body>
+</html>
