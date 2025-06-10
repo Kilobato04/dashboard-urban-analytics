@@ -672,7 +672,11 @@
                 <div class="progress-inputs">
                     <div class="progress-input-group">
                         <label for="exercisedAmount">Exercised (USD)</label>
-                        <input type="number" id="exercisedAmount" value="48152" readonly style="background: #f8f9fa;" title="Auto-calculated from ongoing projects total">
+                        <input type="number" id="exercisedAmount" value="48152" readonly style="background: #f8f9fa;" title="Auto-calculated from completed projects">
+                    </div>
+                    <div class="progress-input-group">
+                        <label for="backlogAmount">Backlog (USD)</label>
+                        <input type="number" id="backlogAmount" value="0" readonly style="background: #007bff; color: white; font-weight: 600;" title="Auto-calculated from in progress projects">
                     </div>
                     <div class="progress-input-group">
                         <label for="potentialAmount">Potential Weighted (USD)</label>
@@ -680,7 +684,7 @@
                     </div>
                     <div class="progress-input-group">
                         <label for="gapAmount">Gap (USD)</label>
-                        <input type="number" id="gapAmount" value="132348" readonly style="background: #f8f9fa;" title="Target - (Exercised + Potential)">
+                        <input type="number" id="gapAmount" value="132348" readonly style="background: #f8f9fa;" title="Target - (Exercised + Backlog + Potential)">
                     </div>
                     <div class="progress-input-group">
                         <label for="targetAmount" style="color: #FF6600; font-weight: 700;">Target (USD)</label>
@@ -691,6 +695,7 @@
             <div class="progress-container">
                 <div class="progress-bar" id="progressBar">
                     <div class="progress-exercised" id="progressExercised"></div>
+                    <div class="progress-backlog" id="progressBacklog" style="background: #007bff;"></div>
                     <div class="progress-potential" id="progressPotential"></div>
                     <div class="progress-remaining" id="progressRemaining"></div>
                 </div>
@@ -712,6 +717,7 @@
             </div>
             <div class="progress-labels">
                 <span style="color: #28a745;">● Exercised</span>
+                <span style="color: #007bff;">● Backlog</span>
                 <span style="color: #FF6600;">● Potential</span>
                 <span style="color: #6c757d;">● Remaining</span>
                 <span style="color: #dc3545;">● Current Month</span>
@@ -1986,6 +1992,32 @@
             return total;
         }
 
+        function getBacklogTotal() {
+            const rows = document.querySelectorAll('#ongoingTable tbody tr:not(.total-row)');
+            let total = 0;
+            rows.forEach(row => {
+                const amountInput = row.querySelector('.amount-input');
+                const statusSelect = row.querySelector('select.editable');
+                if (amountInput && statusSelect && statusSelect.value === 'In Progress') {
+                    total += parseFloat(amountInput.value) || 0;
+                }
+            });
+            return total;
+        }
+
+        function getExercisedTotal() {
+            const rows = document.querySelectorAll('#ongoingTable tbody tr:not(.total-row)');
+            let total = 0;
+            rows.forEach(row => {
+                const amountInput = row.querySelector('.amount-input');
+                const statusSelect = row.querySelector('select.editable');
+                if (amountInput && statusSelect && statusSelect.value === 'Completed') {
+                    total += parseFloat(amountInput.value) || 0;
+                }
+            });
+            return total;
+        }
+
         function getPipelineWeighted() {
             const rows = document.querySelectorAll('#pipelineTable tbody tr:not(.total-row)');
             let totalWeighted = 0;
@@ -2004,42 +2036,51 @@
         function updateProgress() {
             // Get totals automatically
             const pipelineWeighted = getPipelineWeighted();
-            const ongoingTotal = getOngoingTotal();
+            const backlogTotal = getBacklogTotal();
+            const exercisedTotal = getExercisedTotal();
             
             // Update fields
             const potentialField = document.getElementById('potentialAmount');
+            const backlogField = document.getElementById('backlogAmount');
             const exercisedField = document.getElementById('exercisedAmount');
             
             if (potentialField) {
                 potentialField.value = Math.round(pipelineWeighted);
             }
+            if (backlogField) {
+                backlogField.value = backlogTotal;
+            }
             if (exercisedField) {
-                exercisedField.value = ongoingTotal;
+                exercisedField.value = exercisedTotal;
             }
             
-            const exercised = ongoingTotal;
+            const exercised = exercisedTotal;
+            const backlog = backlogTotal;
             const potential = pipelineWeighted;
             const target = 300000;
             
             // Calculate gap
-            const gap = target - (exercised + potential);
+            const gap = target - (exercised + backlog + potential);
             const gapField = document.getElementById('gapAmount');
             if (gapField) {
                 gapField.value = Math.round(gap);
             }
 
-            const total = exercised + potential;
+            const total = exercised + backlog + potential;
             const remaining = Math.max(0, target - total);
 
             const exercisedPercent = (exercised / target) * 100;
+            const backlogPercent = (backlog / target) * 100;
             const potentialPercent = (potential / target) * 100;
             const remainingPercent = (remaining / target) * 100;
 
             const progressExercised = document.getElementById('progressExercised');
+            const progressBacklog = document.getElementById('progressBacklog');
             const progressPotential = document.getElementById('progressPotential');
             const progressRemaining = document.getElementById('progressRemaining');
             
             if (progressExercised) progressExercised.style.width = exercisedPercent + '%';
+            if (progressBacklog) progressBacklog.style.width = backlogPercent + '%';
             if (progressPotential) progressPotential.style.width = potentialPercent + '%';
             if (progressRemaining) progressRemaining.style.width = remainingPercent + '%';
 
