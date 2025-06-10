@@ -1620,6 +1620,77 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- EOI Opportunities -->
+            <div class="pipeline-section">
+                <h2 class="section-title">EOI & Similar Opportunities (No Fee)</h2>
+                <button class="add-row-button" onclick="addEOIRow()">+ Add New EOI Opportunity</button>
+                <div class="table-container">
+                    <table id="eoiTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Project</th>
+                                <th>Client</th>
+                                <th>Lead</th>
+                                <th>Support</th>
+                                <th>Date</th>
+                                <th>Other</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td><input type="text" class="editable" value="Smart Cities Initiative - Costa Rica"></td>
+                                <td><input type="text" class="editable" value="IADB"></td>
+                                <td><select class="editable">
+                                    <option value="Octavio" selected>Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None">None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto" selected>Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><input type="date" class="editable date-input" value="2025-07-20"></td>
+                                <td><input type="text" class="editable" value="Expression of Interest - Smart City Framework" style="min-width: 200px;"></td>
+                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><input type="text" class="editable" value="Sustainable Transport Network - Peru"></td>
+                                <td><input type="text" class="editable" value="World Bank"></td>
+                                <td><select class="editable">
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme" selected>Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><select class="editable">
+                                    <option value="None" selected>None</option>
+                                    <option value="Octavio">Octavio</option>
+                                    <option value="Roberto">Roberto</option>
+                                    <option value="Cossme">Cossme</option>
+                                    <option value="Noé">Noé</option>
+                                    <option value="Ricardo">Ricardo</option>
+                                </select></td>
+                                <td><input type="date" class="editable date-input" value="2025-08-10"></td>
+                                <td><input type="text" class="editable" value="Pre-qualification for transport advisory services" style="min-width: 200px;"></td>
+                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button class="save-button" onclick="saveEOI()">Save EOI Opportunities</button>
+            </div>
 
             <!-- Ongoing Projects -->
             <div class="pipeline-section">
@@ -2319,6 +2390,45 @@
 
         function saveLost() {
             alert('Lost opportunities saved successfully!');
+        }
+
+        function addEOIRow() {
+            const tbody = document.querySelector('#eoiTable tbody');
+            if (!tbody) return;
+            
+            const existingRows = tbody.querySelectorAll('tr');
+            const nextNumber = existingRows.length + 1;
+            const newRow = document.createElement('tr');
+            
+            newRow.innerHTML = `
+                <td>${nextNumber}</td>
+                <td><input type="text" class="editable" value="New EOI Project"></td>
+                <td><input type="text" class="editable" value="New Client"></td>
+                <td><select class="editable">
+                    <option value="Octavio">Octavio</option>
+                    <option value="Roberto">Roberto</option>
+                    <option value="Cossme">Cossme</option>
+                    <option value="Noé">Noé</option>
+                    <option value="Ricardo">Ricardo</option>
+                </select></td>
+                <td><select class="editable">
+                    <option value="None" selected>None</option>
+                    <option value="Octavio">Octavio</option>
+                    <option value="Roberto">Roberto</option>
+                    <option value="Cossme">Cossme</option>
+                    <option value="Noé">Noé</option>
+                    <option value="Ricardo">Ricardo</option>
+                </select></td>
+                <td><input type="date" class="editable date-input" value="2025-12-31"></td>
+                <td><input type="text" class="editable" value="Additional information" style="min-width: 200px;"></td>
+                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+            `;
+            
+            tbody.appendChild(newRow);
+        }
+
+        function saveEOI() {
+            alert('EOI opportunities saved successfully!');
         }
 
         function updatePipeline() {
