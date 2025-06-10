@@ -1645,7 +1645,7 @@
                                 <td><input type="text" class="editable" value="Embassy of the Netherlands in Mexico"></td>
                                 <td><input type="date" class="editable date-input" value="2025-08-15"></td>
                                 <td><input type="number" class="editable amount-input" value="19000" onchange="updateOngoing()"></td>
-                                <td><select class="editable">
+                                <td><select class="editable" onchange="updateOngoing()">
                                     <option value="In Progress" selected>In Progress</option>
                                     <option value="On Hold">On Hold</option>
                                     <option value="Completed">Completed</option>
@@ -1658,7 +1658,7 @@
                                 <td><input type="text" class="editable" value="Local Government"></td>
                                 <td><input type="date" class="editable date-input" value="2025-07-30"></td>
                                 <td><input type="number" class="editable amount-input" value="2652" onchange="updateOngoing()"></td>
-                                <td><select class="editable">
+                                <td><select class="editable" onchange="updateOngoing()">
                                     <option value="In Progress" selected>In Progress</option>
                                     <option value="On Hold">On Hold</option>
                                     <option value="Completed">Completed</option>
@@ -1671,7 +1671,7 @@
                                 <td><input type="text" class="editable" value="VTA"></td>
                                 <td><input type="date" class="editable date-input" value="2025-09-30"></td>
                                 <td><input type="number" class="editable amount-input" value="1500" onchange="updateOngoing()"></td>
-                                <td><select class="editable">
+                                <td><select class="editable" onchange="updateOngoing()">
                                     <option value="In Progress" selected>In Progress</option>
                                     <option value="On Hold">On Hold</option>
                                     <option value="Completed">Completed</option>
@@ -1684,7 +1684,7 @@
                                 <td><input type="text" class="editable" value="IDC"></td>
                                 <td><input type="date" class="editable date-input" value="2025-12-15"></td>
                                 <td><input type="number" class="editable amount-input" value="25000" onchange="updateOngoing()"></td>
-                                <td><select class="editable">
+                               <td><select class="editable" onchange="updateOngoing()">
                                     <option value="In Progress" selected>In Progress</option>
                                     <option value="On Hold">On Hold</option>
                                     <option value="Completed">Completed</option>
@@ -2424,7 +2424,7 @@
                 totalOngoingElement.innerHTML = `<strong>$${total.toLocaleString()}</strong>`;
             }
             
-            // Update progress bar with new exercised amount
+            // Update progress bar with new status-specific amounts
             updateProgress();
         }
 
@@ -2486,7 +2486,7 @@
                 <td><input type="text" class="editable" value="New Client"></td>
                 <td><input type="date" class="editable date-input" value="2025-12-31"></td>
                 <td><input type="number" class="editable amount-input" value="0" onchange="updateOngoing()"></td>
-                <td><select class="editable">
+                <td><select class="editable" onchange="updateOngoing()">
                     <option value="In Progress" selected>In Progress</option>
                     <option value="On Hold">On Hold</option>
                     <option value="Completed">Completed</option>
