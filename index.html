@@ -698,6 +698,7 @@
             color: #FF6600;
             margin-bottom: 20px;
             font-size: 1.3rem;
+            font-weight: 700;
         }
 
         .team-minute-input {
@@ -763,6 +764,7 @@
             color: #28a745;
             margin-bottom: 20px;
             font-size: 1.3rem;
+            font-weight: 700;
         }
 
         .log-controls {
@@ -2116,7 +2118,7 @@
 
         <div id="minuta" class="tab-content">
             <div class="minuta-container">
-                <h2>Weekly Minutes - Team Progress Tracking</h2>
+                <h2 class="section-title">Weekly Minutes - Team Progress Tracking</h2>
                 <div class="week-header">
                     <h3>Week of: <span id="currentWeek"></span></h3>
                     <button class="save-button" onclick="saveAllMinutes()" style="margin-left: auto;">Save All Minutes</button>
@@ -2353,22 +2355,30 @@
     </div>
 
     <script>
-        function openTab(tabName) {
-            const tabContents = document.querySelectorAll('.tab-content');
-            tabContents.forEach(content => content.classList.remove('active'));
-
-            const tabs = document.querySelectorAll('.tab');
-            tabs.forEach(tab => tab.classList.remove('active'));
-
-            const targetTab = document.getElementById(tabName);
-            if (targetTab) {
-                targetTab.classList.add('active');
-            }
-            
-            if (event && event.target) {
-                event.target.classList.add('active');
+            function openTab(tabName) {
+        const tabContents = document.querySelectorAll('.tab-content');
+        tabContents.forEach(content => content.classList.remove('active'));
+    
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => tab.classList.remove('active'));
+    
+        const targetTab = document.getElementById(tabName);
+        if (targetTab) {
+            targetTab.classList.add('active');
+        }
+        
+        if (event && event.target) {
+            event.target.classList.add('active');
+        }
+        
+        // Initialize current week when minuta tab is opened
+        if (tabName === 'minuta') {
+            const currentWeekElement = document.getElementById('currentWeek');
+            if (currentWeekElement) {
+                currentWeekElement.textContent = getCurrentWeek();
             }
         }
+    }
 
         function getOngoingTotal() {
             const rows = document.querySelectorAll('#ongoingTable tbody tr:not(.total-row)');
@@ -3135,6 +3145,12 @@
             updatePipelineLeadAnalysis();
             calculateScore();
             updateCompletionIndicator();
+            
+            // Initialize current week display
+            const currentWeekElement = document.getElementById('currentWeek');
+            if (currentWeekElement) {
+                currentWeekElement.textContent = getCurrentWeek();
+            }
         });
         // Minutes functionality
         function updateCharCounter(member) {
