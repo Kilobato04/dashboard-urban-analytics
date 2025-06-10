@@ -1779,11 +1779,12 @@
 
             <!-- Lost Opportunities -->
             <div class="pipeline-section">
-                <h2 class="section-title">Lost Opportunities</h2>
+                <h2 class="section-title">Lost Opportunities / Decided not to go</h2>
                 <button class="add-row-button" onclick="addLostRow()">+ Add Lost Opportunity</button>
                 <div class="table-container">
                     <table id="lostTable">
                         <thead>
+                            <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Project</th>
@@ -1792,10 +1793,11 @@
                                 <th>Support</th>
                                 <th>Date Lost</th>
                                 <th>Value (USD)</th>
-                                <th>Lost Motive</th>
-                                <th>Competitor</th>
+                                <th>Motive</th>
+                                <th>Comments</th>
                                 <th>Action</th>
                             </tr>
+                        </thead>
                         </thead>
                         <tbody>
                             <tr>
@@ -1829,6 +1831,7 @@
                                     <option value="Political Environment">Political Environment</option>
                                     <option value="Client Stepback">Client Stepback</option>
                                     <option value="Administrative Issues">Administrative Issues</option>
+                                    <option value="Decided not to go">Decided not to go</option>
                                     <option value="Others">Others</option>
                                 </select></td>
                                 <td><input type="text" class="editable" value="Local Consultant"></td>
@@ -1865,6 +1868,7 @@
                                     <option value="Political Environment">Political Environment</option>
                                     <option value="Client Stepback">Client Stepback</option>
                                     <option value="Administrative Issues">Administrative Issues</option>
+                                    <option value="Decided not to go">Decided not to go</option>
                                     <option value="Others">Others</option>
                                 </select></td>
                                 <td><input type="text" class="editable" value="IBM"></td>
@@ -2374,6 +2378,7 @@
                     <option value="Political Environment">Political Environment</option>
                     <option value="Client Stepback">Client Stepback</option>
                     <option value="Administrative Issues">Administrative Issues</option>
+                    <option value="Decided not to go">Decided not to go</option>
                     <option value="Others" selected>Others</option>
                 </select></td>
                 <td><input type="text" class="editable" value="Unknown"></td>
