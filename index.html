@@ -134,6 +134,18 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.3);
             z-index: 10;
         }
+        .team-cost-indicator {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 16px;
+        height: 16px;
+        background: #8B4513;
+        border: 3px solid white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        z-index: 10;
+        clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+       }
 
         .progress-months {
             display: flex;
@@ -434,14 +446,17 @@
         }
 
         .total-row {
-            background: #FF6600 !important;
-            color: white;
-            font-weight: 600;
-        }
-
-        .total-row td {
-            border-bottom: none;
-        }
+        background: #FF6600 !important;
+        color: white;
+        font-weight: 600;
+    }
+    
+    .total-row td {
+        border-bottom: none;
+        background: #FF6600 !important;
+        border-left: none;
+        border-right: none;
+    }
 
         .add-row-button {
             background: #28a745;
@@ -918,7 +933,7 @@
                     <div class="progress-remaining" id="progressRemaining"></div>
                 </div>
                 <div class="progress-indicator" id="progressIndicator"></div>
-                <div class="progress-indicator" id="teamCostIndicator" style="background: #dc3545; border: 2px solid white;"></div>
+                <div class="team-cost-indicator" id="teamCostIndicator"></div>
             </div>
             <div class="progress-months">
                 <span>Jan-25</span>
@@ -940,7 +955,7 @@
                 <span style="color: #FF6600;">● Potential</span>
                 <span style="color: #6c757d;">● Remaining</span>
                 <span style="color: #dc3545;">● Current Month</span>
-                <span style="color: #dc3545;">● Team Cost</span>
+                <span style="color: #8B4513;">▲ Team Cost</span>
             </div>
         </div>
 
@@ -2483,7 +2498,13 @@
             if (progressPotential) progressPotential.style.width = potentialPercent + '%';
             if (progressRemaining) progressRemaining.style.width = remainingPercent + '%';
 
-            const currentMonthPercent = (5 / 12) * 100;
+            // Calculate current month percentage based on actual date
+            const currentDate = new Date();
+            const currentMonth = currentDate.getMonth(); // 0-based (0 = January, 11 = December)
+            const currentDay = currentDate.getDate();
+            const daysInMonth = new Date(currentDate.getFullYear(), currentMonth + 1, 0).getDate();
+            const currentMonthPercent = ((currentMonth + (currentDay / daysInMonth)) / 12) * 100;
+            
             const progressIndicator = document.getElementById('progressIndicator');
             if (progressIndicator) {
                 progressIndicator.style.left = currentMonthPercent + '%';
