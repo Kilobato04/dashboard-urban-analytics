@@ -1618,6 +1618,13 @@
                             <tr>
                                 <td>10</td>
                                 <td><input type="text" class="editable" value="LEGO" onchange="updatePipeline()"></td>
+                                <td><select class="editable">
+                                    <option value="AI">AI</option>
+                                    <option value="Demand Modeling">Demand Modeling</option>
+                                    <option value="BigData">BigData</option>
+                                    <option value="Urban Analytics" selected>Urban Analytics</option>
+                                    <option value="Financial Modeling">Financial Modeling</option>
+                                </select></td>
                                 <td><input type="text" class="editable" value="LEGO"></td>
                                 <td><select class="editable">
                                     <option value="Octavio">Octavio</option>
@@ -2726,7 +2733,7 @@
             const nextNumber = existingRows.length + 1;
             const newRow = document.createElement('tr');
             
-            
+            newRow.innerHTML = `
                 <td>${nextNumber}</td>
                 <td><input type="text" class="editable" value="New EOI Project"></td>
                 <td><input type="text" class="editable" value="New Client"></td>
@@ -2871,7 +2878,7 @@
             const nextNumber = existingRows.length + 1;
             const newRow = document.createElement('tr');
             
-            
+            newRow.innerHTML = `
                 <td>${nextNumber}</td>
                 <td><input type="text" class="editable" value="New Project" onchange="updatePipeline()"></td>
                 <td><select class="editable">
