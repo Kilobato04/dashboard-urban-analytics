@@ -904,6 +904,10 @@
                         <label for="targetAmount" style="color: #FF6600; font-weight: 700;">Target (USD)</label>
                         <input type="number" id="targetAmount" value="300000" readonly style="background: #FF6600; color: white; font-weight: 700; border: 2px solid #e55a00;">
                     </div>
+                    <div class="progress-input-group">
+                        <label for="teamCost" style="color: #dc3545; font-weight: 700;">Team Cost (USD)</label>
+                        <input type="number" id="teamCost" value="240000" readonly style="background: #dc3545; color: white; font-weight: 700; border: 2px solid #c82333;">
+                    </div>
                 </div>
             </div>
             <div class="progress-container">
@@ -914,6 +918,7 @@
                     <div class="progress-remaining" id="progressRemaining"></div>
                 </div>
                 <div class="progress-indicator" id="progressIndicator"></div>
+                <div class="progress-indicator" id="teamCostIndicator" style="background: #dc3545; border: 2px solid white;"></div>
             </div>
             <div class="progress-months">
                 <span>Jan-25</span>
@@ -935,6 +940,7 @@
                 <span style="color: #FF6600;">● Potential</span>
                 <span style="color: #6c757d;">● Remaining</span>
                 <span style="color: #dc3545;">● Current Month</span>
+                <span style="color: #dc3545;">● Team Cost</span>
             </div>
         </div>
 
@@ -1127,70 +1133,6 @@
                     </div>
                 </div>
 
-                <!-- Cossme Padilla -->
-                <div class="team-member">
-                    <div class="member-header">
-                        <div class="member-name">Cossme Padilla</div>
-                        <div class="completion-indicator" data-member="cossme">😱</div>
-                    </div>
-                    <div class="quarter-section">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div class="quarter-title">Q2 2025</div>
-                            <div class="quarter-individual-indicator" data-member="cossme" data-quarter="q2" style="font-size: 1.5rem;">😱</div>
-                        </div>
-                        <ul class="tactics-list">
-                            <li>
-                                <span class="tactic-text">Lead 2 environmental assessment proposals ($25K each)</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
-                            </li>
-                            <li>
-                                <span class="tactic-text">Participate in at least 1 sustainability or environmental conference</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="quarter-section">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div class="quarter-title">Q3 2025</div>
-                            <div class="quarter-individual-indicator" data-member="cossme" data-quarter="q3" style="font-size: 1.5rem;">😱</div>
-                        </div>
-                        <ul class="tactics-list">
-                            <li>
-                                <span class="tactic-text">Develop 2 climate resilience planning proposals ($30K each)</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
-                            </li>
-                            <li>
-                                <span class="tactic-text">Participate in UN-Habitat Mexico City forum</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
-                            </li>
-                            <li>
-                                <span class="tactic-text">Develop partnerships with environmental NGOs</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="quarter-section">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div class="quarter-title">Q4 2025</div>
-                            <div class="quarter-individual-indicator" data-member="cossme" data-quarter="q4" style="font-size: 1.5rem;">😱</div>
-                        </div>
-                        <ul class="tactics-list">
-                            <li>
-                                <span class="tactic-text">Submit 2 urban sustainability proposals ($40K each)</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
-                            </li>
-                            <li>
-                                <span class="tactic-text">Complete certification in carbon footprint analysis</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
-                            </li>
-                            <li>
-                                <span class="tactic-text">Plan 2026 sustainability initiatives</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
                 <!-- Noé Osorio -->
                 <div class="team-member">
                     <div class="member-header">
@@ -1349,18 +1291,6 @@
                     </div>
 
                     <div class="quarter-section">
-                        <div class="quarter-title" style="background: rgba(255,255,255,0.2); color: white;">Cossme Padilla - Proposal Management Practice</div>
-                        <ul class="tactics-list">
-                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
-                                <span class="tactic-text">Lead the proposal management practice and standards</span>
-                            </li>
-                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
-                                <span class="tactic-text">Review Devex/IADB/BCIE procurement platforms</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="quarter-section">
                         <div class="quarter-title" style="background: rgba(255,255,255,0.2); color: white;">Ricardo Sánchez - Mobility Tech Practice</div>
                         <ul class="tactics-list">
                             <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
@@ -1386,6 +1316,10 @@
                 </div>
             </div>
             <button class="save-button" onclick="saveTactics()">Save Tactics Progress</button>
+            <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 6px;">
+                <p style="margin: 0; color: #856404; font-weight: 600;">💾 Auto-save functionality is not yet enabled on the server.</p>
+                <p style="margin: 5px 0 0 0; color: #6c757d; font-size: 0.9rem;">Changes are currently saved locally in your browser session only.</p>
+            </div>
         </div>
 
         <div id="pipeline" class="tab-content">
@@ -1399,6 +1333,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Project</th>
+                                <th>Topic</th>
                                 <th>Client</th>
                                 <th>Lead</th>
                                 <th>Support</th>
@@ -1413,11 +1348,17 @@
                             <tr>
                                 <td>1</td>
                                 <td><input type="text" class="editable" value="Seattle - WSF" onchange="updatePipeline()"></td>
+                                <td><select class="editable">
+                                    <option value="AI">AI</option>
+                                    <option value="Demand Modeling" selected>Demand Modeling</option>
+                                    <option value="BigData">BigData</option>
+                                    <option value="Urban Analytics">Urban Analytics</option>
+                                    <option value="Financial Modeling">Financial Modeling</option>
+                                </select></td>
                                 <td><input type="text" class="editable" value="CrossColab"></td>
                                 <td><select class="editable">
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto" selected>Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1425,7 +1366,6 @@
                                     <option value="None">None</option>
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1438,11 +1378,17 @@
                             <tr>
                                 <td>2</td>
                                 <td><input type="text" class="editable" value="UVG Study - Guatemala City" onchange="updatePipeline()"></td>
+                                <td><select class="editable">
+                                    <option value="AI">AI</option>
+                                    <option value="Demand Modeling" selected>Demand Modeling</option>
+                                    <option value="BigData">BigData</option>
+                                    <option value="Urban Analytics">Urban Analytics</option>
+                                    <option value="Financial Modeling">Financial Modeling</option>
+                                </select></td>
                                 <td><input type="text" class="editable" value="UVG"></td>
                                 <td><select class="editable">
                                     <option value="Octavio" selected>Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1450,7 +1396,6 @@
                                     <option value="None" selected>None</option>
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1463,11 +1408,17 @@
                             <tr>
                                 <td>3</td>
                                 <td><input type="text" class="editable" value="BMS - PM" onchange="updatePipeline()"></td>
+                                <td><select class="editable">
+                                    <option value="AI">AI</option>
+                                    <option value="Demand Modeling" selected>Demand Modeling</option>
+                                    <option value="BigData">BigData</option>
+                                    <option value="Urban Analytics">Urban Analytics</option>
+                                    <option value="Financial Modeling">Financial Modeling</option>
+                                </select></td>
                                 <td><input type="text" class="editable" value="BMS"></td>
                                 <td><select class="editable">
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé" selected>Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1475,7 +1426,6 @@
                                     <option value="None">None</option>
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme" selected>Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1488,11 +1438,17 @@
                             <tr>
                                 <td>4</td>
                                 <td><input type="text" class="editable" value="HP - ENERGY ASSESSMENT - CD JUAREZ" onchange="updatePipeline()"></td>
+                                <td><select class="editable">
+                                    <option value="AI">AI</option>
+                                    <option value="Demand Modeling" selected>Demand Modeling</option>
+                                    <option value="BigData">BigData</option>
+                                    <option value="Urban Analytics">Urban Analytics</option>
+                                    <option value="Financial Modeling">Financial Modeling</option>
+                                </select></td>
                                 <td><input type="text" class="editable" value="CrossColab"></td>
                                 <td><select class="editable">
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme" selected>Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1500,7 +1456,6 @@
                                     <option value="None" selected>None</option>
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1513,11 +1468,17 @@
                             <tr>
                                 <td>5</td>
                                 <td><input type="text" class="editable" value="Desarrollar Geovisor en temas mineros con AI" onchange="updatePipeline()"></td>
+                                <td><select class="editable">
+                                    <option value="AI">AI</option>
+                                    <option value="Demand Modeling" selected>Demand Modeling</option>
+                                    <option value="BigData">BigData</option>
+                                    <option value="Urban Analytics">Urban Analytics</option>
+                                    <option value="Financial Modeling">Financial Modeling</option>
+                                </select></td>
                                 <td><input type="text" class="editable" value="CrossColab"></td>
                                 <td><select class="editable">
                                     <option value="Octavio" selected>Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1525,7 +1486,6 @@
                                     <option value="None">None</option>
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto" selected>Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1538,11 +1498,17 @@
                             <tr>
                                 <td>6</td>
                                 <td><input type="text" class="editable" value="Grupo BIMBO" onchange="updatePipeline()"></td>
+                                <td><select class="editable">
+                                    <option value="AI">AI</option>
+                                    <option value="Demand Modeling" selected>Demand Modeling</option>
+                                    <option value="BigData">BigData</option>
+                                    <option value="Urban Analytics">Urban Analytics</option>
+                                    <option value="Financial Modeling">Financial Modeling</option>
+                                </select></td>
                                 <td><input type="text" class="editable" value="BIMBO"></td>
                                 <td><select class="editable">
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo" selected>Ricardo</option>
                                 </select></td>
@@ -1550,7 +1516,6 @@
                                     <option value="None">None</option>
                                     <option value="Octavio" selected>Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1563,11 +1528,17 @@
                             <tr>
                                 <td>7</td>
                                 <td><input type="text" class="editable" value="META - Traffic (Equipo Gastón)" onchange="updatePipeline()"></td>
+                                <td><select class="editable">
+                                    <option value="AI">AI</option>
+                                    <option value="Demand Modeling" selected>Demand Modeling</option>
+                                    <option value="BigData">BigData</option>
+                                    <option value="Urban Analytics">Urban Analytics</option>
+                                    <option value="Financial Modeling">Financial Modeling</option>
+                                </select></td>
                                 <td><input type="text" class="editable" value="META"></td>
                                 <td><select class="editable">
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto" selected>Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1575,7 +1546,6 @@
                                     <option value="None" selected>None</option>
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1588,11 +1558,17 @@
                             <tr>
                                 <td>8</td>
                                 <td><input type="text" class="editable" value="META - PM + Geospatial analysis (Michael)" onchange="updatePipeline()"></td>
+                                <td><select class="editable">
+                                    <option value="AI">AI</option>
+                                    <option value="Demand Modeling" selected>Demand Modeling</option>
+                                    <option value="BigData">BigData</option>
+                                    <option value="Urban Analytics">Urban Analytics</option>
+                                    <option value="Financial Modeling">Financial Modeling</option>
+                                </select></td>
                                 <td><input type="text" class="editable" value="META"></td>
                                 <td><select class="editable">
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé" selected>Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1600,7 +1576,6 @@
                                     <option value="None">None</option>
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto" selected>Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1613,11 +1588,17 @@
                             <tr>
                                 <td>9</td>
                                 <td><input type="text" class="editable" value="San Francisco - TOD Analysis" onchange="updatePipeline()"></td>
+                                <td><select class="editable">
+                                    <option value="AI">AI</option>
+                                    <option value="Demand Modeling" selected>Demand Modeling</option>
+                                    <option value="BigData">BigData</option>
+                                    <option value="Urban Analytics">Urban Analytics</option>
+                                    <option value="Financial Modeling">Financial Modeling</option>
+                                </select></td>
                                 <td><input type="text" class="editable" value="CrossColab"></td>
                                 <td><select class="editable">
                                     <option value="Octavio" selected>Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1625,7 +1606,6 @@
                                     <option value="None" selected>None</option>
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1642,7 +1622,6 @@
                                 <td><select class="editable">
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo" selected>Ricardo</option>
                                 </select></td>
@@ -1650,7 +1629,6 @@
                                     <option value="None" selected>None</option>
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1663,11 +1641,17 @@
                             <tr>
                                 <td>11</td>
                                 <td><input type="text" class="editable" value="BORDER CROSSING MESA DE OTAY" onchange="updatePipeline()"></td>
+                                <td><select class="editable">
+                                    <option value="AI">AI</option>
+                                    <option value="Demand Modeling" selected>Demand Modeling</option>
+                                    <option value="BigData">BigData</option>
+                                    <option value="Urban Analytics">Urban Analytics</option>
+                                    <option value="Financial Modeling">Financial Modeling</option>
+                                </select></td>
                                 <td><input type="text" class="editable" value="CrossColab"></td>
                                 <td><select class="editable">
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto" selected>Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1675,7 +1659,6 @@
                                     <option value="None" selected>None</option>
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1688,11 +1671,17 @@
                             <tr>
                                 <td>12</td>
                                 <td><input type="text" class="editable" value="L.A. 511" onchange="updatePipeline()"></td>
+                                <td><select class="editable">
+                                    <option value="AI">AI</option>
+                                    <option value="Demand Modeling" selected>Demand Modeling</option>
+                                    <option value="BigData">BigData</option>
+                                    <option value="Urban Analytics">Urban Analytics</option>
+                                    <option value="Financial Modeling">Financial Modeling</option>
+                                </select></td>
                                 <td><input type="text" class="editable" value="CrossColab"></td>
                                 <td><select class="editable">
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme" selected>Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1700,7 +1689,6 @@
                                     <option value="None">None</option>
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto" selected>Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1713,11 +1701,17 @@
                             <tr>
                                 <td>13</td>
                                 <td><input type="text" class="editable" value="DD Traffic Study - France" onchange="updatePipeline()"></td>
+                                <td><select class="editable">
+                                    <option value="AI">AI</option>
+                                    <option value="Demand Modeling" selected>Demand Modeling</option>
+                                    <option value="BigData">BigData</option>
+                                    <option value="Urban Analytics">Urban Analytics</option>
+                                    <option value="Financial Modeling">Financial Modeling</option>
+                                </select></td>
                                 <td><input type="text" class="editable" value="France Client"></td>
                                 <td><select class="editable">
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto" selected>Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1725,7 +1719,6 @@
                                     <option value="None" selected>None</option>
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1738,11 +1731,17 @@
                             <tr>
                                 <td>14</td>
                                 <td><input type="text" class="editable" value="Estudio Movilidad Sección 2 - Bosque de Chapultepec" onchange="updatePipeline()"></td>
+                                <td><select class="editable">
+                                    <option value="AI">AI</option>
+                                    <option value="Demand Modeling" selected>Demand Modeling</option>
+                                    <option value="BigData">BigData</option>
+                                    <option value="Urban Analytics">Urban Analytics</option>
+                                    <option value="Financial Modeling">Financial Modeling</option>
+                                </select></td>
                                 <td><input type="text" class="editable" value="MOTA-ENGIL"></td>
                                 <td><select class="editable">
                                     <option value="Octavio" selected>Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1750,7 +1749,6 @@
                                     <option value="None">None</option>
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme" selected>Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1763,11 +1761,17 @@
                             <tr>
                                 <td>15</td>
                                 <td><input type="text" class="editable" value="PMU - monitoring platform - Lima" onchange="updatePipeline()"></td>
+                                <td><select class="editable">
+                                    <option value="AI">AI</option>
+                                    <option value="Demand Modeling" selected>Demand Modeling</option>
+                                    <option value="BigData">BigData</option>
+                                    <option value="Urban Analytics">Urban Analytics</option>
+                                    <option value="Financial Modeling">Financial Modeling</option>
+                                </select></td>
                                 <td><input type="text" class="editable" value="ATU"></td>
                                 <td><select class="editable">
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé" selected>Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1775,7 +1779,6 @@
                                     <option value="None" selected>None</option>
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1788,11 +1791,17 @@
                             <tr>
                                 <td>16</td>
                                 <td><input type="text" class="editable" value="Advisory Services on Mobility Issues for the 2026 World Cup; Focus on Mexico" onchange="updatePipeline()"></td>
+                                <td><select class="editable">
+                                    <option value="AI">AI</option>
+                                    <option value="Demand Modeling" selected>Demand Modeling</option>
+                                    <option value="BigData">BigData</option>
+                                    <option value="Urban Analytics">Urban Analytics</option>
+                                    <option value="Financial Modeling">Financial Modeling</option>
+                                </select></td>
                                 <td><input type="text" class="editable" value="FIFA/CrossColab"></td>
                                 <td><select class="editable">
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo" selected>Ricardo</option>
                                 </select></td>
@@ -1800,7 +1809,6 @@
                                     <option value="None">None</option>
                                     <option value="Octavio" selected>Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1838,7 +1846,7 @@
             
             <!-- EOI Opportunities -->
             <div class="pipeline-section">
-                <h2 class="section-title">EOI & Similar Opportunities (No Fee)</h2>
+                <h2 class="section-title">EOI's and Leads (No Fee)</h2>
                 <button class="add-row-button" onclick="addEOIRow()">+ Add New EOI Opportunity</button>
                 <div class="table-container">
                     <table id="eoiTable">
@@ -1862,7 +1870,6 @@
                                 <td><select class="editable">
                                     <option value="Octavio" selected>Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1870,7 +1877,6 @@
                                     <option value="None">None</option>
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto" selected>Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1885,7 +1891,6 @@
                                 <td><select class="editable">
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme" selected>Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -1893,7 +1898,6 @@
                                     <option value="None" selected>None</option>
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -2020,7 +2024,6 @@
                                 <td><select class="editable">
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto" selected>Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -2028,7 +2031,6 @@
                                     <option value="None">None</option>
                                     <option value="Octavio" selected>Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -2057,7 +2059,6 @@
                                 <td><select class="editable">
                                     <option value="Octavio" selected>Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -2065,7 +2066,6 @@
                                     <option value="None" selected>None</option>
                                     <option value="Octavio">Octavio</option>
                                     <option value="Roberto">Roberto</option>
-                                    <option value="Cossme">Cossme</option>
                                     <option value="Noé">Noé</option>
                                     <option value="Ricardo">Ricardo</option>
                                 </select></td>
@@ -2103,6 +2103,10 @@
                     </table>
                 </div>
                 <button class="save-button" onclick="saveLost()">Save Lost Opportunities</button>
+                <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 6px;">
+                    <p style="margin: 0; color: #856404; font-weight: 600;">💾 Auto-save functionality is not yet enabled on the server.</p>
+                    <p style="margin: 5px 0 0 0; color: #6c757d; font-size: 0.9rem;">Changes are currently saved locally in your browser session only.</p>
+                </div>
                 
                 <!-- Loss Analysis Summary -->
                 <div style="margin-top: 20px; background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #dc3545;">
@@ -2155,20 +2159,6 @@
                                 oninput="updateCharCounter('roberto')"></textarea>
                         </div>
 
-                        <!-- Cossme Padilla -->
-                        <div class="team-minute-input">
-                            <div class="member-input-header">
-                                <h4>Cossme Padilla</h4>
-                                <span class="char-counter" id="cossme-counter">0/800</span>
-                            </div>
-                            <textarea 
-                                id="cossme-input" 
-                                class="minute-textarea" 
-                                placeholder="Enter weekly progress bullets for Cossme..."
-                                maxlength="800"
-                                oninput="updateCharCounter('cossme')"></textarea>
-                        </div>
-
                         <!-- Noé Osorio -->
                         <div class="team-minute-input">
                             <div class="member-input-header">
@@ -2213,6 +2203,10 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 6px;">
+                <p style="margin: 0; color: #856404; font-weight: 600;">💾 Auto-save functionality is not yet enabled on the server.</p>
+                <p style="margin: 5px 0 0 0; color: #6c757d; font-size: 0.9rem;">Changes are currently saved locally in your browser session only.</p>
             </div>
         </div>
 
@@ -2487,10 +2481,16 @@
             if (progressIndicator) {
                 progressIndicator.style.left = currentMonthPercent + '%';
             }
+                        // Team cost indicator
+            const teamCostPercent = (240000 / target) * 100;
+            const teamCostIndicator = document.getElementById('teamCostIndicator');
+            if (teamCostIndicator) {
+                teamCostIndicator.style.left = teamCostPercent + '%';
+            }
         }
 
         function updateCompletionIndicator() {
-            const teamMembers = ['octavio', 'roberto', 'cossme', 'noe', 'ricardo'];
+            const teamMembers = ['octavio', 'roberto', 'noe', 'ricardo'];
             const quarters = ['q2', 'q3', 'q4'];
             
             teamMembers.forEach(member => {
@@ -2677,7 +2677,6 @@
                 <td><select class="editable">
                     <option value="Octavio">Octavio</option>
                     <option value="Roberto">Roberto</option>
-                    <option value="Cossme">Cossme</option>
                     <option value="Noé">Noé</option>
                     <option value="Ricardo">Ricardo</option>
                 </select></td>
@@ -2685,7 +2684,6 @@
                     <option value="None" selected>None</option>
                     <option value="Octavio">Octavio</option>
                     <option value="Roberto">Roberto</option>
-                    <option value="Cossme">Cossme</option>
                     <option value="Noé">Noé</option>
                     <option value="Ricardo">Ricardo</option>
                 </select></td>
@@ -2728,14 +2726,13 @@
             const nextNumber = existingRows.length + 1;
             const newRow = document.createElement('tr');
             
-            newRow.innerHTML = `
+            
                 <td>${nextNumber}</td>
                 <td><input type="text" class="editable" value="New EOI Project"></td>
                 <td><input type="text" class="editable" value="New Client"></td>
                 <td><select class="editable">
                     <option value="Octavio">Octavio</option>
                     <option value="Roberto">Roberto</option>
-                    <option value="Cossme">Cossme</option>
                     <option value="Noé">Noé</option>
                     <option value="Ricardo">Ricardo</option>
                 </select></td>
@@ -2743,7 +2740,6 @@
                     <option value="None" selected>None</option>
                     <option value="Octavio">Octavio</option>
                     <option value="Roberto">Roberto</option>
-                    <option value="Cossme">Cossme</option>
                     <option value="Noé">Noé</option>
                     <option value="Ricardo">Ricardo</option>
                 </select></td>
@@ -2825,7 +2821,7 @@
             const analysisContainer = document.getElementById('pipelineLeadAnalysis');
             if (analysisContainer) {
                 let html = '';
-                const teamMembers = ['Octavio', 'Roberto', 'Cossme', 'Noé', 'Ricardo'];
+                const teamMembers = ['Octavio', 'Roberto', 'Noé', 'Ricardo'];
                 
                 teamMembers.forEach(member => {
                     const stats = teamStats[member] || { lead: 0, support: 0 };
@@ -2875,14 +2871,20 @@
             const nextNumber = existingRows.length + 1;
             const newRow = document.createElement('tr');
             
-            newRow.innerHTML = `
+            
                 <td>${nextNumber}</td>
                 <td><input type="text" class="editable" value="New Project" onchange="updatePipeline()"></td>
+                <td><select class="editable">
+                    <option value="AI">AI</option>
+                    <option value="Demand Modeling">Demand Modeling</option>
+                    <option value="BigData">BigData</option>
+                    <option value="Urban Analytics" selected>Urban Analytics</option>
+                    <option value="Financial Modeling">Financial Modeling</option>
+                </select></td>
                 <td><input type="text" class="editable" value="New Client"></td>
                 <td><select class="editable">
                     <option value="Octavio">Octavio</option>
                     <option value="Roberto">Roberto</option>
-                    <option value="Cossme">Cossme</option>
                     <option value="Noé">Noé</option>
                     <option value="Ricardo">Ricardo</option>
                 </select></td>
@@ -2890,7 +2892,6 @@
                     <option value="None" selected>None</option>
                     <option value="Octavio">Octavio</option>
                     <option value="Roberto">Roberto</option>
-                    <option value="Cossme">Cossme</option>
                     <option value="Noé">Noé</option>
                     <option value="Ricardo">Ricardo</option>
                 </select></td>
@@ -3201,11 +3202,10 @@
         }
 
         function saveAllMinutes() {
-            const members = ['octavio', 'roberto', 'cossme', 'noe', 'ricardo'];
+            const members = ['octavio', 'roberto', 'noe', 'ricardo'];
             const memberNames = {
                 'octavio': 'Octavio Jiménez',
                 'roberto': 'Roberto Ascencio', 
-                'cossme': 'Cossme Padilla',
                 'noe': 'Noé Osorio',
                 'ricardo': 'Ricardo Sánchez'
             };
