@@ -907,12 +907,16 @@
                         <input type="number" id="backlogAmount" value="0" readonly style="background: #007bff; color: white; font-weight: 600;" title="Auto-calculated from in progress projects">
                     </div>
                     <div class="progress-input-group">
-                        <label for="potentialAmount">Potential Weighted (USD)</label>
+                        <label for="potentialAmount">Potential W</label>
                         <input type="number" id="potentialAmount" value="183557" readonly style="background: #f8f9fa;" title="Auto-calculated from pipeline weighted total">
                     </div>
                     <div class="progress-input-group">
-                        <label for="gapAmount">Gap (USD)</label>
+                        <label for="gapAmount">Gap/Target</label>
                         <input type="number" id="gapAmount" value="132348" readonly style="background: #f8f9fa;" title="Target - (Exercised + Backlog + Potential)">
+                    </div>
+                    <div class="progress-input-group">
+                        <label for="gapTeamCost">Gap/TeamCost</label>
+                        <input type="number" id="gapTeamCost" value="-8291" readonly style="background: #f8f9fa;" title="TeamCost - (Exercised + Backlog + Potential)">
                     </div>
                     <div class="progress-input-group">
                         <label for="teamCost" style="color: #343a40; font-weight: 700;">Team Cost (USD)</label>
@@ -2472,11 +2476,30 @@
             const potential = pipelineWeighted;
             const target = 300000;
             
-            // Calculate gap
-            const gap = target - (exercised + backlog + potential);
+            // Calculate gaps
+            const gapTarget = target - (exercised + backlog + potential);
+            const gapTeamCost = 240000 - (exercised + backlog + potential);
+            
             const gapField = document.getElementById('gapAmount');
+            const gapTeamCostField = document.getElementById('gapTeamCost');
+            
             if (gapField) {
-                gapField.value = Math.round(gap);
+                gapField.value = Math.round(gapTarget);
+            }
+            
+            if (gapTeamCostField) {
+                gapTeamCostField.value = Math.round(gapTeamCost);
+                
+                // Cambiar color según el resultado
+                if (gapTeamCost > 0) {
+                    gapTeamCostField.style.background = '#d4edda';
+                    gapTeamCostField.style.color = '#155724';
+                    gapTeamCostField.style.border = '2px solid #28a745';
+                } else {
+                    gapTeamCostField.style.background = '#f8d7da';
+                    gapTeamCostField.style.color = '#721c24';
+                    gapTeamCostField.style.border = '2px solid #dc3545';
+                }
             }
 
             const total = exercised + backlog + potential;
