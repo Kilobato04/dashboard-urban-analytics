@@ -1,5 +1,11 @@
 // Dashboard functionality for Urban Analytics Mexico Practice Group
+// Updated with Server Storage Integration
 
+// === GLOBAL VARIABLES ===
+let isInitializing = true;
+let rowCounter = 1;
+
+// === TAB NAVIGATION ===
 function openTab(tabName) {
     const tabContents = document.querySelectorAll('.tab-content');
     tabContents.forEach(content => content.classList.remove('active'));
@@ -25,7 +31,7 @@ function openTab(tabName) {
     }
 }
 
-// Progress Bar Functions
+// === PROGRESS BAR FUNCTIONS ===
 function getOngoingTotal() {
     const rows = document.querySelectorAll('#ongoingTable tbody tr:not(.total-row)');
     let total = 0;
@@ -90,31 +96,24 @@ function updateProgress() {
     const backlogField = document.getElementById('backlogAmount');
     const exercisedField = document.getElementById('exercisedAmount');
     
-    if (potentialField) {
-        potentialField.value = Math.round(pipelineWeighted);
-    }
-    if (backlogField) {
-        backlogField.value = backlogTotal;
-    }
-    if (exercisedField) {
-        exercisedField.value = exercisedTotal;
-    }
+    if (potentialField) potentialField.value = Math.round(pipelineWeighted);
+    if (backlogField) backlogField.value = backlogTotal;
+    if (exercisedField) exercisedField.value = exercisedTotal;
     
     const exercised = exercisedTotal;
     const backlog = backlogTotal;
     const potential = pipelineWeighted;
-    const target = 300000;
+    const target = parseInt(document.getElementById('targetAmount')?.value) || 300000;
     
     // Calculate gaps
     const gapTarget = target - (exercised + backlog + potential);
-    const gapTeamCost = 240000 - (exercised + backlog + potential);
+    const teamCostValue = parseInt(document.getElementById('teamCost')?.value) || 240000;
+    const gapTeamCost = teamCostValue - (exercised + backlog + potential);
     
     const gapField = document.getElementById('gapAmount');
     const gapTeamCostField = document.getElementById('gapTeamCost');
     
-    if (gapField) {
-        gapField.value = Math.round(gapTarget);
-    }
+    if (gapField) gapField.value = Math.round(gapTarget);
     
     if (gapTeamCostField) {
         gapTeamCostField.value = Math.round(gapTeamCost);
@@ -149,9 +148,9 @@ function updateProgress() {
     if (progressPotential) progressPotential.style.width = potentialPercent + '%';
     if (progressRemaining) progressRemaining.style.width = remainingPercent + '%';
 
-    // Calculate current month percentage based on actual date
+    // Calculate current month percentage
     const currentDate = new Date();
-    const currentMonth = currentDate.getMonth(); // 0-based (0 = January, 11 = December)
+    const currentMonth = currentDate.getMonth();
     const currentDay = currentDate.getDate();
     const daysInMonth = new Date(currentDate.getFullYear(), currentMonth + 1, 0).getDate();
     const currentMonthPercent = ((currentMonth + (currentDay / daysInMonth)) / 12) * 100;
@@ -162,14 +161,17 @@ function updateProgress() {
     }
     
     // Team cost indicator
-    const teamCostPercent = (240000 / target) * 100;
+    const teamCostPercent = (teamCostValue / target) * 100;
     const teamCostIndicator = document.getElementById('teamCostIndicator');
     if (teamCostIndicator) {
         teamCostIndicator.style.left = teamCostPercent + '%';
     }
+    
+    // Mark changes for saving
+    markChangesForSaving();
 }
 
-// Completion Indicators
+// === COMPLETION INDICATORS ===
 function updateCompletionIndicator() {
     const teamMembers = ['octavio', 'roberto', 'noe', 'ricardo'];
     const quarters = ['q2', 'q3', 'q4'];
@@ -191,7 +193,6 @@ function updateCompletionIndicator() {
             
             if (quarterIndicator) {
                 if (quarter === 'q2') {
-                    // Q2 has 2 tasks per person
                     if (quarterCheckedCount === 0) {
                         quarterIndicator.textContent = '😱';
                     } else if (quarterCheckedCount === 1) {
@@ -200,7 +201,6 @@ function updateCompletionIndicator() {
                         quarterIndicator.textContent = '😊';
                     }
                 } else {
-                    // Q3 and Q4 have 3 tasks per person
                     if (quarterCheckedCount === 0) {
                         quarterIndicator.textContent = '😱';
                     } else if (quarterCheckedCount === 1) {
@@ -231,6 +231,7 @@ function updateCompletionIndicator() {
         }
     });
     
+    // Update quarterly indicators
     quarters.forEach(quarter => {
         let membersWithAllCompleted = 0;
         let membersWithSomeCompleted = 0;
@@ -246,14 +247,12 @@ function updateCompletionIndicator() {
             const quarterCheckedCount = Array.from(quarterCheckboxes).filter(cb => cb.checked).length;
             
             if (quarter === 'q2') {
-                // Q2 has 2 tasks per person
                 if (quarterCheckedCount >= 2) {
                     membersWithAllCompleted++;
                 } else if (quarterCheckedCount > 0) {
                     membersWithSomeCompleted++;
                 }
             } else {
-                // Q3 and Q4 have 3 tasks per person
                 if (quarterCheckedCount >= 3) {
                     membersWithAllCompleted++;
                 } else if (quarterCheckedCount > 0) {
@@ -275,9 +274,12 @@ function updateCompletionIndicator() {
             }
         }
     });
+    
+    // Mark changes for saving
+    markChangesForSaving();
 }
 
-// Pipeline Functions
+// === PIPELINE FUNCTIONS ===
 function updatePipeline() {
     const rows = document.querySelectorAll('#pipelineTable tbody tr:not(.total-row)');
     let totalAmount = 0;
@@ -311,9 +313,9 @@ function updatePipeline() {
     
     updateProgress();
     updatePipelineLeadAnalysis();
+    markChangesForSaving();
 }
 
-// FIXED: Pipeline Lead Analysis Function - Using column-specific selectors
 function updatePipelineLeadAnalysis() {
     const rows = document.querySelectorAll('#pipelineTable tbody tr:not(.total-row)');
     const teamStats = {};
@@ -321,7 +323,6 @@ function updatePipelineLeadAnalysis() {
     rows.forEach(row => {
         const cells = row.querySelectorAll('td');
         if (cells.length >= 6) {
-            // Column 4 (index 4) = Lead, Column 5 (index 5) = Support
             const leadSelect = cells[4].querySelector('select.editable');
             const supportSelect = cells[5].querySelector('select.editable');
             
@@ -329,13 +330,11 @@ function updatePipelineLeadAnalysis() {
                 const lead = leadSelect.value;
                 const support = supportSelect.value;
                 
-                // Count leads
                 if (!teamStats[lead]) {
                     teamStats[lead] = { lead: 0, support: 0 };
                 }
                 teamStats[lead].lead++;
                 
-                // Count support (if not "None")
                 if (support !== "None") {
                     if (!teamStats[support]) {
                         teamStats[support] = { lead: 0, support: 0 };
@@ -370,7 +369,7 @@ function updatePipelineLeadAnalysis() {
     }
 }
 
-// Lost Opportunities Functions
+// === LOST OPPORTUNITIES FUNCTIONS ===
 function updateLost() {
     const rows = document.querySelectorAll('#lostTable tbody tr:not(.total-row)');
     let total = 0;
@@ -388,9 +387,9 @@ function updateLost() {
     }
     
     updateLossAnalysis();
+    markChangesForSaving();
 }
 
-// FIXED: Loss Analysis Function - Using column-specific selector for Motive
 function updateLossAnalysis() {
     const rows = document.querySelectorAll('#lostTable tbody tr:not(.total-row)');
     const motives = {};
@@ -399,7 +398,6 @@ function updateLossAnalysis() {
     rows.forEach(row => {
         const cells = row.querySelectorAll('td');
         if (cells.length >= 8) {
-            // Column 7 (index 7) = Motive select
             const motivSelect = cells[7].querySelector('select.editable');
             const amountInput = row.querySelector('.amount-input');
             
@@ -441,7 +439,7 @@ function updateLossAnalysis() {
     }
 }
 
-// Ongoing Projects Functions
+// === ONGOING PROJECTS FUNCTIONS ===
 function updateOngoing() {
     const rows = document.querySelectorAll('#ongoingTable tbody tr:not(.total-row)');
     let total = 0;
@@ -458,11 +456,11 @@ function updateOngoing() {
         totalOngoingElement.innerHTML = `<strong>$${total.toLocaleString()}</strong>`;
     }
     
-    // Update progress bar with new status-specific amounts
     updateProgress();
+    markChangesForSaving();
 }
 
-// Row Management Functions
+// === ROW MANAGEMENT FUNCTIONS ===
 function addPipelineRow() {
     const tbody = document.querySelector('#pipelineTable tbody');
     if (!tbody) return;
@@ -475,14 +473,14 @@ function addPipelineRow() {
     newRow.innerHTML = `
         <td>${nextNumber}</td>
         <td><input type="text" class="editable" value="New Project" onchange="updatePipeline()"></td>
-        <td><select class="editable">
+        <td><select class="editable" onchange="updatePipeline()">
             <option value="AI">AI</option>
             <option value="Demand Modeling">Demand Modeling</option>
             <option value="BigData">BigData</option>
             <option value="Urban Analytics" selected>Urban Analytics</option>
             <option value="Financial Modeling">Financial Modeling</option>
         </select></td>
-        <td><input type="text" class="editable" value="New Client"></td>
+        <td><input type="text" class="editable" value="New Client" onchange="updatePipeline()"></td>
         <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
             <option value="Octavio">Octavio</option>
             <option value="Roberto">Roberto</option>
@@ -496,7 +494,7 @@ function addPipelineRow() {
             <option value="Noé">Noé</option>
             <option value="Ricardo">Ricardo</option>
         </select></td>
-        <td><input type="date" class="editable date-input" value="2025-12-31"></td>
+        <td><input type="date" class="editable date-input" value="2025-12-31" onchange="updatePipeline()"></td>
         <td><input type="number" class="editable amount-input" value="0" onchange="updatePipeline()"></td>
         <td><input type="number" class="editable probability-input" value="0" min="0" max="100" onchange="updatePipeline()"></td>
         <td class="weighted-value">$0</td>
@@ -508,6 +506,9 @@ function addPipelineRow() {
     } else {
         tbody.appendChild(newRow);
     }
+    
+    // Setup event listeners for the new row
+    setupRowEventListeners(newRow);
     updatePipeline();
 }
 
@@ -542,6 +543,8 @@ function addEOIRow() {
     `;
     
     tbody.appendChild(newRow);
+    setupRowEventListeners(newRow);
+    markChangesForSaving();
 }
 
 function addOngoingRow() {
@@ -572,6 +575,8 @@ function addOngoingRow() {
     } else {
         tbody.appendChild(newRow);
     }
+    
+    setupRowEventListeners(newRow);
     updateOngoing();
 }
 
@@ -625,6 +630,8 @@ function addLostRow() {
     } else {
         tbody.appendChild(newRow);
     }
+    
+    setupRowEventListeners(newRow);
     updateLost();
 }
 
@@ -646,13 +653,51 @@ function deleteRow(button) {
             });
         }
         
+        // Update calculations
         updatePipeline();
         updateOngoing();
         updateLost();
+        markChangesForSaving();
     }
 }
 
-// Evaluation Functions
+// === EVENT LISTENERS SETUP ===
+function setupRowEventListeners(row) {
+    const inputs = row.querySelectorAll('input, select');
+    inputs.forEach(input => {
+        input.addEventListener('input', markChangesForSaving);
+        input.addEventListener('change', markChangesForSaving);
+    });
+}
+
+function setupAllEventListeners() {
+    console.log('🔧 Setting up event listeners for all existing rows...');
+    
+    // Setup for all table rows
+    const allRows = document.querySelectorAll('#pipelineTable tbody tr, #eoiTable tbody tr, #ongoingTable tbody tr, #lostTable tbody tr');
+    allRows.forEach(row => {
+        if (!row.classList.contains('total-row')) {
+            setupRowEventListeners(row);
+        }
+    });
+    
+    // Setup for checkboxes
+    const checkboxes = document.querySelectorAll('.tactic-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', markChangesForSaving);
+    });
+    
+    // Setup for evaluation inputs
+    const evaluationInputs = document.querySelectorAll('.weight-input, .score-input, #opportunityName');
+    evaluationInputs.forEach(input => {
+        input.addEventListener('input', markChangesForSaving);
+        input.addEventListener('change', markChangesForSaving);
+    });
+    
+    console.log('✅ Event listeners setup complete');
+}
+
+// === EVALUATION FUNCTIONS ===
 function calculateScore() {
     const items = document.querySelectorAll('.evaluation-item');
     let totalWeightedScore = 0;
@@ -705,6 +750,8 @@ function calculateScore() {
             containerElement.classList.add('score-no-go');
         }
     }
+    
+    markChangesForSaving();
 }
 
 function saveEvaluation() {
@@ -716,7 +763,8 @@ function saveEvaluation() {
     const finalScore = finalScoreElement ? finalScoreElement.textContent : '0';
     const totalWeight = totalWeightElement ? totalWeightElement.textContent : '0';
     
-    alert(`Evaluation for "${opportunityName}" saved successfully!\nFinal Score: ${finalScore}/10\nTotal Weight: ${totalWeight}%\n\nNote: Server-side saving is not yet implemented. Data is stored locally only.`);
+    alert(`Evaluation for "${opportunityName}" saved successfully!\nFinal Score: ${finalScore}/10\nTotal Weight: ${totalWeight}%`);
+    markChangesForSaving();
 }
 
 function generatePDF() {
@@ -731,7 +779,7 @@ function generatePDF() {
     
     // Header
     doc.setFontSize(20);
-    doc.setTextColor(255, 102, 0); // Arcadis orange
+    doc.setTextColor(255, 102, 0);
     doc.text('Go/No Go Opportunity Evaluation', 20, 30);
     doc.setFontSize(14);
     doc.setTextColor(255, 102, 0);
@@ -761,58 +809,12 @@ function generatePDF() {
     doc.text(`Total Weight: ${totalWeight}%`, 20, 140);
     doc.text(`Recommendation: ${recommendation}`, 20, 150);
     
-    // Evaluation Criteria
-    doc.setFontSize(14);
-    doc.setTextColor(255, 102, 0);
-    doc.text('Evaluation Criteria - Urban Analytics Mexico', 20, 170);
-    
-    // Get all evaluation items
-    const items = document.querySelectorAll('.evaluation-item');
-    let yPosition = 185;
-    
-    doc.setFontSize(9);
-    doc.setTextColor(0, 0, 0);
-    
-    items.forEach((item, index) => {
-        if (yPosition > 270) {
-            doc.addPage();
-            yPosition = 20;
-        }
-        
-        const criterion = item.querySelector('.criterion').textContent;
-        const weight = item.querySelector('.weight-input').value;
-        const score = item.querySelector('.score-input').value;
-        const weightedScore = ((weight * score) / 100).toFixed(2);
-        
-        // Split long text if needed
-        const splitText = doc.splitTextToSize(criterion, 100);
-        doc.text(splitText, 20, yPosition);
-        
-        const textHeight = splitText.length * 4;
-        doc.text(`Weight: ${weight}%`, 130, yPosition);
-        doc.text(`Score: ${score}/10`, 160, yPosition);
-        doc.text(`Weighted: ${weightedScore}`, 180, yPosition);
-        
-        yPosition += Math.max(12, textHeight + 4);
-    });
-    
-    // Footer
-    if (yPosition > 250) {
-        doc.addPage();
-        yPosition = 20;
-    }
-    
-    doc.setFontSize(8);
-    doc.setTextColor(128, 128, 128);
-    doc.text('Generated by Arcadis Practice Group Urban Analytics Mexico Dashboard', 20, yPosition + 20);
-    doc.text(`Document generated on ${new Date().toLocaleString()}`, 20, yPosition + 30);
-    
     // Save the PDF
     const fileName = `GoNoGo_Evaluation_UrbanAnalyticsMX_${opportunityName.replace(/[^a-z0-9]/gi, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
     doc.save(fileName);
 }
 
-// Minutes Functions
+// === MINUTES FUNCTIONS ===
 function updateCharCounter(member) {
     const textarea = document.getElementById(`${member}-input`);
     const counter = document.getElementById(`${member}-counter`);
@@ -846,22 +848,6 @@ function getCurrentWeek() {
     return `${formatDate(startOfWeek)} - ${formatDate(endOfWeek)}`;
 }
 
-function formatMinuteEntry(member, content, date) {
-    const lines = content.split('\n').filter(line => line.trim() !== '');
-    let formattedContent = '';
-    let bulletNumber = 1;
-    
-    lines.forEach(line => {
-        const trimmedLine = line.trim();
-        if (trimmedLine) {
-            formattedContent += `${bulletNumber}. ${trimmedLine}\n`;
-            bulletNumber++;
-        }
-    });
-    
-    return `${member} ${date}\n${''.padEnd(50, '-')}\n${formattedContent}\n`;
-}
-
 function saveAllMinutes() {
     const members = ['octavio', 'roberto', 'noe', 'ricardo'];
     const memberNames = {
@@ -887,7 +873,6 @@ function saveAllMinutes() {
         
         if (content) {
             hasNewEntries = true;
-            const formattedEntry = formatMinuteEntry(memberNames[member], content, currentDate);
             
             // Create new log entry element
             const entryDiv = document.createElement('div');
@@ -910,7 +895,8 @@ function saveAllMinutes() {
     });
     
     if (hasNewEntries) {
-        alert('Weekly minutes saved successfully!\n\nNote: Server-side saving is not yet implemented. Data is stored locally only.');
+        alert('Weekly minutes saved successfully!');
+        markChangesForSaving();
     } else {
         alert('No content to save. Please enter progress for at least one team member.');
     }
@@ -926,6 +912,7 @@ function clearMinutesLog() {
             </div>
         `;
         alert('Minutes log cleared successfully!');
+        markChangesForSaving();
     }
 }
 
@@ -961,21 +948,21 @@ function exportMinutesLog() {
     window.URL.revokeObjectURL(url);
 }
 
-// Main Save Function - Only for Pipeline and Minutes
-function saveData() {
-    const activeTab = document.querySelector('.tab.active').textContent.trim();
-    
-    if (activeTab === 'Project Pipeline') {
-        alert('Project Pipeline data saved successfully!\n\nNote: Server-side saving is not yet implemented. Changes are stored locally only.');
-    } else if (activeTab === 'Weekly Minutes') {
-        saveAllMinutes();
-    } else {
-        alert('Manual saving is only available for Project Pipeline and Weekly Minutes sections.\n\nNote: Server-side saving functionality is not yet implemented.');
+// === INTEGRATION WITH STORAGE SYSTEM ===
+function markChangesForSaving() {
+    if (!isInitializing && typeof urbanAnalyticsStorage !== 'undefined') {
+        urbanAnalyticsStorage.markUnsavedChanges();
     }
 }
 
-// Initialize Dashboard
+// === MAIN INITIALIZATION ===
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Initializing Urban Analytics Dashboard...');
+    
+    // Set initializing flag
+    isInitializing = true;
+    
+    // Initialize basic components
     updateProgress();
     updatePipeline();
     updateOngoing();
@@ -989,4 +976,27 @@ document.addEventListener('DOMContentLoaded', function() {
     if (currentWeekElement) {
         currentWeekElement.textContent = getCurrentWeek();
     }
+    
+    // Setup event listeners after a delay to ensure DOM is ready
+    setTimeout(() => {
+        setupAllEventListeners();
+        isInitializing = false;
+        console.log('✅ Urban Analytics Dashboard initialized');
+    }, 1000);
 });
+
+// === UTILITY FUNCTIONS ===
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+    }).format(amount);
+}
+
+function formatNumber(num) {
+    return new Intl.NumberFormat('en-US').format(num);
+}
+
+console.log('✅ Urban Analytics Dashboard script loaded successfully');
