@@ -319,10 +319,11 @@ function updatePipelineLeadAnalysis() {
     const teamStats = {};
 
     rows.forEach(row => {
-        const selects = row.querySelectorAll('select.editable');
-        if (selects.length >= 2) {
-            const leadSelect = selects[0]; // First select is Lead
-            const supportSelect = selects[1]; // Second select is Support
+    const cells = row.querySelectorAll('td');
+    if (cells.length >= 6) {
+        // Column 4 (index 4) = Lead, Column 5 (index 5) = Support
+        const leadSelect = cells[4].querySelector('select.editable');
+        const supportSelect = cells[5].querySelector('select.editable');
             
             if (leadSelect && supportSelect) {
                 const lead = leadSelect.value;
@@ -395,7 +396,10 @@ function updateLossAnalysis() {
     let totalValue = 0;
 
     rows.forEach(row => {
-        const motivSelect = row.querySelector('select.editable');
+    const cells = row.querySelectorAll('td');
+    if (cells.length >= 8) {
+        // Column 7 (index 7) = Motive select
+        const motivSelect = cells[7].querySelector('select.editable');
         const amountInput = row.querySelector('.amount-input');
         
         if (motivSelect && amountInput) {
