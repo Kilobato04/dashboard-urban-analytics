@@ -1,0 +1,902 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #1a1a1a;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    background: linear-gradient(135deg, #FF6600 0%, #e55a00 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(255, 102, 0, 0.3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.header p {
+    font-size: 1.1rem;
+    opacity: 0.95;
+}
+
+.header-actions {
+    margin-left: auto;
+}
+
+.revenue-progress {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-left: 5px solid #FF6600;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.progress-inputs {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.progress-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.progress-input-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.progress-input-group input {
+    padding: 8px 12px;
+    border: 2px solid #e9ecef;
+    border-radius: 6px;
+    width: 120px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.progress-input-group input:focus {
+    outline: none;
+    border-color: #FF6600;
+}
+
+.progress-container {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.progress-bar {
+    background: #e9ecef;
+    height: 25px;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+}
+
+.progress-exercised {
+    background: #28a745;
+    transition: width 0.5s ease;
+}
+
+.progress-potential {
+    background: #FF6600;
+    transition: width 0.5s ease;
+}
+
+.progress-remaining {
+    background: #6c757d;
+    transition: width 0.5s ease;
+}
+
+.progress-indicator {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    background: #dc3545;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    z-index: 10;
+}
+
+.team-cost-indicator {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    background: #343a40;
+    border: 3px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    z-index: 10;
+}
+
+.progress-months {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.progress-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+.quarterly-summary {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.quarterly-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.quarter-card {
+    background: linear-gradient(135deg, #FF6600 0%, #e55a00 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(255, 102, 0, 0.2);
+}
+
+.quarter-card h3 {
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+}
+
+.quarter-objectives {
+    margin-bottom: 15px;
+}
+
+.quarter-objectives li {
+    margin-bottom: 5px;
+}
+
+.quarter-countdown {
+    background: rgba(255,255,255,0.2);
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.tabs {
+    display: flex;
+    background: white;
+    border-radius: 12px 12px 0 0;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.tab {
+    flex: 1;
+    padding: 15px 20px;
+    background: #f8f9fa;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
+}
+
+.tab.active {
+    background: #FF6600;
+    color: white;
+    border-bottom-color: #e55a00;
+}
+
+.tab:hover:not(.active) {
+    background: #e9ecef;
+    color: #FF6600;
+}
+
+.tab-content {
+    display: none;
+    background: white;
+    padding: 30px;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    min-height: 600px;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.tactics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.team-member {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.team-member:hover {
+    border-color: #FF6600;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 102, 0, 0.15);
+}
+
+.member-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.member-name {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #FF6600;
+    flex-grow: 1;
+}
+
+.completion-indicator {
+    font-size: 2rem;
+    margin-left: 15px;
+}
+
+.quarter-section {
+    margin-bottom: 20px;
+}
+
+.quarter-title {
+    background: #FF6600;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+}
+
+.tactics-list {
+    list-style: none;
+}
+
+.tactics-list li {
+    background: white;
+    padding: 12px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    border-left: 4px solid #FF6600;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tactics-list li:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(255, 102, 0, 0.2);
+}
+
+.tactic-text {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+.tactic-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.save-button {
+    background: #FF6600;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+}
+
+.save-button:hover {
+    background: #e55a00;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 102, 0, 0.3);
+}
+
+.pipeline-section {
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #FF6600;
+}
+
+.table-container {
+    overflow-x: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+}
+
+th {
+    background: #FF6600;
+    color: white;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+}
+
+tr:hover {
+    background: #f8f9fa;
+}
+
+.editable {
+    background: transparent;
+    border: 1px solid transparent;
+    padding: 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+.editable:focus {
+    outline: none;
+    border-color: #FF6600;
+    background: white;
+    box-shadow: 0 0 0 2px rgba(255, 102, 0, 0.2);
+}
+
+.editable[type="text"] {
+    min-width: 150px;
+}
+
+select.editable {
+    cursor: pointer;
+    background: white;
+    border: 1px solid #e9ecef;
+}
+
+select.editable:focus {
+    border-color: #FF6600;
+}
+
+.amount-input {
+    text-align: right;
+    width: 100px;
+}
+
+.probability-input {
+    text-align: center;
+    width: 80px;
+}
+
+.date-input {
+    width: 120px;
+}
+
+.total-row {
+    background: #FF6600 !important;
+    color: white;
+    font-weight: 600;
+}
+
+.total-row td {
+    border-bottom: none;
+    background: #FF6600 !important;
+    border-left: none;
+    border-right: none;
+}
+
+.add-row-button {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin: 10px 0;
+    font-weight: 600;
+}
+
+.add-row-button:hover {
+    background: #218838;
+}
+
+.delete-button {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.delete-button:hover {
+    background: #c82333;
+}
+
+.evaluation-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.evaluation-instructions {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid #FF6600;
+}
+
+.evaluation-instructions h3 {
+    color: #FF6600;
+    margin-bottom: 10px;
+}
+
+.evaluation-instructions ul {
+    margin-left: 20px;
+}
+
+.evaluation-instructions li {
+    margin-bottom: 5px;
+}
+
+.evaluation-form {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.evaluation-headers {
+    display: grid;
+    grid-template-columns: 2fr 150px 150px;
+    gap: 15px;
+    padding: 15px 20px;
+    background: #FF6600;
+    color: white;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.evaluation-item {
+    background: white;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #FF6600;
+    display: grid;
+    grid-template-columns: 2fr 150px 150px;
+    gap: 15px;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.criterion {
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.criterion-description {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-top: 5px;
+}
+
+.weight-input, .score-input {
+    padding: 10px 12px;
+    border: 2px solid #e9ecef;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+.weight-input:focus, .score-input:focus {
+    outline: none;
+    border-color: #FF6600;
+    box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.1);
+}
+
+.weight-total {
+    background: #e9ecef;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.final-score {
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    margin-top: 30px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.score-go {
+    background: #28a745;
+    color: white;
+}
+
+.score-conditional {
+    background: #ffc107;
+    color: #1a1a1a;
+}
+
+.score-no-go {
+    background: #dc3545;
+    color: white;
+}
+
+.opportunity-header {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.opportunity-name {
+    width: 100%;
+    max-width: 500px;
+    padding: 12px;
+    border: 2px solid #e9ecef;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.opportunity-name:focus {
+    outline: none;
+    border-color: #FF6600;
+}
+
+/* Minuta Section Styles */
+.minuta-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.week-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-left: 4px solid #FF6600;
+}
+
+.week-header h3 {
+    color: #FF6600;
+    margin: 0;
+}
+
+.minuta-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.minuta-input-section {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-left: 4px solid #FF6600;
+}
+
+.minuta-input-section h3 {
+    color: #FF6600;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.team-minute-input {
+    margin-bottom: 25px;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.member-input-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.member-input-header h4 {
+    color: #1a1a1a;
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.char-counter {
+    font-size: 0.8rem;
+    color: #6c757d;
+    font-weight: 600;
+}
+
+.minute-textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 12px;
+    border: 2px solid #e9ecef;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    resize: vertical;
+    transition: border-color 0.2s ease;
+}
+
+.minute-textarea:focus {
+    outline: none;
+    border-color: #FF6600;
+    box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.1);
+}
+
+.minute-textarea::placeholder {
+    color: #6c757d;
+    font-style: italic;
+}
+
+.minuta-log-section {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-left: 4px solid #28a745;
+}
+
+.minuta-log-section h3 {
+    color: #28a745;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.log-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.clear-log-button {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.clear-log-button:hover {
+    background: #c82333;
+}
+
+.export-log-button {
+    background: #17a2b8;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.export-log-button:hover {
+    background: #138496;
+}
+
+.minutes-log {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 20px;
+    min-height: 500px;
+    max-height: 600px;
+    overflow-y: auto;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.log-placeholder {
+    text-align: center;
+    color: #6c757d;
+    margin-top: 50px;
+}
+
+.log-entry {
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.log-entry:last-child {
+    border-bottom: none;
+}
+
+.log-entry-header {
+    font-weight: 700;
+    color: #FF6600;
+    margin-bottom: 5px;
+}
+
+.log-entry-separator {
+    color: #6c757d;
+    margin-bottom: 8px;
+}
+
+.log-entry-content {
+    color: #1a1a1a;
+    white-space: pre-line;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    .header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .header h1 {
+        font-size: 2rem;
+    }
+
+    .tactics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .evaluation-headers,
+    .evaluation-item {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        text-align: left;
+    }
+
+    .progress-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .progress-inputs {
+        justify-content: center;
+    }
+
+    .quarterly-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .member-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .minuta-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .week-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .log-controls {
+        flex-direction: column;
+    }
+
+    .minute-textarea {
+        min-height: 100px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .minuta-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .week-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+}
