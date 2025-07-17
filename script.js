@@ -313,17 +313,17 @@ function updatePipeline() {
     updatePipelineLeadAnalysis();
 }
 
-// FIXED: Pipeline Lead Analysis Function
+// FIXED: Pipeline Lead Analysis Function - Using column-specific selectors
 function updatePipelineLeadAnalysis() {
     const rows = document.querySelectorAll('#pipelineTable tbody tr:not(.total-row)');
     const teamStats = {};
 
     rows.forEach(row => {
-    const cells = row.querySelectorAll('td');
-    if (cells.length >= 6) {
-        // Column 4 (index 4) = Lead, Column 5 (index 5) = Support
-        const leadSelect = cells[4].querySelector('select.editable');
-        const supportSelect = cells[5].querySelector('select.editable');
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 6) {
+            // Column 4 (index 4) = Lead, Column 5 (index 5) = Support
+            const leadSelect = cells[4].querySelector('select.editable');
+            const supportSelect = cells[5].querySelector('select.editable');
             
             if (leadSelect && supportSelect) {
                 const lead = leadSelect.value;
@@ -390,28 +390,30 @@ function updateLost() {
     updateLossAnalysis();
 }
 
+// FIXED: Loss Analysis Function - Using column-specific selector for Motive
 function updateLossAnalysis() {
     const rows = document.querySelectorAll('#lostTable tbody tr:not(.total-row)');
     const motives = {};
     let totalValue = 0;
 
     rows.forEach(row => {
-    const cells = row.querySelectorAll('td');
-    if (cells.length >= 8) {
-        // Column 7 (index 7) = Motive select
-        const motivSelect = cells[7].querySelector('select.editable');
-        const amountInput = row.querySelector('.amount-input');
-        
-        if (motivSelect && amountInput) {
-            const motive = motivSelect.value;
-            const amount = parseFloat(amountInput.value) || 0;
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 8) {
+            // Column 7 (index 7) = Motive select
+            const motivSelect = cells[7].querySelector('select.editable');
+            const amountInput = row.querySelector('.amount-input');
             
-            if (!motives[motive]) {
-                motives[motive] = { count: 0, value: 0 };
+            if (motivSelect && amountInput) {
+                const motive = motivSelect.value;
+                const amount = parseFloat(amountInput.value) || 0;
+                
+                if (!motives[motive]) {
+                    motives[motive] = { count: 0, value: 0 };
+                }
+                motives[motive].count++;
+                motives[motive].value += amount;
+                totalValue += amount;
             }
-            motives[motive].count++;
-            motives[motive].value += amount;
-            totalValue += amount;
         }
     });
 
