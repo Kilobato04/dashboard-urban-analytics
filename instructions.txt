@@ -1,0 +1,280 @@
+# 📁 Estructura de Carpetas - Urban Analytics Dashboard
+
+## Estructura Recomendada del Proyecto
+
+```
+urban-analytics-dashboard/
+├── index.html                          # ← HTML principal (sin datos hardcodeados)
+├── styles.css                          # ← CSS existente
+├── script.js                           # ← Script principal actualizado
+├── urban-analytics-storage.js          # ← Sistema de storage (NUEVO)
+├── api/
+│   └── save_data.php                   # ← API para guardar/cargar datos (NUEVO)
+├── data/
+│   └── urban_analytics_data.json      # ← Datos guardados (se crea automáticamente)
+├── backup/                             # ← Carpeta para backups (opcional)
+├── assets/
+│   └── js/
+│       └── plotly.min.js              # ← Para gráficas (si es necesario)
+└── README.md                          # ← Documentación
+```
+
+## 📋 Archivos Principales
+
+### 1. **index.html**
+- ✅ **Eliminados**: Todos los datos hardcodeados de las tablas
+- ✅ **Agregado**: Indicador de estado de conexión
+- ✅ **Agregado**: Botón de guardado manual funcional
+- ✅ **Agregado**: Inclusión del script de storage
+
+### 2. **urban-analytics-storage.js** (NUEVO)
+- ✅ **Funcionalidad**: Sistema completo de guardado/carga
+- ✅ **Características**:
+  - Guardado automático en servidor
+  - Carga al inicializar
+  - Detección de cambios
+  - Notificaciones al usuario
+  - Manejo de errores
+  - Modo offline
+
+### 3. **script.js** (ACTUALIZADO)
+- ✅ **Integrado**: Con sistema de storage
+- ✅ **Agregado**: Marcado de cambios para guardado
+- ✅ **Mantenido**: Todas las funcionalidades existentes
+- ✅ **Mejorado**: Event listeners y detección de cambios
+
+### 4. **api/save_data.php** (NUEVO)
+- ✅ **Funcionalidad**: API REST para guardar/cargar datos
+- ✅ **Características**:
+  - Validación de datos
+  - Manejo de errores
+  - Headers CORS
+  - Respuestas JSON estructuradas
+
+## 🔧 Configuración del Servidor
+
+### Para Netlify (Recomendado)
+1. **Crear archivo `netlify.toml`**:
+```toml
+[build]
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+```
+
+2. **Crear función serverless**: `netlify/functions/save_data.js`
+```javascript
+const fs = require('fs');
+const path = require('path');
+
+exports.handler = async (event, context) => {
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Content-Type': 'application/json'
+  };
+
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 200, headers, body: '' };
+  }
+
+  const dataPath = '/tmp/urban_analytics_data.json';
+
+  try {
+    if (event.httpMethod === 'POST') {
+      // Guardar datos
+      const data = JSON.parse(event.body);
+      data.metadata.lastSaved = new Date().toISOString();
+      
+      fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
+      
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({
+          success: true,
+          message: 'Data saved successfully',
+          timestamp: data.metadata.lastSaved
+        })
+      };
+    } else {
+      // Cargar datos
+      if (fs.existsSync(dataPath)) {
+        const data = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify({
+            success: true,
+            data: data,
+            message: 'Data loaded successfully'
+          })
+        };
+      } else {
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify({
+            success: true,
+            data: null,
+            message: 'No saved data found'
+          })
+        };
+      }
+    }
+  } catch (error) {
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({
+        success: false,
+        error: error.message
+      })
+    };
+  }
+};
+```
+
+### Para Servidor Web Tradicional
+- Usar el archivo `api/save_data.php` proporcionado
+- Asegurar que el servidor tenga permisos de escritura en la carpeta `data/`
+- Configurar PHP 7.4+ con soporte JSON
+
+## 📊 Ejemplo de Estructura de Datos JSON
+
+```json
+{
+  "metadata": {
+    "version": "1.0",
+    "lastSaved": "2024-01-15T10:30:00.000Z",
+    "appName": "Urban Analytics Mexico Dashboard"
+  },
+  "pipeline": {
+    "current": [
+      {
+        "id": "pipeline_1",
+        "number": "1",
+        "project": "Seattle - WSF",
+        "topic": "Demand Modeling",
+        "client": "CrossColab",
+        "lead": "Roberto",
+        "support": "None",
+        "date": "2025-07-15",
+        "price": 55000,
+        "probability": 60,
+        "weightedValue": 33000
+      }
+    ],
+    "eoi": [],
+    "ongoing": [],
+    "lost": []
+  },
+  "progress": {
+    "exercised": 0,
+    "backlog": 0,
+    "potential": 33000,
+    "target": 300000,
+    "teamCost": 240000
+  },
+  "tactics": {
+    "octavio": {
+      "q2": [
+        {
+          "text": "Lead 2 proposals worth $25K each",
+          "completed": false
+        }
+      ],
+      "q3": [],
+      "q4": []
+    }
+  },
+  "evaluation": {
+    "opportunityName": "",
+    "criteria": [],
+    "finalScore": "5.00",
+    "totalWeight": "100",
+    "recommendation": "NO GO"
+  },
+  "settings": {
+    "autoSave": false,
+    "manualSaveOnly": true
+  }
+}
+```
+
+## 🚀 Pasos de Implementación
+
+### 1. **Preparación**
+```bash
+# Crear estructura de carpetas
+mkdir urban-analytics-dashboard
+cd urban-analytics-dashboard
+mkdir api data backup assets/js
+```
+
+### 2. **Subir Archivos**
+- Colocar `index.html` en la raíz
+- Colocar `urban-analytics-storage.js` en la raíz
+- Colocar `script.js` actualizado en la raíz
+- Colocar `api/save_data.php` en la carpeta api/
+
+### 3. **Configurar Permisos** (Para PHP)
+```bash
+chmod 755 api/
+chmod 666 data/
+```
+
+### 4. **Probar Funcionalidad**
+- Abrir el dashboard en el navegador
+- Verificar que aparezca "🌐 Conectado" en el header
+- Agregar un proyecto en el pipeline
+- Presionar "💾 Save Changes"
+- Verificar que aparezca "✅ Guardado exitoso"
+- Recargar la página y verificar que los datos persisten
+
+## 🔍 Verificación de Funcionamiento
+
+### Indicadores de Estado
+- **🌐 Conectado**: Sistema conectado al servidor
+- **📱 Sin conexión**: Modo offline
+- **✅ Sincronizado**: Datos guardados exitosamente
+- **⚠️ Cambios pendientes**: Hay cambios sin guardar
+
+### Pruebas Recomendadas
+1. **Agregar proyecto**: ✅ Debe guardarse automáticamente
+2. **Modificar datos**: ✅ Debe marcar cambios pendientes
+3. **Guardar manual**: ✅ Debe confirmar guardado exitoso
+4. **Recargar página**: ✅ Debe cargar datos guardados
+5. **Modo offline**: ✅ Debe mostrar notificación apropiada
+
+## 📈 Beneficios del Nuevo Sistema
+
+### ✅ **Ventajas Implementadas**
+- **Persistencia**: Los datos se guardan en servidor
+- **Confiabilidad**: Sistema robusto de guardado/carga
+- **Notificaciones**: Feedback claro al usuario
+- **Modo offline**: Funciona sin conexión
+- **Detección automática**: Marca cambios automáticamente
+- **Backup**: Datos respaldados en servidor
+
+### 🔄 **Flujo de Trabajo Mejorado**
+1. Usuario abre dashboard → Carga datos del servidor
+2. Usuario modifica datos → Marca cambios pendientes
+3. Usuario presiona guardar → Envía datos al servidor
+4. Sistema confirma guardado → Usuario ve confirmación
+5. Usuario cierra/recarga → Datos persisten correctamente
+
+## 🎯 **Resultado Final**
+Dashboard completamente funcional con:
+- ✅ Sin datos hardcodeados
+- ✅ Guardado automático en servidor
+- ✅ Carga automática al inicializar
+- ✅ Botón de guardado manual
+- ✅ Indicadores de estado
+- ✅ Notificaciones al usuario
+- ✅ Manejo de errores
+- ✅ Compatibilidad con Netlify y servidores PHP
