@@ -15,6 +15,10 @@
             <p>Strategic Planning & Project Pipeline Dashboard - 2025</p>
             <div class="header-actions">
                 <button class="save-button" onclick="saveData()" style="margin-left: auto;">💾 Save Changes</button>
+                <div class="status-indicator" style="margin-left: 10px;">
+                    <span id="connectionStatus">🌐 Conectado</span>
+                    <span id="saveStatusText">✅ Sincronizado</span>
+                </div>
             </div>
         </div>
         
@@ -25,7 +29,7 @@
                 <div class="progress-inputs">
                     <div class="progress-input-group">
                         <label for="exercisedAmount">Exercised (USD)</label>
-                        <input type="number" id="exercisedAmount" value="48152" readonly style="background: #f8f9fa;" title="Auto-calculated from completed projects">
+                        <input type="number" id="exercisedAmount" value="0" readonly style="background: #f8f9fa;" title="Auto-calculated from completed projects">
                     </div>
                     <div class="progress-input-group">
                         <label for="backlogAmount">Backlog (USD)</label>
@@ -33,15 +37,15 @@
                     </div>
                     <div class="progress-input-group">
                         <label for="potentialAmount">Potential W</label>
-                        <input type="number" id="potentialAmount" value="183557" readonly style="background: #f8f9fa;" title="Auto-calculated from pipeline weighted total">
+                        <input type="number" id="potentialAmount" value="0" readonly style="background: #f8f9fa;" title="Auto-calculated from pipeline weighted total">
                     </div>
                     <div class="progress-input-group">
                         <label for="gapAmount">Gap/Target</label>
-                        <input type="number" id="gapAmount" value="132348" readonly style="background: #f8f9fa;" title="Target - (Exercised + Backlog + Potential)">
+                        <input type="number" id="gapAmount" value="300000" readonly style="background: #f8f9fa;" title="Target - (Exercised + Backlog + Potential)">
                     </div>
                     <div class="progress-input-group">
                         <label for="gapTeamCost">Gap/TeamCost</label>
-                        <input type="number" id="gapTeamCost" value="-8291" readonly style="background: #f8f9fa;" title="TeamCost - (Exercised + Backlog + Potential)">
+                        <input type="number" id="gapTeamCost" value="240000" readonly style="background: #f8f9fa;" title="TeamCost - (Exercised + Backlog + Potential)">
                     </div>
                     <div class="progress-input-group">
                         <label for="teamCost" style="color: #343a40; font-weight: 700;">Team Cost (USD)</label>
@@ -91,7 +95,7 @@
         <div class="tabs">
             <button class="tab active" onclick="openTab('tactics')">Quarterly Tactics</button>
             <button class="tab" onclick="openTab('pipeline')">Project Pipeline</button>
-             <button class="tab" onclick="openTab('minuta')">Weekly Minutes</button>                                                                     
+            <button class="tab" onclick="openTab('minuta')">Weekly Minutes</button>                                                                     
             <button class="tab" onclick="openTab('evaluation')">Go/No Go Evaluation</button>
         </div>
 
@@ -162,11 +166,11 @@
                         <ul class="tactics-list">
                             <li>
                                 <span class="tactic-text">Lead 2 proposals worth $25K each for urban analytics clients</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" data-member="octavio" onchange="updateCompletionIndicator()">
                             </li>
                             <li>
                                 <span class="tactic-text">Participate in at least 1 key conference presentation or panel</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" data-member="octavio" onchange="updateCompletionIndicator()">
                             </li>
                         </ul>
                     </div>
@@ -178,15 +182,15 @@
                         <ul class="tactics-list">
                             <li>
                                 <span class="tactic-text">Develop 2 major urban analytics proposals ($30K each)</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" data-member="octavio" onchange="updateCompletionIndicator()">
                             </li>
                             <li>
                                 <span class="tactic-text">Establish partnership with local universities for research</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" data-member="octavio" onchange="updateCompletionIndicator()">
                             </li>
                             <li>
                                 <span class="tactic-text">Conduct workshop on smart city solutions</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" data-member="octavio" onchange="updateCompletionIndicator()">
                             </li>
                         </ul>
                     </div>
@@ -198,15 +202,15 @@
                         <ul class="tactics-list">
                             <li>
                                 <span class="tactic-text">Complete 2 strategic proposals for 2026 projects ($40K each)</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" data-member="octavio" onchange="updateCompletionIndicator()">
                             </li>
                             <li>
                                 <span class="tactic-text">Organize team training on emerging urban technologies</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" data-member="octavio" onchange="updateCompletionIndicator()">
                             </li>
                             <li>
                                 <span class="tactic-text">Prepare 2026 business development roadmap</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" data-member="octavio" onchange="updateCompletionIndicator()">
                             </li>
                         </ul>
                     </div>
@@ -226,11 +230,11 @@
                         <ul class="tactics-list">
                             <li>
                                 <span class="tactic-text">Lead 2 technical proposals for urban mobility projects ($22K each)</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" data-member="roberto" onchange="updateCompletionIndicator()">
                             </li>
                             <li>
                                 <span class="tactic-text">Participate in at least 1 technical conference or transport symposium</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" data-member="roberto" onchange="updateCompletionIndicator()">
                             </li>
                         </ul>
                     </div>
@@ -242,15 +246,15 @@
                         <ul class="tactics-list">
                             <li>
                                 <span class="tactic-text">Develop 2 transportation analysis proposals ($35K each)</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" data-member="roberto" onchange="updateCompletionIndicator()">
                             </li>
                             <li>
                                 <span class="tactic-text">Present at International Urban Planning Conference</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" data-member="roberto" onchange="updateCompletionIndicator()">
                             </li>
                             <li>
                                 <span class="tactic-text">Initiate collaboration with European Arcadis offices</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" data-member="roberto" onchange="updateCompletionIndicator()">
                             </li>
                         </ul>
                     </div>
@@ -262,15 +266,15 @@
                         <ul class="tactics-list">
                             <li>
                                 <span class="tactic-text">Submit 2 integrated transport proposals ($45K each)</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" data-member="roberto" onchange="updateCompletionIndicator()">
                             </li>
                             <li>
                                 <span class="tactic-text">Conduct year-end technical capabilities assessment</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" data-member="roberto" onchange="updateCompletionIndicator()">
                             </li>
                             <li>
                                 <span class="tactic-text">Develop training curriculum for 2026</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" data-member="roberto" onchange="updateCompletionIndicator()">
                             </li>
                         </ul>
                     </div>
@@ -290,11 +294,11 @@
                         <ul class="tactics-list">
                             <li>
                                 <span class="tactic-text">Implement new project management software and training</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" data-member="noe" onchange="updateCompletionIndicator()">
                             </li>
                             <li>
                                 <span class="tactic-text">Deliver at least 1 key workshop or presentation on project management</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" data-member="noe" onchange="updateCompletionIndicator()">
                             </li>
                         </ul>
                     </div>
@@ -306,15 +310,15 @@
                         <ul class="tactics-list">
                             <li>
                                 <span class="tactic-text">Establish quality assurance protocols for all deliverables</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" data-member="noe" onchange="updateCompletionIndicator()">
                             </li>
                             <li>
                                 <span class="tactic-text">Coordinate cross-functional team integration activities</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" data-member="noe" onchange="updateCompletionIndicator()">
                             </li>
                             <li>
                                 <span class="tactic-text">Develop client satisfaction measurement system</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" data-member="noe" onchange="updateCompletionIndicator()">
                             </li>
                         </ul>
                     </div>
@@ -326,15 +330,15 @@
                         <ul class="tactics-list">
                             <li>
                                 <span class="tactic-text">Complete annual team performance evaluation</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" data-member="noe" onchange="updateCompletionIndicator()">
                             </li>
                             <li>
                                 <span class="tactic-text">Plan 2026 staffing and resource requirements</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" data-member="noe" onchange="updateCompletionIndicator()">
                             </li>
                             <li>
                                 <span class="tactic-text">Implement knowledge management system</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" data-member="noe" onchange="updateCompletionIndicator()">
                             </li>
                         </ul>
                     </div>
@@ -354,11 +358,11 @@
                         <ul class="tactics-list">
                             <li>
                                 <span class="tactic-text">Lead 2 business development proposals ($20K each)</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" data-member="ricardo" onchange="updateCompletionIndicator()">
                             </li>
                             <li>
                                 <span class="tactic-text">Deliver at least 1 key presentation on market strategy and business development</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" data-member="ricardo" onchange="updateCompletionIndicator()">
                             </li>
                         </ul>
                     </div>
@@ -370,15 +374,15 @@
                         <ul class="tactics-list">
                             <li>
                                 <span class="tactic-text">Develop 2 strategic consulting proposals ($35K each)</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" data-member="ricardo" onchange="updateCompletionIndicator()">
                             </li>
                             <li>
                                 <span class="tactic-text">Organize client appreciation events in key markets</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" data-member="ricardo" onchange="updateCompletionIndicator()">
                             </li>
                             <li>
                                 <span class="tactic-text">Establish thought leadership through industry publications</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" data-member="ricardo" onchange="updateCompletionIndicator()">
                             </li>
                         </ul>
                     </div>
@@ -390,69 +394,15 @@
                         <ul class="tactics-list">
                             <li>
                                 <span class="tactic-text">Submit 2 major strategic proposals ($50K each)</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" data-member="ricardo" onchange="updateCompletionIndicator()">
                             </li>
                             <li>
                                 <span class="tactic-text">Finalize strategic alliances and partnership agreements</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" data-member="ricardo" onchange="updateCompletionIndicator()">
                             </li>
                             <li>
                                 <span class="tactic-text">Prepare marketing strategy and budget for 2026</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" onchange="updateCompletionIndicator()">
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            <!-- Wildcard - Transversal Responsibilities -->
-                <div class="team-member" style="background: linear-gradient(135deg, #FF6600 0%, #e55a00 100%); color: white; border: 2px solid #e55a00;">
-                    <div class="member-header">
-                        <div class="member-name" style="color: white; border-bottom: 2px solid white;">🎯 Transversal Responsibilities</div>
-                    </div>
-                    
-                    <div class="quarter-section">
-                        <div class="quarter-title" style="background: rgba(255,255,255,0.2); color: white;">Octavio Jiménez - Cross-Office Leadership</div>
-                        <ul class="tactics-list">
-                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
-                                <span class="tactic-text">Enhance cross-collaboration among Arcadis offices</span>
-                            </li>
-                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
-                                <span class="tactic-text">Provide necessary tools and communication with the rest of the team</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="quarter-section">
-                        <div class="quarter-title" style="background: rgba(255,255,255,0.2); color: white;">Roberto Ascencio - Mobility Demand Practice</div>
-                        <ul class="tactics-list">
-                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
-                                <span class="tactic-text">Lead the mobility demand practice development</span>
-                            </li>
-                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
-                                <span class="tactic-text">Review and monitor European Union procurement platforms</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="quarter-section">
-                        <div class="quarter-title" style="background: rgba(255,255,255,0.2); color: white;">Ricardo Sánchez - Mobility Tech Practice</div>
-                        <ul class="tactics-list">
-                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
-                                <span class="tactic-text">Lead the Mobility Tech practice development</span>
-                            </li>
-                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
-                                <span class="tactic-text">Review WB, Compras MX/CDMX/EDOMEX procurement platforms</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="quarter-section">
-                        <div class="quarter-title" style="background: rgba(255,255,255,0.2); color: white;">Noé Osorio - AI/LLM/BigData Practice</div>
-                        <ul class="tactics-list">
-                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
-                                <span class="tactic-text">Lead the AI/LLM/BigData practice development</span>
-                            </li>
-                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
-                                <span class="tactic-text">Develop mobility models with AI capabilities</span>
+                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" data-member="ricardo" onchange="updateCompletionIndicator()">
                             </li>
                         </ul>
                     </div>
@@ -483,486 +433,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td><input type="text" class="editable" value="Seattle - WSF" onchange="updatePipeline()"></td>
-                                <td><select class="editable">
-                                    <option value="AI">AI</option>
-                                    <option value="Demand Modeling" selected>Demand Modeling</option>
-                                    <option value="BigData">BigData</option>
-                                    <option value="Urban Analytics">Urban Analytics</option>
-                                    <option value="Financial Modeling">Financial Modeling</option>
-                                </select></td>
-                                <td><input type="text" class="editable" value="CrossColab"></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto" selected>Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="None">None</option>
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><input type="date" class="editable date-input" value="2025-07-15"></td>
-                                <td><input type="number" class="editable amount-input" value="55000" onchange="updatePipeline()"></td>
-                                <td><input type="number" class="editable probability-input" value="60" min="0" max="100" onchange="updatePipeline()"></td>
-                                <td class="weighted-value">$33,000</td>
-                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td><input type="text" class="editable" value="UVG Study - Guatemala City" onchange="updatePipeline()"></td>
-                                <td><select class="editable">
-                                    <option value="AI">AI</option>
-                                    <option value="Demand Modeling" selected>Demand Modeling</option>
-                                    <option value="BigData">BigData</option>
-                                    <option value="Urban Analytics">Urban Analytics</option>
-                                    <option value="Financial Modeling">Financial Modeling</option>
-                                </select></td>
-                                <td><input type="text" class="editable" value="UVG"></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="Octavio" selected>Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="None" selected>None</option>
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><input type="date" class="editable date-input" value="2025-08-30"></td>
-                                <td><input type="number" class="editable amount-input" value="12000" onchange="updatePipeline()"></td>
-                                <td><input type="number" class="editable probability-input" value="70" min="0" max="100" onchange="updatePipeline()"></td>
-                                <td class="weighted-value">$8,400</td>
-                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td><input type="text" class="editable" value="BMS - PM" onchange="updatePipeline()"></td>
-                                <td><select class="editable">
-                                    <option value="AI">AI</option>
-                                    <option value="Demand Modeling" selected>Demand Modeling</option>
-                                    <option value="BigData">BigData</option>
-                                    <option value="Urban Analytics">Urban Analytics</option>
-                                    <option value="Financial Modeling">Financial Modeling</option>
-                                </select></td>
-                                <td><input type="text" class="editable" value="BMS"></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé" selected>Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="None">None</option>
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><input type="date" class="editable date-input" value="2025-07-30"></td>
-                                <td><input type="number" class="editable amount-input" value="10000" onchange="updatePipeline()"></td>
-                                <td><input type="number" class="editable probability-input" value="70" min="0" max="100" onchange="updatePipeline()"></td>
-                                <td class="weighted-value">$7,000</td>
-                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td><input type="text" class="editable" value="HP - ENERGY ASSESSMENT - CD JUAREZ" onchange="updatePipeline()"></td>
-                                <td><select class="editable">
-                                    <option value="AI">AI</option>
-                                    <option value="Demand Modeling" selected>Demand Modeling</option>
-                                    <option value="BigData">BigData</option>
-                                    <option value="Urban Analytics">Urban Analytics</option>
-                                    <option value="Financial Modeling">Financial Modeling</option>
-                                </select></td>
-                                <td><input type="text" class="editable" value="CrossColab"></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="None" selected>None</option>
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><input type="date" class="editable date-input" value="2025-09-15"></td>
-                                <td><input type="number" class="editable amount-input" value="1780" onchange="updatePipeline()"></td>
-                                <td><input type="number" class="editable probability-input" value="65" min="0" max="100" onchange="updatePipeline()"></td>
-                                <td class="weighted-value">$1,157</td>
-                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td><input type="text" class="editable" value="Desarrollar Geovisor en temas mineros con AI" onchange="updatePipeline()"></td>
-                                <td><select class="editable">
-                                    <option value="AI">AI</option>
-                                    <option value="Demand Modeling" selected>Demand Modeling</option>
-                                    <option value="BigData">BigData</option>
-                                    <option value="Urban Analytics">Urban Analytics</option>
-                                    <option value="Financial Modeling">Financial Modeling</option>
-                                </select></td>
-                                <td><input type="text" class="editable" value="CrossColab"></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="Octavio" selected>Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="None">None</option>
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto" selected>Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><input type="date" class="editable date-input" value="2025-10-01"></td>
-                                <td><input type="number" class="editable amount-input" value="15000" onchange="updatePipeline()"></td>
-                                <td><input type="number" class="editable probability-input" value="60" min="0" max="100" onchange="updatePipeline()"></td>
-                                <td class="weighted-value">$9,000</td>
-                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
-                            </tr>
-                            <tr>
-                                <td>6</td>
-                                <td><input type="text" class="editable" value="Grupo BIMBO" onchange="updatePipeline()"></td>
-                                <td><select class="editable">
-                                    <option value="AI">AI</option>
-                                    <option value="Demand Modeling" selected>Demand Modeling</option>
-                                    <option value="BigData">BigData</option>
-                                    <option value="Urban Analytics">Urban Analytics</option>
-                                    <option value="Financial Modeling">Financial Modeling</option>
-                                </select></td>
-                                <td><input type="text" class="editable" value="BIMBO"></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo" selected>Ricardo</option>
-                                </select></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="None">None</option>
-                                    <option value="Octavio" selected>Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><input type="date" class="editable date-input" value="2025-08-15"></td>
-                                <td><input type="number" class="editable amount-input" value="29000" onchange="updatePipeline()"></td>
-                                <td><input type="number" class="editable probability-input" value="60" min="0" max="100" onchange="updatePipeline()"></td>
-                                <td class="weighted-value">$17,400</td>
-                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
-                            </tr>
-                            <tr>
-                                <td>7</td>
-                                <td><input type="text" class="editable" value="META - Traffic (Equipo Gastón)" onchange="updatePipeline()"></td>
-                                <td><select class="editable">
-                                    <option value="AI">AI</option>
-                                    <option value="Demand Modeling" selected>Demand Modeling</option>
-                                    <option value="BigData">BigData</option>
-                                    <option value="Urban Analytics">Urban Analytics</option>
-                                    <option value="Financial Modeling">Financial Modeling</option>
-                                </select></td>
-                                <td><input type="text" class="editable" value="META"></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto" selected>Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="None" selected>None</option>
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><input type="date" class="editable date-input" value="2025-11-30"></td>
-                                <td><input type="number" class="editable amount-input" value="20000" onchange="updatePipeline()"></td>
-                                <td><input type="number" class="editable probability-input" value="60" min="0" max="100" onchange="updatePipeline()"></td>
-                                <td class="weighted-value">$12,000</td>
-                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
-                            </tr>
-                            <tr>
-                                <td>8</td>
-                                <td><input type="text" class="editable" value="META - PM + Geospatial analysis (Michael)" onchange="updatePipeline()"></td>
-                                <td><select class="editable">
-                                    <option value="AI">AI</option>
-                                    <option value="Demand Modeling" selected>Demand Modeling</option>
-                                    <option value="BigData">BigData</option>
-                                    <option value="Urban Analytics">Urban Analytics</option>
-                                    <option value="Financial Modeling">Financial Modeling</option>
-                                </select></td>
-                                <td><input type="text" class="editable" value="META"></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé" selected>Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="None">None</option>
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto" selected>Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><input type="date" class="editable date-input" value="2025-10-15"></td>
-                                <td><input type="number" class="editable amount-input" value="13400" onchange="updatePipeline()"></td>
-                                <td><input type="number" class="editable probability-input" value="60" min="0" max="100" onchange="updatePipeline()"></td>
-                                <td class="weighted-value">$8,040</td>
-                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
-                            </tr>
-                            <tr>
-                                <td>9</td>
-                                <td><input type="text" class="editable" value="San Francisco - TOD Analysis" onchange="updatePipeline()"></td>
-                                <td><select class="editable">
-                                    <option value="AI">AI</option>
-                                    <option value="Demand Modeling" selected>Demand Modeling</option>
-                                    <option value="BigData">BigData</option>
-                                    <option value="Urban Analytics">Urban Analytics</option>
-                                    <option value="Financial Modeling">Financial Modeling</option>
-                                </select></td>
-                                <td><input type="text" class="editable" value="CrossColab"></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="Octavio" selected>Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="None" selected>None</option>
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><input type="date" class="editable date-input" value="2025-09-30"></td>
-                                <td><input type="number" class="editable amount-input" value="25000" onchange="updatePipeline()"></td>
-                                <td><input type="number" class="editable probability-input" value="50" min="0" max="100" onchange="updatePipeline()"></td>
-                                <td class="weighted-value">$12,500</td>
-                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
-                            </tr>
-                            <tr>
-                                <td>10</td>
-                                <td><input type="text" class="editable" value="LEGO" onchange="updatePipeline()"></td>
-                                <td><select class="editable">
-                                    <option value="AI">AI</option>
-                                    <option value="Demand Modeling">Demand Modeling</option>
-                                    <option value="BigData">BigData</option>
-                                    <option value="Urban Analytics" selected>Urban Analytics</option>
-                                    <option value="Financial Modeling">Financial Modeling</option>
-                                </select></td>
-                                <td><input type="text" class="editable" value="LEGO"></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo" selected>Ricardo</option>
-                                </select></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="None" selected>None</option>
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><input type="date" class="editable date-input" value="2025-08-31"></td>
-                                <td><input type="number" class="editable amount-input" value="5000" onchange="updatePipeline()"></td>
-                                <td><input type="number" class="editable probability-input" value="50" min="0" max="100" onchange="updatePipeline()"></td>
-                                <td class="weighted-value">$2,500</td>
-                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
-                            </tr>
-                            <tr>
-                                <td>11</td>
-                                <td><input type="text" class="editable" value="BORDER CROSSING MESA DE OTAY" onchange="updatePipeline()"></td>
-                                <td><select class="editable">
-                                    <option value="AI">AI</option>
-                                    <option value="Demand Modeling" selected>Demand Modeling</option>
-                                    <option value="BigData">BigData</option>
-                                    <option value="Urban Analytics">Urban Analytics</option>
-                                    <option value="Financial Modeling">Financial Modeling</option>
-                                </select></td>
-                                <td><input type="text" class="editable" value="CrossColab"></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto" selected>Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="None" selected>None</option>
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><input type="date" class="editable date-input" value="2025-11-15"></td>
-                                <td><input type="number" class="editable amount-input" value="15000" onchange="updatePipeline()"></td>
-                                <td><input type="number" class="editable probability-input" value="50" min="0" max="100" onchange="updatePipeline()"></td>
-                                <td class="weighted-value">$7,500</td>
-                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
-                            </tr>
-                            <tr>
-                                <td>12</td>
-                                <td><input type="text" class="editable" value="L.A. 511" onchange="updatePipeline()"></td>
-                                <td><select class="editable">
-                                    <option value="AI">AI</option>
-                                    <option value="Demand Modeling" selected>Demand Modeling</option>
-                                    <option value="BigData">BigData</option>
-                                    <option value="Urban Analytics">Urban Analytics</option>
-                                    <option value="Financial Modeling">Financial Modeling</option>
-                                </select></td>
-                                <td><input type="text" class="editable" value="CrossColab"></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="None">None</option>
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto" selected>Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><input type="date" class="editable date-input" value="2025-12-31"></td>
-                                <td><input type="number" class="editable amount-input" value="60000" onchange="updatePipeline()"></td>
-                                <td><input type="number" class="editable probability-input" value="40" min="0" max="100" onchange="updatePipeline()"></td>
-                                <td class="weighted-value">$24,000</td>
-                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
-                            </tr>
-                            <tr>
-                                <td>13</td>
-                                <td><input type="text" class="editable" value="DD Traffic Study - France" onchange="updatePipeline()"></td>
-                                <td><select class="editable">
-                                    <option value="AI">AI</option>
-                                    <option value="Demand Modeling" selected>Demand Modeling</option>
-                                    <option value="BigData">BigData</option>
-                                    <option value="Urban Analytics">Urban Analytics</option>
-                                    <option value="Financial Modeling">Financial Modeling</option>
-                                </select></td>
-                                <td><input type="text" class="editable" value="France Client"></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto" selected>Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="None" selected>None</option>
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><input type="date" class="editable date-input" value="2025-10-30"></td>
-                                <td><input type="number" class="editable amount-input" value="24400" onchange="updatePipeline()"></td>
-                                <td><input type="number" class="editable probability-input" value="40" min="0" max="100" onchange="updatePipeline()"></td>
-                                <td class="weighted-value">$9,760</td>
-                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
-                            </tr>
-                            <tr>
-                                <td>14</td>
-                                <td><input type="text" class="editable" value="Estudio Movilidad Sección 2 - Bosque de Chapultepec" onchange="updatePipeline()"></td>
-                                <td><select class="editable">
-                                    <option value="AI">AI</option>
-                                    <option value="Demand Modeling" selected>Demand Modeling</option>
-                                    <option value="BigData">BigData</option>
-                                    <option value="Urban Analytics">Urban Analytics</option>
-                                    <option value="Financial Modeling">Financial Modeling</option>
-                                </select></td>
-                                <td><input type="text" class="editable" value="MOTA-ENGIL"></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="Octavio" selected>Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="None">None</option>
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><input type="date" class="editable date-input" value="2025-11-30"></td>
-                                <td><input type="number" class="editable amount-input" value="54000" onchange="updatePipeline()"></td>
-                                <td><input type="number" class="editable probability-input" value="35" min="0" max="100" onchange="updatePipeline()"></td>
-                                <td class="weighted-value">$18,900</td>
-                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
-                            </tr>
-                            <tr>
-                                <td>15</td>
-                                <td><input type="text" class="editable" value="PMU - monitoring platform - Lima" onchange="updatePipeline()"></td>
-                                <td><select class="editable">
-                                    <option value="AI">AI</option>
-                                    <option value="Demand Modeling" selected>Demand Modeling</option>
-                                    <option value="BigData">BigData</option>
-                                    <option value="Urban Analytics">Urban Analytics</option>
-                                    <option value="Financial Modeling">Financial Modeling</option>
-                                </select></td>
-                                <td><input type="text" class="editable" value="ATU"></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé" selected>Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="None" selected>None</option>
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><input type="date" class="editable date-input" value="2025-12-15"></td>
-                                <td><input type="number" class="editable amount-input" value="62000" onchange="updatePipeline()"></td>
-                                <td><input type="number" class="editable probability-input" value="20" min="0" max="100" onchange="updatePipeline()"></td>
-                                <td class="weighted-value">$12,400</td>
-                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
-                            </tr>
-                            <tr>
-                                <td>16</td>
-                                <td><input type="text" class="editable" value="Advisory Services on Mobility Issues for the 2026 World Cup; Focus on Mexico" onchange="updatePipeline()"></td>
-                                <td><select class="editable">
-                                    <option value="AI">AI</option>
-                                    <option value="Demand Modeling" selected>Demand Modeling</option>
-                                    <option value="BigData">BigData</option>
-                                    <option value="Urban Analytics">Urban Analytics</option>
-                                    <option value="Financial Modeling">Financial Modeling</option>
-                                </select></td>
-                                <td><input type="text" class="editable" value="FIFA/CrossColab"></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo" selected>Ricardo</option>
-                                </select></td>
-                                <td><select class="editable" onchange="updatePipelineLeadAnalysis()">
-                                    <option value="None">None</option>
-                                    <option value="Octavio" selected>Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><input type="date" class="editable date-input" value="2026-01-15"></td>
-                                <td><input type="number" class="editable amount-input" value="20000" onchange="updatePipeline()"></td>
-                                <td><input type="number" class="editable probability-input" value="0" min="0" max="100" onchange="updatePipeline()"></td>
-                                <td class="weighted-value">$0</td>
-                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
-                            </tr>
+                            <!-- Data will be loaded from server -->
                             <tr class="total-row">
                                 <td><strong>#</strong></td>
                                 <td><strong>TOTAL PIPELINE</strong></td>
@@ -970,9 +441,10 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td id="totalPipeline"><strong>$421,580</strong></td>
                                 <td></td>
-                                <td id="totalWeighted"><strong>$183,557</strong></td>
+                                <td id="totalPipeline"><strong>$0</strong></td>
+                                <td></td>
+                                <td id="totalWeighted"><strong>$0</strong></td>
                                 <td></td>
                             </tr>
                         </tbody>
@@ -1007,48 +479,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td><input type="text" class="editable" value="Smart Cities Initiative - Costa Rica"></td>
-                                <td><input type="text" class="editable" value="IADB"></td>
-                                <td><select class="editable">
-                                    <option value="Octavio" selected>Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><select class="editable">
-                                    <option value="None">None</option>
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto" selected>Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><input type="date" class="editable date-input" value="2025-07-20"></td>
-                                <td><input type="text" class="editable" value="Expression of Interest - Smart City Framework" style="min-width: 200px;"></td>
-                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td><input type="text" class="editable" value="Sustainable Transport Network - Peru"></td>
-                                <td><input type="text" class="editable" value="World Bank"></td>
-                                <td><select class="editable">
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><select class="editable">
-                                    <option value="None" selected>None</option>
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><input type="date" class="editable date-input" value="2025-08-10"></td>
-                                <td><input type="text" class="editable" value="Pre-qualification for transport advisory services" style="min-width: 200px;"></td>
-                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
-                            </tr>
+                            <!-- Data will be loaded from server -->
                         </tbody>
                     </table>
                 </div>
@@ -1072,64 +503,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td><input type="text" class="editable" value="Urban Mobility Plan - Lima and Callao"></td>
-                                <td><input type="text" class="editable" value="Embassy of the Netherlands in Mexico"></td>
-                                <td><input type="date" class="editable date-input" value="2025-08-15"></td>
-                                <td><input type="number" class="editable amount-input" value="19000" onchange="updateOngoing()"></td>
-                                <td><select class="editable" onchange="updateOngoing()">
-                                    <option value="In Progress" selected>In Progress</option>
-                                    <option value="On Hold">On Hold</option>
-                                    <option value="Completed">Completed</option>
-                                </select></td>
-                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td><input type="text" class="editable" value="Oaxaca Cycling Workshop"></td>
-                                <td><input type="text" class="editable" value="Local Government"></td>
-                                <td><input type="date" class="editable date-input" value="2025-07-30"></td>
-                                <td><input type="number" class="editable amount-input" value="2652" onchange="updateOngoing()"></td>
-                                <td><select class="editable" onchange="updateOngoing()">
-                                    <option value="In Progress" selected>In Progress</option>
-                                    <option value="On Hold">On Hold</option>
-                                    <option value="Completed">Completed</option>
-                                </select></td>
-                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td><input type="text" class="editable" value="San José VTA Accessibility Analysis"></td>
-                                <td><input type="text" class="editable" value="VTA"></td>
-                                <td><input type="date" class="editable date-input" value="2025-09-30"></td>
-                                <td><input type="number" class="editable amount-input" value="1500" onchange="updateOngoing()"></td>
-                                <td><select class="editable" onchange="updateOngoing()">
-                                    <option value="In Progress" selected>In Progress</option>
-                                    <option value="On Hold">On Hold</option>
-                                    <option value="Completed">Completed</option>
-                                </select></td>
-                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td><input type="text" class="editable" value="El Naranjo - Model update"></td>
-                                <td><input type="text" class="editable" value="IDC"></td>
-                                <td><input type="date" class="editable date-input" value="2025-12-15"></td>
-                                <td><input type="number" class="editable amount-input" value="25000" onchange="updateOngoing()"></td>
-               <td><select class="editable" onchange="updateOngoing()">
-                                    <option value="In Progress" selected>In Progress</option>
-                                    <option value="On Hold">On Hold</option>
-                                    <option value="Completed">Completed</option>
-                                </select></td>
-                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
-                            </tr>
+                            <!-- Data will be loaded from server -->
                             <tr class="total-row">
                                 <td><strong>#</strong></td>
                                 <td><strong>TOTAL ONGOING</strong></td>
                                 <td></td>
                                 <td></td>
-                                <td id="totalOngoing"><strong>$48,152</strong></td>
+                                <td id="totalOngoing"><strong>$0</strong></td>
                                 <td></td>
                                 <td></td>
                             </tr>
@@ -1159,76 +539,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td><input type="text" class="editable" value="Mexico City Metro Analysis"></td>
-                                <td><input type="text" class="editable" value="CDMX Government"></td>
-                                <td><select class="editable">
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto" selected>Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><select class="editable">
-                                    <option value="None">None</option>
-                                    <option value="Octavio" selected>Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><input type="date" class="editable date-input" value="2025-05-15"></td>
-                                <td><input type="number" class="editable amount-input" value="85000" onchange="updateLost()"></td>
-                                <td><select class="editable" onchange="updateLossAnalysis()">
-                                    <option value="Price" selected>Price</option>
-                                    <option value="Technical">Technical</option>
-                                    <option value="Price/Technical">Price/Technical</option>
-                                    <option value="Deadline">Deadline</option>
-                                    <option value="Corruption">Corruption</option>
-                                    <option value="Lack of Funds">Lack of Funds</option>
-                                    <option value="Political Environment">Political Environment</option>
-                                    <option value="Client Stepback">Client Stepback</option>
-                                    <option value="Administrative Issues">Administrative Issues</option>
-                                    <option value="Decided not to go">Decided not to go</option>
-                                    <option value="Others">Others</option>
-                                </select></td>
-                                <td><input type="text" class="editable" value="Local Consultant"></td>
-                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td><input type="text" class="editable" value="Guadalajara Smart Traffic"></td>
-                                <td><input type="text" class="editable" value="Municipal Government"></td>
-                                <td><select class="editable">
-                                    <option value="Octavio" selected>Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><select class="editable">
-                                    <option value="None" selected>None</option>
-                                    <option value="Octavio">Octavio</option>
-                                    <option value="Roberto">Roberto</option>
-                                    <option value="Noé">Noé</option>
-                                    <option value="Ricardo">Ricardo</option>
-                                </select></td>
-                                <td><input type="date" class="editable date-input" value="2025-04-20"></td>
-                                <td><input type="number" class="editable amount-input" value="45000" onchange="updateLost()"></td>
-                                <td><select class="editable" onchange="updateLossAnalysis()">
-                                    <option value="Price">Price</option>
-                                    <option value="Technical">Technical</option>
-                                    <option value="Price/Technical">Price/Technical</option>
-                                    <option value="Deadline" selected>Deadline</option>
-                                    <option value="Corruption">Corruption</option>
-                                    <option value="Lack of Funds">Lack of Funds</option>
-                                    <option value="Political Environment">Political Environment</option>
-                                    <option value="Client Stepback">Client Stepback</option>
-                                    <option value="Administrative Issues">Administrative Issues</option>
-                                    <option value="Decided not to go">Decided not to go</option>
-                                    <option value="Others">Others</option>
-                                </select></td>
-                                <td><input type="text" class="editable" value="IBM"></td>
-                                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
-                            </tr>
+                            <!-- Data will be loaded from server -->
                             <tr class="total-row">
                                 <td><strong>#</strong></td>
                                 <td><strong>TOTAL LOST VALUE</strong></td>
@@ -1236,7 +547,7 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td id="totalLost"><strong>$130,000</strong></td>
+                                <td id="totalLost"><strong>$0</strong></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -1362,7 +673,7 @@
                 
                 <div class="opportunity-header">
                     <label for="opportunityName"><strong>Opportunity Name:</strong></label>
-                    <input type="text" id="opportunityName" class="opportunity-name" placeholder="Enter opportunity name..." value="Sample Opportunity - Urban Analytics Mexico">
+                    <input type="text" id="opportunityName" class="opportunity-name" placeholder="Enter opportunity name..." value="">
                 </div>
 
                 <div class="evaluation-form">
@@ -1378,7 +689,7 @@
                             <div class="criterion-description">How well does this opportunity align with our specific growth targets and technical development goals in urban analytics?</div>
                         </div>
                         <input type="number" class="weight-input" value="18" min="0" max="100" onchange="calculateScore()">
-                        <input type="number" class="score-input" value="8" min="1" max="10" onchange="calculateScore()">
+                        <input type="number" class="score-input" value="5" min="1" max="10" onchange="calculateScore()">
                     </div>
 
                     <div class="evaluation-item">
@@ -1387,7 +698,7 @@
                             <div class="criterion-description">Expected profitability, budget adequacy, and direct contribution to our $300K annual revenue goal.</div>
                         </div>
                         <input type="number" class="weight-input" value="16" min="0" max="100" onchange="calculateScore()">
-                        <input type="number" class="score-input" value="7" min="1" max="10" onchange="calculateScore()">
+                        <input type="number" class="score-input" value="5" min="1" max="10" onchange="calculateScore()">
                     </div>
 
                     <div class="evaluation-item">
@@ -1396,7 +707,7 @@
                             <div class="criterion-description">Team's technical competence and availability of required skills for successful delivery within our practice group.</div>
                         </div>
                         <input type="number" class="weight-input" value="14" min="0" max="100" onchange="calculateScore()">
-                        <input type="number" class="score-input" value="9" min="1" max="10" onchange="calculateScore()">
+                        <input type="number" class="score-input" value="5" min="1" max="10" onchange="calculateScore()">
                     </div>
 
                     <div class="evaluation-item">
@@ -1405,7 +716,7 @@
                             <div class="criterion-description">Coherence with Arcadis global strategy and potential for cross-office collaboration and knowledge sharing.</div>
                         </div>
                         <input type="number" class="weight-input" value="12" min="0" max="100" onchange="calculateScore()">
-                        <input type="number" class="score-input" value="7" min="1" max="10" onchange="calculateScore()">
+                        <input type="number" class="score-input" value="5" min="1" max="10" onchange="calculateScore()">
                     </div>
 
                     <div class="evaluation-item">
@@ -1414,7 +725,7 @@
                             <div class="criterion-description">Quality of existing relationship, past performance, and opportunity to strengthen our position in the Mexican market.</div>
                         </div>
                         <input type="number" class="weight-input" value="10" min="0" max="100" onchange="calculateScore()">
-                        <input type="number" class="score-input" value="6" min="1" max="10" onchange="calculateScore()">
+                        <input type="number" class="score-input" value="5" min="1" max="10" onchange="calculateScore()">
                     </div>
 
                     <div class="evaluation-item">
@@ -1423,7 +734,7 @@
                             <div class="criterion-description">Opportunity for meaningful collaboration with other Arcadis offices generating significant shared revenue (>30% collaboration).</div>
                         </div>
                         <input type="number" class="weight-input" value="8" min="0" max="100" onchange="calculateScore()">
-                        <input type="number" class="score-input" value="7" min="1" max="10" onchange="calculateScore()">
+                        <input type="number" class="score-input" value="5" min="1" max="10" onchange="calculateScore()">
                     </div>
 
                     <div class="evaluation-item">
@@ -1441,7 +752,7 @@
                             <div class="criterion-description">Our competitive advantage and realistic probability of winning against other bidders in the market.</div>
                         </div>
                         <input type="number" class="weight-input" value="6" min="0" max="100" onchange="calculateScore()">
-                        <input type="number" class="score-input" value="6" min="1" max="10" onchange="calculateScore()">
+                        <input type="number" class="score-input" value="5" min="1" max="10" onchange="calculateScore()">
                     </div>
 
                     <div class="evaluation-item">
@@ -1450,7 +761,7 @@
                             <div class="criterion-description">Team's familiarity with local regulations, culture, and market conditions in the target region or country.</div>
                         </div>
                         <input type="number" class="weight-input" value="4" min="0" max="100" onchange="calculateScore()">
-                        <input type="number" class="score-input" value="8" min="1" max="10" onchange="calculateScore()">
+                        <input type="number" class="score-input" value="5" min="1" max="10" onchange="calculateScore()">
                     </div>
 
                     <div class="evaluation-item">
@@ -1459,7 +770,7 @@
                             <div class="criterion-description">Opportunity to develop new capabilities, technologies, or methodologies that benefit future projects and team growth.</div>
                         </div>
                         <input type="number" class="weight-input" value="4" min="0" max="100" onchange="calculateScore()">
-                        <input type="number" class="score-input" value="8" min="1" max="10" onchange="calculateScore()">
+                        <input type="number" class="score-input" value="5" min="1" max="10" onchange="calculateScore()">
                     </div>
 
                     <div class="weight-total" id="weightTotal">
@@ -1467,9 +778,9 @@
                     </div>
 
                     <div class="final-score score-conditional" id="finalScoreContainer">
-                        <div>Total Weighted Score: <span id="finalScore">7.04</span> / 10</div>
+                        <div>Total Weighted Score: <span id="finalScore">5.00</span> / 10</div>
                         <div style="margin-top: 10px; font-size: 1rem;">
-                            Recommendation: <span id="recommendation">CONDITIONAL GO - Good opportunity worth pursuing with some considerations</span>
+                            Recommendation: <span id="recommendation">NO GO - High risk, poor alignment</span>
                         </div>
                     </div>
                     
@@ -1480,6 +791,8 @@
         </div>
     </div>
 
+    <!-- Include Storage System -->
+    <script src="urban-analytics-storage.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
