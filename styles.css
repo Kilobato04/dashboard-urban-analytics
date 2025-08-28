@@ -900,3 +900,46 @@ select.editable:focus {
         text-align: center;
     }
 }
+
+/* Botón de exportación CSV para Pipeline */
+.export-csv-button {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.export-csv-button:hover {
+    background: linear-gradient(135deg, #138496 0%, #0f6674 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(23, 162, 184, 0.4);
+}
+
+.export-csv-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
+}
+
+/* Responsive design para móviles */
+@media (max-width: 768px) {
+    .export-csv-button {
+        padding: 10px 15px;
+        font-size: 0.8rem;
+    }
+    
+    /* En móvil, poner el botón abajo del título */
+    .export-csv-button {
+        margin-top: 10px;
+        width: 100%;
+        justify-content: center;
+    }
+}
