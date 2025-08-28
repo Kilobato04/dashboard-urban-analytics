@@ -999,4 +999,326 @@ function formatNumber(num) {
     return new Intl.NumberFormat('en-US').format(num);
 }
 
+// === FUNCIÓN PARA EXPORTAR PIPELINE A CSV ===
+
+function exportPipelineToCSV() {
+    console.log('📊 Iniciando exportación de Pipeline a CSV...');
+    
+    try {
+        // Generar contenido CSV
+        let csvContent = '';
+        
+        // Header del archivo
+        csvContent += generateCSVHeader();
+        
+        // Sección 1: Current Proposal Pipeline
+        csvContent += generateCurrentPipelineCSV();
+        
+        // Sección 2: EOI Opportunities  
+        csvContent += generateEOICSV();
+        
+        // Sección 3: Ongoing Projects
+        csvContent += generateOngoingCSV();
+        
+        // Sección 4: Lost Opportunities
+        csvContent += generateLostOpportunitiesCSV();
+        
+        // Footer con estadísticas
+        csvContent += generateCSVFooter();
+        
+        // Descargar archivo
+        downloadCSV(csvContent, `Urban_Analytics_Pipeline_${getCurrentDateString()}.csv`);
+        
+        // Mostrar notificación de éxito
+        showExportNotification('✅ Pipeline data exported successfully!');
+        console.log('✅ Exportación CSV completada');
+        
+    } catch (error) {
+        console.error('❌ Error exportando CSV:', error);
+        showExportNotification('❌ Error exporting data: ' + error.message, 'error');
+    }
+}
+
+// === GENERAR HEADER DEL CSV ===
+function generateCSVHeader() {
+    const currentDate = new Date().toLocaleString('en-US');
+    const teamCost = document.getElementById('teamCost')?.value || '240000';
+    const target = document.getElementById('targetAmount')?.value || '300000';
+    
+    return `Urban Analytics Mexico - Project Pipeline Export
+Generated on: ${currentDate}
+Team Cost: $${parseInt(teamCost).toLocaleString()}
+Revenue Target: $${parseInt(target).toLocaleString()}
+
+========================================
+
+`;
+}
+
+// === GENERAR CURRENT PIPELINE CSV ===
+function generateCurrentPipelineCSV() {
+    console.log('📋 Extrayendo Current Pipeline...');
+    
+    let csv = `CURRENT PROPOSAL PIPELINE
+#,Project,Topic,Client,Lead,Support,Date,Price (USD),Probability (%),Weighted Value (USD)
+`;
+    
+    const rows = document.querySelectorAll('#pipelineTable tbody tr:not(.total-row)');
+    let totalAmount = 0;
+    let totalWeighted = 0;
+    
+    rows.forEach((row, index) => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 10) {
+            const project = escapeCSV(cells[1].querySelector('input')?.value || '');
+            const topic = escapeCSV(cells[2].querySelector('select')?.value || '');
+            const client = escapeCSV(cells[3].querySelector('input')?.value || '');
+            const lead = escapeCSV(cells[4].querySelector('select')?.value || '');
+            const support = escapeCSV(cells[5].querySelector('select')?.value || '');
+            const date = cells[6].querySelector('input')?.value || '';
+            const price = parseFloat(cells[7].querySelector('input')?.value) || 0;
+            const probability = parseFloat(cells[8].querySelector('input')?.value) || 0;
+            const weighted = (price * probability) / 100;
+            
+            csv += `${index + 1},"${project}","${topic}","${client}","${lead}","${support}",${date},${price},${probability},${weighted.toFixed(2)}
+`;
+            
+            totalAmount += price;
+            totalWeighted += weighted;
+        }
+    });
+    
+    // Totales
+    csv += `TOTAL,,,,,,,$${totalAmount.toLocaleString()},,${totalWeighted.toFixed(2)}
+
+`;
+    
+    console.log(`📊 Current Pipeline: ${rows.length} proyectos, $${totalAmount.toLocaleString()} total`);
+    return csv;
+}
+
+// === GENERAR EOI CSV ===
+function generateEOICSV() {
+    console.log('📋 Extrayendo EOI Opportunities...');
+    
+    let csv = `EOI'S AND LEADS (NO FEE)
+#,Project,Client,Lead,Support,Date,Other
+`;
+    
+    const rows = document.querySelectorAll('#eoiTable tbody tr');
+    
+    rows.forEach((row, index) => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 7) {
+            const project = escapeCSV(cells[1].querySelector('input')?.value || '');
+            const client = escapeCSV(cells[2].querySelector('input')?.value || '');
+            const lead = escapeCSV(cells[3].querySelector('select')?.value || '');
+            const support = escapeCSV(cells[4].querySelector('select')?.value || '');
+            const date = cells[5].querySelector('input')?.value || '';
+            const other = escapeCSV(cells[6].querySelector('input')?.value || '');
+            
+            csv += `${index + 1},"${project}","${client}","${lead}","${support}",${date},"${other}"
+`;
+        }
+    });
+    
+    csv += `
+`;
+    console.log(`📊 EOI: ${rows.length} oportunidades`);
+    return csv;
+}
+
+// === GENERAR ONGOING CSV ===
+function generateOngoingCSV() {
+    console.log('📋 Extrayendo Ongoing Projects...');
+    
+    let csv = `ONGOING PROJECTS
+#,Project,Client,Date,Value (USD),Status
+`;
+    
+    const rows = document.querySelectorAll('#ongoingTable tbody tr:not(.total-row)');
+    let totalValue = 0;
+    
+    rows.forEach((row, index) => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 6) {
+            const project = escapeCSV(cells[1].querySelector('input')?.value || '');
+            const client = escapeCSV(cells[2].querySelector('input')?.value || '');
+            const date = cells[3].querySelector('input')?.value || '';
+            const value = parseFloat(cells[4].querySelector('input')?.value) || 0;
+            const status = escapeCSV(cells[5].querySelector('select')?.value || '');
+            
+            csv += `${index + 1},"${project}","${client}",${date},${value},"${status}"
+`;
+            
+            totalValue += value;
+        }
+    });
+    
+    // Total
+    csv += `TOTAL,,,,$${totalValue.toLocaleString()},
+
+`;
+    
+    console.log(`📊 Ongoing: ${rows.length} proyectos, $${totalValue.toLocaleString()} total`);
+    return csv;
+}
+
+// === GENERAR LOST OPPORTUNITIES CSV ===
+function generateLostOpportunitiesCSV() {
+    console.log('📋 Extrayendo Lost Opportunities...');
+    
+    let csv = `LOST OPPORTUNITIES / DECIDED NOT TO GO
+#,Project,Client,Lead,Support,Date Lost,Value (USD),Motive,Comments
+`;
+    
+    const rows = document.querySelectorAll('#lostTable tbody tr:not(.total-row)');
+    let totalLost = 0;
+    const motiveStats = {};
+    
+    rows.forEach((row, index) => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 9) {
+            const project = escapeCSV(cells[1].querySelector('input')?.value || '');
+            const client = escapeCSV(cells[2].querySelector('input')?.value || '');
+            const lead = escapeCSV(cells[3].querySelector('select')?.value || '');
+            const support = escapeCSV(cells[4].querySelector('select')?.value || '');
+            const dateLost = cells[5].querySelector('input')?.value || '';
+            const value = parseFloat(cells[6].querySelector('input')?.value) || 0;
+            const motive = escapeCSV(cells[7].querySelector('select')?.value || '');
+            const comments = escapeCSV(cells[8].querySelector('input')?.value || '');
+            
+            csv += `${index + 1},"${project}","${client}","${lead}","${support}",${dateLost},${value},"${motive}","${comments}"
+`;
+            
+            totalLost += value;
+            
+            // Estadísticas por motivo
+            if (!motiveStats[motive]) {
+                motiveStats[motive] = { count: 0, value: 0 };
+            }
+            motiveStats[motive].count++;
+            motiveStats[motive].value += value;
+        }
+    });
+    
+    // Total y estadísticas
+    csv += `TOTAL,,,,,,$${totalLost.toLocaleString()},,
+
+LOSS ANALYSIS BY MOTIVE
+Motive,Count,Total Value (USD),Percentage
+`;
+    
+    Object.entries(motiveStats).forEach(([motive, stats]) => {
+        const percentage = totalLost > 0 ? ((stats.value / totalLost) * 100).toFixed(1) : '0';
+        csv += `"${motive}",${stats.count},$${stats.value.toLocaleString()},${percentage}%
+`;
+    });
+    
+    csv += `
+`;
+    
+    console.log(`📊 Lost: ${rows.length} oportunidades, $${totalLost.toLocaleString()} perdido`);
+    return csv;
+}
+
+// === GENERAR FOOTER CON ESTADÍSTICAS ===
+function generateCSVFooter() {
+    // Calcular estadísticas generales
+    const exercised = parseInt(document.getElementById('exercisedAmount')?.value) || 0;
+    const backlog = parseInt(document.getElementById('backlogAmount')?.value) || 0;
+    const potential = parseInt(document.getElementById('potentialAmount')?.value) || 0;
+    const target = parseInt(document.getElementById('targetAmount')?.value) || 300000;
+    const teamCost = parseInt(document.getElementById('teamCost')?.value) || 240000;
+    
+    const gapTarget = target - (exercised + backlog + potential);
+    const gapTeamCost = teamCost - (exercised + backlog + potential);
+    
+    return `========================================
+SUMMARY STATISTICS
+Exercised Revenue: $${exercised.toLocaleString()}
+Backlog Revenue: $${backlog.toLocaleString()}
+Potential Revenue: $${potential.toLocaleString()}
+Total Pipeline: $${(exercised + backlog + potential).toLocaleString()}
+
+Target Gap: $${gapTarget.toLocaleString()}
+Team Cost Gap: $${gapTeamCost.toLocaleString()}
+
+Target Achievement: ${((exercised + backlog + potential) / target * 100).toFixed(1)}%
+Team Cost Coverage: ${((exercised + backlog + potential) / teamCost * 100).toFixed(1)}%
+
+Generated by Urban Analytics Mexico Dashboard
+========================================
+`;
+}
+
+// === FUNCIONES AUXILIARES ===
+
+// Escapar comillas en CSV
+function escapeCSV(text) {
+    if (typeof text !== 'string') return '';
+    return text.replace(/"/g, '""');
+}
+
+// Obtener fecha actual formateada
+function getCurrentDateString() {
+    const now = new Date();
+    return now.getFullYear() + 
+           String(now.getMonth() + 1).padStart(2, '0') + 
+           String(now.getDate()).padStart(2, '0');
+}
+
+// Descargar archivo CSV
+function downloadCSV(csvContent, fileName) {
+    console.log(`📥 Descargando archivo: ${fileName}`);
+    
+    // Crear blob con BOM para Excel compatibility
+    const BOM = '\uFEFF';
+    const blob = new Blob([BOM + csvContent], { 
+        type: 'text/csv;charset=utf-8;' 
+    });
+    
+    // Crear y ejecutar descarga
+    const link = document.createElement('a');
+    if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', fileName);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+}
+
+// Mostrar notificación de exportación
+function showExportNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed; 
+        top: 70px; 
+        right: 20px; 
+        padding: 15px 25px;
+        border-radius: 8px; 
+        color: white; 
+        font-weight: bold; 
+        z-index: 10001;
+        ${type === 'success' ? 'background: #17a2b8;' : 'background: #dc3545;'}
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto-remove after 4 seconds
+    setTimeout(() => {
+        if (document.body.contains(notification)) {
+            document.body.removeChild(notification);
+        }
+    }, 4000);
+}
+
+console.log('✅ Pipeline CSV Export functions loaded successfully');
+
 console.log('✅ Urban Analytics Dashboard script loaded successfully');
