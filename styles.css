@@ -943,3 +943,72 @@ select.editable:focus {
         justify-content: center;
     }
 }
+
+/* Estilos adicionales para las nuevas columnas de Ongoing Projects */
+
+/* Input para BST (más pequeño) */
+.bst-input {
+    width: 100px;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: monospace;
+    font-weight: 600;
+}
+
+/* Input para UA Fees (destacado) */
+.ua-fees-input {
+    background: linear-gradient(135deg, #FF6600 0%, #e55a00 100%);
+    color: white;
+    font-weight: 700;
+    border: 2px solid #e55a00;
+}
+
+.ua-fees-input:focus {
+    background: linear-gradient(135deg, #e55a00 0%, #d14900 100%);
+    box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.2);
+}
+
+/* Ajustes para la tabla más ancha */
+#ongoingTable {
+    min-width: 1000px;
+}
+
+/* Columnas más estrechas para que quepa todo */
+#ongoingTable th:nth-child(5), /* BST */
+#ongoingTable td:nth-child(5) {
+    width: 100px;
+    min-width: 100px;
+}
+
+#ongoingTable th:nth-child(6), /* Project Fees */
+#ongoingTable td:nth-child(6),
+#ongoingTable th:nth-child(7), /* UA Fees */
+#ongoingTable td:nth-child(7) {
+    width: 140px;
+    min-width: 140px;
+}
+
+/* Responsive design para móviles */
+@media (max-width: 1024px) {
+    #ongoingTable {
+        font-size: 0.8rem;
+    }
+    
+    #ongoingTable th,
+    #ongoingTable td {
+        padding: 8px 6px;
+    }
+}
+
+/* Total row destacado para ambas columnas de fees */
+.total-row #totalProjectFees {
+    background: #28a745;
+    color: white;
+    font-weight: 700;
+}
+
+.total-row #totalOngoing {
+    background: #FF6600;
+    color: white;
+    font-weight: 700;
+}
