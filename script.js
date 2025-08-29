@@ -36,9 +36,13 @@ function getOngoingTotal() {
     const rows = document.querySelectorAll('#ongoingTable tbody tr:not(.total-row)');
     let total = 0;
     rows.forEach(row => {
-        const amountInput = row.querySelector('.amount-input');
-        if (amountInput) {
-            total += parseFloat(amountInput.value) || 0;
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 8) {
+            // Usar UA Fees (columna 7, índice 6)
+            const uaFeesInput = cells[6].querySelector('.amount-input');
+            if (uaFeesInput) {
+                total += parseFloat(uaFeesInput.value) || 0;
+            }
         }
     });
     return total;
@@ -48,10 +52,14 @@ function getBacklogTotal() {
     const rows = document.querySelectorAll('#ongoingTable tbody tr:not(.total-row)');
     let total = 0;
     rows.forEach(row => {
-        const amountInput = row.querySelector('.amount-input');
-        const statusSelect = row.querySelector('select.editable');
-        if (amountInput && statusSelect && statusSelect.value === 'In Progress') {
-            total += parseFloat(amountInput.value) || 0;
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 8) {
+            // Usar UA Fees (columna 7, índice 6)
+            const uaFeesInput = cells[6].querySelector('.amount-input');
+            const statusSelect = cells[7].querySelector('select.editable'); // Status ahora es columna 8
+            if (uaFeesInput && statusSelect && statusSelect.value === 'In Progress') {
+                total += parseFloat(uaFeesInput.value) || 0;
+            }
         }
     });
     return total;
@@ -61,10 +69,14 @@ function getExercisedTotal() {
     const rows = document.querySelectorAll('#ongoingTable tbody tr:not(.total-row)');
     let total = 0;
     rows.forEach(row => {
-        const amountInput = row.querySelector('.amount-input');
-        const statusSelect = row.querySelector('select.editable');
-        if (amountInput && statusSelect && statusSelect.value === 'Completed') {
-            total += parseFloat(amountInput.value) || 0;
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 8) {
+            // Usar UA Fees (columna 7, índice 6)
+            const uaFeesInput = cells[6].querySelector('.amount-input');
+            const statusSelect = cells[7].querySelector('select.editable'); // Status ahora es columna 8
+            if (uaFeesInput && statusSelect && statusSelect.value === 'Completed') {
+                total += parseFloat(uaFeesInput.value) || 0;
+            }
         }
     });
     return total;
@@ -442,23 +454,44 @@ function updateLossAnalysis() {
 // === ONGOING PROJECTS FUNCTIONS ===
 function updateOngoing() {
     const rows = document.querySelectorAll('#ongoingTable tbody tr:not(.total-row)');
-    let total = 0;
+    let totalProjectFees = 0;
+    let totalUAFees = 0;
 
     rows.forEach(row => {
-        const amountInput = row.querySelector('.amount-input');
-        if (amountInput) {
-            total += parseFloat(amountInput.value) || 0;
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 8) { // Ahora son 8 columnas + action
+            // Project Fees (columna 6, índice 5)
+            const projectFeesInput = cells[5].querySelector('.amount-input');
+            if (projectFeesInput) {
+                totalProjectFees += parseFloat(projectFeesInput.value) || 0;
+            }
+            
+            // UA Fees (columna 7, índice 6) 
+            const uaFeesInput = cells[6].querySelector('.amount-input');
+            if (uaFeesInput) {
+                totalUAFees += parseFloat(uaFeesInput.value) || 0;
+            }
         }
     });
 
+    // Actualizar totales en la tabla
+    const totalProjectFeesElement = document.getElementById('totalProjectFees');
     const totalOngoingElement = document.getElementById('totalOngoing');
+    
+    if (totalProjectFeesElement) {
+        totalProjectFeesElement.innerHTML = `<strong>$${totalProjectFees.toLocaleString()}</strong>`;
+    }
     if (totalOngoingElement) {
-        totalOngoingElement.innerHTML = `<strong>$${total.toLocaleString()}</strong>`;
+        totalOngoingElement.innerHTML = `<strong>$${totalUAFees.toLocaleString()}</strong>`;
     }
     
+    // Actualizar progress bar (usar UA Fees)
     updateProgress();
     markChangesForSaving();
+    
+    console.log(`📊 Ongoing updated: Project Fees: $${totalProjectFees.toLocaleString()}, UA Fees: $${totalUAFees.toLocaleString()}`);
 }
+
 
 // === ROW MANAGEMENT FUNCTIONS ===
 function addPipelineRow() {
@@ -561,7 +594,9 @@ function addOngoingRow() {
         <td><input type="text" class="editable" value="New Project"></td>
         <td><input type="text" class="editable" value="New Client"></td>
         <td><input type="date" class="editable date-input" value="2025-12-31"></td>
-        <td><input type="number" class="editable amount-input" value="0" onchange="updateOngoing()"></td>
+        <td><input type="text" class="editable bst-input" value="BST00${nextNumber}" placeholder="BST Code"></td>
+        <td><input type="number" class="editable amount-input" value="0" onchange="updateOngoing()" placeholder="Project Fees"></td>
+        <td><input type="number" class="editable amount-input ua-fees-input" value="0" onchange="updateOngoing()" placeholder="UA Fees"></td>
         <td><select class="editable" onchange="updateOngoing()">
             <option value="In Progress" selected>In Progress</option>
             <option value="On Hold">On Hold</option>
@@ -1133,36 +1168,42 @@ function generateOngoingCSV() {
     console.log('📋 Extrayendo Ongoing Projects...');
     
     let csv = `ONGOING PROJECTS
-#,Project,Client,Date,Value (USD),Status
+#,Project,Client,Date,BST,Project Fees USD,UA Fees USD,Status
 `;
     
     const rows = document.querySelectorAll('#ongoingTable tbody tr:not(.total-row)');
-    let totalValue = 0;
+    let totalProjectFees = 0;
+    let totalUAFees = 0;
     
     rows.forEach((row, index) => {
         const cells = row.querySelectorAll('td');
-        if (cells.length >= 6) {
+        if (cells.length >= 8) {
             const project = escapeCSV(cells[1].querySelector('input')?.value || '');
             const client = escapeCSV(cells[2].querySelector('input')?.value || '');
             const date = cells[3].querySelector('input')?.value || '';
-            const value = parseFloat(cells[4].querySelector('input')?.value) || 0;
-            const status = escapeCSV(cells[5].querySelector('select')?.value || '');
+            const bst = escapeCSV(cells[4].querySelector('input')?.value || '');
+            const projectFees = parseFloat(cells[5].querySelector('input')?.value) || 0;
+            const uaFees = parseFloat(cells[6].querySelector('input')?.value) || 0;
+            const status = escapeCSV(cells[7].querySelector('select')?.value || '');
             
-            csv += `${index + 1},"${project}","${client}",${date},${value},"${status}"
+            csv += `${index + 1},"${project}","${client}",${date},"${bst}",${projectFees},${uaFees},"${status}"
 `;
             
-            totalValue += value;
+            totalProjectFees += projectFees;
+            totalUAFees += uaFees;
         }
     });
     
-    // Total
-    csv += `TOTAL,,,,$${totalValue.toLocaleString()},
+    // Totales
+    csv += `TOTAL,,,,,${totalProjectFees.toLocaleString()},${totalUAFees.toLocaleString()},
 
 `;
     
-    console.log(`📊 Ongoing: ${rows.length} proyectos, $${totalValue.toLocaleString()} total`);
+    console.log(`📊 Ongoing: ${rows.length} proyectos, Project Fees: $${totalProjectFees.toLocaleString()}, UA Fees: $${totalUAFees.toLocaleString()}`);
     return csv;
 }
+
+console.log('✅ Ongoing Projects functions updated with new columns (BST, Project Fees USD, UA Fees USD)');
 
 // === GENERAR LOST OPPORTUNITIES CSV ===
 function generateLostOpportunitiesCSV() {
