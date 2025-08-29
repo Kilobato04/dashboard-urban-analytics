@@ -459,7 +459,7 @@ function updateOngoing() {
 
     rows.forEach(row => {
         const cells = row.querySelectorAll('td');
-        if (cells.length >= 8) { // Ahora son 8 columnas + action
+        if (cells.length >= 8) {
             // Project Fees (columna 6, índice 5)
             const projectFeesInput = cells[5].querySelector('.amount-input');
             if (projectFeesInput) {
@@ -591,10 +591,10 @@ function addOngoingRow() {
     
     newRow.innerHTML = `
         <td>${nextNumber}</td>
-        <td><input type="text" class="editable" value="New Project"></td>
-        <td><input type="text" class="editable" value="New Client"></td>
-        <td><input type="date" class="editable date-input" value="2025-12-31"></td>
-        <td><input type="text" class="editable bst-input" value="BST00${nextNumber}" placeholder="BST Code"></td>
+        <td><input type="text" class="editable" value="New Project" onchange="updateOngoing()"></td>
+        <td><input type="text" class="editable" value="New Client" onchange="updateOngoing()"></td>
+        <td><input type="date" class="editable date-input" value="2025-12-31" onchange="updateOngoing()"></td>
+        <td><input type="text" class="editable bst-input" value="BST00${nextNumber}" placeholder="BST Code" onchange="updateOngoing()"></td>
         <td><input type="number" class="editable amount-input" value="0" onchange="updateOngoing()" placeholder="Project Fees"></td>
         <td><input type="number" class="editable amount-input ua-fees-input" value="0" onchange="updateOngoing()" placeholder="UA Fees"></td>
         <td><select class="editable" onchange="updateOngoing()">
@@ -1168,7 +1168,7 @@ function generateOngoingCSV() {
     console.log('📋 Extrayendo Ongoing Projects...');
     
     let csv = `ONGOING PROJECTS
-#,Project,Client,Date,BST,Project Fees USD,UA Fees USD,Status
+#,Project,Client,Date,BST,Fees USD,UA Fees USD,Status
 `;
     
     const rows = document.querySelectorAll('#ongoingTable tbody tr:not(.total-row)');
