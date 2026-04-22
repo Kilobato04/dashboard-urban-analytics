@@ -1,862 +1,457 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Practice Group Urban Analytics Mexico Dashboard</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Urban Analytics Mexico — Dashboard 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>Practice Group Urban Analytics Mexico</h1>
-            <p>Strategic Planning & Project Pipeline Dashboard - 2025</p>
-            <div class="header-actions">
-                <button class="save-button" onclick="saveData()" style="margin-left: auto;">💾 Save Changes</button>
-                <div class="status-indicator" style="margin-left: 10px;">
-                    <span id="connectionStatus">🌐 Conectado</span>
-                    <span id="saveStatusText">✅ Sincronizado</span>
-                </div>
-            </div>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-logo">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="4" fill="#E3610F"/>
+          <path d="M8 24L16 8L24 24" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M11 19H21" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-name">Urban Analytics Mexico</span>
+        <span class="brand-sub">Practice Group Dashboard · 2026</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="status-pill" id="syncStatus">
+        <span class="status-dot"></span>
+        <span id="statusText">Synced</span>
+      </div>
+      <button class="btn btn-ghost" onclick="showHistory()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 106 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>
+        History
+      </button>
+      <button class="btn btn-primary" onclick="saveData()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Save
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- REVENUE PROGRESS -->
+<section class="revenue-section">
+  <div class="section-inner">
+    <div class="revenue-header">
+      <div>
+        <h2 class="section-heading">Revenue Progress 2026</h2>
+        <p class="section-sub">Annual target: Jan — Dec 2026</p>
+      </div>
+      <div class="revenue-metrics">
+        <div class="metric">
+          <span class="metric-label">Exercised</span>
+          <span class="metric-value green" id="exercisedAmount">$0</span>
         </div>
-        
-        <!-- Revenue Progress Bar -->
-        <div class="revenue-progress">
-            <div class="progress-header">
-                <h3>Revenue Progress 2025 (USD)</h3>
-                <div class="progress-inputs">
-                    <div class="progress-input-group">
-                        <label for="exercisedAmount">Exercised (USD)</label>
-                        <input type="number" id="exercisedAmount" value="0" readonly style="background: #f8f9fa;" title="Auto-calculated from completed projects">
-                    </div>
-                    <div class="progress-input-group">
-                        <label for="backlogAmount">Backlog (USD)</label>
-                        <input type="number" id="backlogAmount" value="0" readonly style="background: #007bff; color: white; font-weight: 600;" title="Auto-calculated from in progress projects">
-                    </div>
-                    <div class="progress-input-group">
-                        <label for="potentialAmount">Potential W</label>
-                        <input type="number" id="potentialAmount" value="0" readonly style="background: #f8f9fa;" title="Auto-calculated from pipeline weighted total">
-                    </div>
-                    <div class="progress-input-group">
-                        <label for="gapAmount">Gap/Target</label>
-                        <input type="number" id="gapAmount" value="300000" readonly style="background: #f8f9fa;" title="Target - (Exercised + Backlog + Potential)">
-                    </div>
-                    <div class="progress-input-group">
-                        <label for="gapTeamCost">Gap/TeamCost</label>
-                        <input type="number" id="gapTeamCost" value="240000" readonly style="background: #f8f9fa;" title="TeamCost - (Exercised + Backlog + Potential)">
-                    </div>
-                    <div class="progress-input-group">
-                        <label for="teamCost" style="color: #343a40; font-weight: 700;">Team Cost (USD)</label>
-                        <input type="number" id="teamCost" value="240000" readonly style="background: #343a40; color: white; font-weight: 700; border: 2px solid #212529;">
-                    </div>
-                    <div class="progress-input-group">
-                        <label for="targetAmount" style="color: #FF6600; font-weight: 700;">Target (USD)</label>
-                        <input type="number" id="targetAmount" value="300000" readonly style="background: #FF6600; color: white; font-weight: 700; border: 2px solid #e55a00;">
-                    </div>
-                </div>
-            </div>
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar">
-                    <div class="progress-exercised" id="progressExercised"></div>
-                    <div class="progress-backlog" id="progressBacklog" style="background: #007bff;"></div>
-                    <div class="progress-potential" id="progressPotential"></div>
-                    <div class="progress-remaining" id="progressRemaining"></div>
-                </div>
-                <div class="progress-indicator" id="progressIndicator"></div>
-                <div class="team-cost-indicator" id="teamCostIndicator"></div>
-            </div>
-            <div class="progress-months">
-                <span>Jan-25</span>
-                <span>Feb-25</span>
-                <span>Mar-25</span>
-                <span>Apr-25</span>
-                <span>May-25</span>
-                <span>Jun-25</span>
-                <span>Jul-25</span>
-                <span>Aug-25</span>
-                <span>Sep-25</span>
-                <span>Oct-25</span>
-                <span>Nov-25</span>
-                <span>Dec-25</span>
-            </div>
-            <div class="progress-labels">
-                <span style="color: #28a745;">● Exercised</span>
-                <span style="color: #007bff;">● Backlog</span>
-                <span style="color: #FF6600;">● Potential</span>
-                <span style="color: #6c757d;">● Remaining</span>
-                <span style="color: #dc3545;">● Current Month</span>
-                <span style="color: #343a40;">■ Team Cost</span>
-            </div>
+        <div class="metric-divider"></div>
+        <div class="metric">
+          <span class="metric-label">Backlog</span>
+          <span class="metric-value blue" id="backlogAmount">$0</span>
         </div>
-
-        <!-- Tabs -->
-        <div class="tabs">
-            <button class="tab active" onclick="openTab('tactics')">Quarterly Tactics</button>
-            <button class="tab" onclick="openTab('pipeline')">Project Pipeline</button>
-            <button class="tab" onclick="openTab('minuta')">Weekly Minutes</button>                                                                     
-            <button class="tab" onclick="openTab('evaluation')">Go/No Go Evaluation</button>
+        <div class="metric-divider"></div>
+        <div class="metric">
+          <span class="metric-label">Potential (W)</span>
+          <span class="metric-value orange" id="potentialAmount">$0</span>
         </div>
-
-        <!-- Tab Contents -->
-        <div id="tactics" class="tab-content active">
-            <!-- Quarterly Summary -->
-            <div class="quarterly-summary">
-                <h2>2025 Quarterly Objectives Summary</h2>
-                <div class="quarterly-cards">
-                    <div class="quarter-card">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <h3>Q2 2025</h3>
-                            <div class="quarter-progress-indicator" id="q2-progress" style="font-size: 2rem;">😱</div>
-                        </div>
-                        <ul class="quarter-objectives">
-                            <li>10 key proposals worth $20K+ each (remainder of June)</li>
-                            <li>5 conference presentations and workshops</li>
-                            <li>Focus on immediate deliverables and visibility</li>
-                        </ul>
-                        <div class="quarter-countdown">
-                            Time remaining: Rest of June 2025
-                        </div>
-                    </div>
-                    <div class="quarter-card">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <h3>Q3 2025</h3>
-                            <div class="quarter-progress-indicator" id="q3-progress" style="font-size: 2rem;">😱</div>
-                        </div>
-                        <ul class="quarter-objectives">
-                            <li>8 strategic proposals ($30K+ each)</li>
-                            <li>Conference presentations</li>
-                            <li>Partnership development</li>
-                        </ul>
-                        <div class="quarter-countdown">
-                            Starts: July 1, 2025
-                        </div>
-                    </div>
-                    <div class="quarter-card">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <h3>Q4 2025</h3>
-                            <div class="quarter-progress-indicator" id="q4-progress" style="font-size: 2rem;">😱</div>
-                        </div>
-                        <ul class="quarter-objectives">
-                            <li>8 major proposals ($40K+ each)</li>
-                            <li>2026 strategic planning</li>
-                            <li>Annual assessments</li>
-                        </ul>
-                        <div class="quarter-countdown">
-                            Starts: October 1, 2025
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <h2>2025 Quarterly Tactics by Team Member</h2>
-            <div class="tactics-grid">
-                <!-- Octavio Jiménez -->
-                <div class="team-member">
-                    <div class="member-header">
-                        <div class="member-name">Octavio Jiménez</div>
-                        <div class="completion-indicator" data-member="octavio">😱</div>
-                    </div>
-                    <div class="quarter-section">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div class="quarter-title">Q2 2025</div>
-                            <div class="quarter-individual-indicator" data-member="octavio" data-quarter="q2" style="font-size: 1.5rem;">😱</div>
-                        </div>
-                        <ul class="tactics-list">
-                            <li>
-                                <span class="tactic-text">Lead 2 proposals worth $25K each for urban analytics clients</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" data-member="octavio" onchange="updateCompletionIndicator()">
-                            </li>
-                            <li>
-                                <span class="tactic-text">Participate in at least 1 key conference presentation or panel</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" data-member="octavio" onchange="updateCompletionIndicator()">
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="quarter-section">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div class="quarter-title">Q3 2025</div>
-                            <div class="quarter-individual-indicator" data-member="octavio" data-quarter="q3" style="font-size: 1.5rem;">😱</div>
-                        </div>
-                        <ul class="tactics-list">
-                            <li>
-                                <span class="tactic-text">Develop 2 major urban analytics proposals ($30K each)</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" data-member="octavio" onchange="updateCompletionIndicator()">
-                            </li>
-                            <li>
-                                <span class="tactic-text">Establish partnership with local universities for research</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" data-member="octavio" onchange="updateCompletionIndicator()">
-                            </li>
-                            <li>
-                                <span class="tactic-text">Conduct workshop on smart city solutions</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" data-member="octavio" onchange="updateCompletionIndicator()">
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="quarter-section">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div class="quarter-title">Q4 2025</div>
-                            <div class="quarter-individual-indicator" data-member="octavio" data-quarter="q4" style="font-size: 1.5rem;">😱</div>
-                        </div>
-                        <ul class="tactics-list">
-                            <li>
-                                <span class="tactic-text">Complete 2 strategic proposals for 2026 projects ($40K each)</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" data-member="octavio" onchange="updateCompletionIndicator()">
-                            </li>
-                            <li>
-                                <span class="tactic-text">Organize team training on emerging urban technologies</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" data-member="octavio" onchange="updateCompletionIndicator()">
-                            </li>
-                            <li>
-                                <span class="tactic-text">Prepare 2026 business development roadmap</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" data-member="octavio" onchange="updateCompletionIndicator()">
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Roberto Ascencio -->
-                <div class="team-member">
-                    <div class="member-header">
-                        <div class="member-name">Roberto Ascencio</div>
-                        <div class="completion-indicator" data-member="roberto">😱</div>
-                    </div>
-                    <div class="quarter-section">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div class="quarter-title">Q2 2025</div>
-                            <div class="quarter-individual-indicator" data-member="roberto" data-quarter="q2" style="font-size: 1.5rem;">😱</div>
-                        </div>
-                        <ul class="tactics-list">
-                            <li>
-                                <span class="tactic-text">Lead 2 technical proposals for urban mobility projects ($22K each)</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" data-member="roberto" onchange="updateCompletionIndicator()">
-                            </li>
-                            <li>
-                                <span class="tactic-text">Participate in at least 1 technical conference or transport symposium</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" data-member="roberto" onchange="updateCompletionIndicator()">
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="quarter-section">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div class="quarter-title">Q3 2025</div>
-                            <div class="quarter-individual-indicator" data-member="roberto" data-quarter="q3" style="font-size: 1.5rem;">😱</div>
-                        </div>
-                        <ul class="tactics-list">
-                            <li>
-                                <span class="tactic-text">Develop 2 transportation analysis proposals ($35K each)</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" data-member="roberto" onchange="updateCompletionIndicator()">
-                            </li>
-                            <li>
-                                <span class="tactic-text">Present at International Urban Planning Conference</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" data-member="roberto" onchange="updateCompletionIndicator()">
-                            </li>
-                            <li>
-                                <span class="tactic-text">Initiate collaboration with European Arcadis offices</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" data-member="roberto" onchange="updateCompletionIndicator()">
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="quarter-section">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div class="quarter-title">Q4 2025</div>
-                            <div class="quarter-individual-indicator" data-member="roberto" data-quarter="q4" style="font-size: 1.5rem;">😱</div>
-                        </div>
-                        <ul class="tactics-list">
-                            <li>
-                                <span class="tactic-text">Submit 2 integrated transport proposals ($45K each)</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" data-member="roberto" onchange="updateCompletionIndicator()">
-                            </li>
-                            <li>
-                                <span class="tactic-text">Conduct year-end technical capabilities assessment</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" data-member="roberto" onchange="updateCompletionIndicator()">
-                            </li>
-                            <li>
-                                <span class="tactic-text">Develop training curriculum for 2026</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" data-member="roberto" onchange="updateCompletionIndicator()">
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Noé Osorio -->
-                <div class="team-member">
-                    <div class="member-header">
-                        <div class="member-name">Noé Osorio</div>
-                        <div class="completion-indicator" data-member="noe">😱</div>
-                    </div>
-                    <div class="quarter-section">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div class="quarter-title">Q2 2025</div>
-                            <div class="quarter-individual-indicator" data-member="noe" data-quarter="q2" style="font-size: 1.5rem;">😱</div>
-                        </div>
-                        <ul class="tactics-list">
-                            <li>
-                                <span class="tactic-text">Implement new project management software and training</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" data-member="noe" onchange="updateCompletionIndicator()">
-                            </li>
-                            <li>
-                                <span class="tactic-text">Deliver at least 1 key workshop or presentation on project management</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" data-member="noe" onchange="updateCompletionIndicator()">
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="quarter-section">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div class="quarter-title">Q3 2025</div>
-                            <div class="quarter-individual-indicator" data-member="noe" data-quarter="q3" style="font-size: 1.5rem;">😱</div>
-                        </div>
-                        <ul class="tactics-list">
-                            <li>
-                                <span class="tactic-text">Establish quality assurance protocols for all deliverables</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" data-member="noe" onchange="updateCompletionIndicator()">
-                            </li>
-                            <li>
-                                <span class="tactic-text">Coordinate cross-functional team integration activities</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" data-member="noe" onchange="updateCompletionIndicator()">
-                            </li>
-                            <li>
-                                <span class="tactic-text">Develop client satisfaction measurement system</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" data-member="noe" onchange="updateCompletionIndicator()">
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="quarter-section">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div class="quarter-title">Q4 2025</div>
-                            <div class="quarter-individual-indicator" data-member="noe" data-quarter="q4" style="font-size: 1.5rem;">😱</div>
-                        </div>
-                        <ul class="tactics-list">
-                            <li>
-                                <span class="tactic-text">Complete annual team performance evaluation</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" data-member="noe" onchange="updateCompletionIndicator()">
-                            </li>
-                            <li>
-                                <span class="tactic-text">Plan 2026 staffing and resource requirements</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" data-member="noe" onchange="updateCompletionIndicator()">
-                            </li>
-                            <li>
-                                <span class="tactic-text">Implement knowledge management system</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" data-member="noe" onchange="updateCompletionIndicator()">
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Ricardo Sánchez -->
-                <div class="team-member">
-                    <div class="member-header">
-                        <div class="member-name">Ricardo Sánchez</div>
-                        <div class="completion-indicator" data-member="ricardo">😱</div>
-                    </div>
-                    <div class="quarter-section">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div class="quarter-title">Q2 2025</div>
-                            <div class="quarter-individual-indicator" data-member="ricardo" data-quarter="q2" style="font-size: 1.5rem;">😱</div>
-                        </div>
-                        <ul class="tactics-list">
-                            <li>
-                                <span class="tactic-text">Lead 2 business development proposals ($20K each)</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" data-member="ricardo" onchange="updateCompletionIndicator()">
-                            </li>
-                            <li>
-                                <span class="tactic-text">Deliver at least 1 key presentation on market strategy and business development</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q2" data-member="ricardo" onchange="updateCompletionIndicator()">
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="quarter-section">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div class="quarter-title">Q3 2025</div>
-                            <div class="quarter-individual-indicator" data-member="ricardo" data-quarter="q3" style="font-size: 1.5rem;">😱</div>
-                        </div>
-                        <ul class="tactics-list">
-                            <li>
-                                <span class="tactic-text">Develop 2 strategic consulting proposals ($35K each)</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" data-member="ricardo" onchange="updateCompletionIndicator()">
-                            </li>
-                            <li>
-                                <span class="tactic-text">Organize client appreciation events in key markets</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" data-member="ricardo" onchange="updateCompletionIndicator()">
-                            </li>
-                            <li>
-                                <span class="tactic-text">Establish thought leadership through industry publications</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q3" data-member="ricardo" onchange="updateCompletionIndicator()">
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="quarter-section">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div class="quarter-title">Q4 2025</div>
-                            <div class="quarter-individual-indicator" data-member="ricardo" data-quarter="q4" style="font-size: 1.5rem;">😱</div>
-                        </div>
-                        <ul class="tactics-list">
-                            <li>
-                                <span class="tactic-text">Submit 2 major strategic proposals ($50K each)</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" data-member="ricardo" onchange="updateCompletionIndicator()">
-                            </li>
-                            <li>
-                                <span class="tactic-text">Finalize strategic alliances and partnership agreements</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" data-member="ricardo" onchange="updateCompletionIndicator()">
-                            </li>
-                            <li>
-                                <span class="tactic-text">Prepare marketing strategy and budget for 2026</span>
-                                <input type="checkbox" class="tactic-checkbox" data-quarter="q4" data-member="ricardo" onchange="updateCompletionIndicator()">
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <!-- Wildcard - Transversal Responsibilities -->
-                <div class="team-member" style="background: linear-gradient(135deg, #FF6600 0%, #e55a00 100%); color: white; border: 2px solid #e55a00;">
-                    <div class="member-header">
-                        <div class="member-name" style="color: white; border-bottom: 2px solid white;">🎯 Transversal Responsibilities</div>
-                    </div>
-                    
-                    <div class="quarter-section">
-                        <div class="quarter-title" style="background: rgba(255,255,255,0.2); color: white;">Octavio Jiménez - Cross-Office Leadership</div>
-                        <ul class="tactics-list">
-                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
-                                <span class="tactic-text">Enhance cross-collaboration among Arcadis offices</span>
-                            </li>
-                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
-                                <span class="tactic-text">Provide necessary tools and communication with the rest of the team</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="quarter-section">
-                        <div class="quarter-title" style="background: rgba(255,255,255,0.2); color: white;">Roberto Ascencio - Mobility Demand Practice</div>
-                        <ul class="tactics-list">
-                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
-                                <span class="tactic-text">Lead the mobility demand practice development</span>
-                            </li>
-                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
-                                <span class="tactic-text">Review and monitor European Union procurement platforms</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="quarter-section">
-                        <div class="quarter-title" style="background: rgba(255,255,255,0.2); color: white;">Ricardo Sánchez - Mobility Tech Practice</div>
-                        <ul class="tactics-list">
-                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
-                                <span class="tactic-text">Lead the Mobility Tech practice development</span>
-                            </li>
-                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
-                                <span class="tactic-text">Review WB, Compras MX/CDMX/EDOMEX procurement platforms</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="quarter-section">
-                        <div class="quarter-title" style="background: rgba(255,255,255,0.2); color: white;">Noé Osorio - AI/LLM/BigData Practice</div>
-                        <ul class="tactics-list">
-                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
-                                <span class="tactic-text">Lead the AI/LLM/BigData practice development</span>
-                            </li>
-                            <li style="background: rgba(255,255,255,0.1); border-left: 4px solid white; color: white;">
-                                <span class="tactic-text">Develop mobility models with AI capabilities</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>               
-            </div>  
+        <div class="metric-divider"></div>
+        <div class="metric">
+          <span class="metric-label">Gap / Target</span>
+          <span class="metric-value" id="gapAmount">$380,000</span>
         </div>
-
-        <div id="pipeline" class="tab-content">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 5px;">
-                <h2 style="margin: 0; color: #1a1a1a; font-size: 1.8rem; font-weight: 700;">Project Pipeline Data</h2>
-                <button class="export-csv-button" onclick="exportPipelineToCSV()" title="Download all pipeline data as CSV">
-                    📊 Export All Pipeline Data (CSV)
-                </button>
-            </div>
-            <!-- Current Proposal Pipeline -->
-            <div class="pipeline-section">
-                <h2 class="section-title">Current Proposal Pipeline</h2>
-                <button class="add-row-button" onclick="addPipelineRow()">+ Add New Proposal</button>
-                <div class="table-container">
-                    <table id="pipelineTable">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Project</th>
-                                <th>Topic</th>
-                                <th>Client</th>
-                                <th>Lead</th>
-                                <th>Support</th>
-                                <th>Date</th>
-                                <th>Price (USD)</th>
-                                <th>Probability (%)</th>
-                                <th>Weighted Value (USD)</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Data will be loaded from server -->
-                            <tr class="total-row">
-                                <td><strong>#</strong></td>
-                                <td><strong>TOTAL PIPELINE</strong></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td id="totalPipeline"><strong>$0</strong></td>
-                                <td></td>
-                                <td id="totalWeighted"><strong>$0</strong></td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <!-- Pipeline Lead Summary -->
-                <div style="margin-top: 20px; background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #FF6600;">
-                    <h3 style="color: #FF6600; margin-bottom: 15px;">👥 Pipeline Lead Summary</h3>
-                    <div id="pipelineLeadAnalysis" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                        <!-- Will be populated by JavaScript -->
-                    </div>
-                </div>
-            </div>
-            
-            <!-- EOI Opportunities -->
-            <div class="pipeline-section">
-                <h2 class="section-title">EOI's and Leads (No Fee)</h2>
-                <button class="add-row-button" onclick="addEOIRow()">+ Add New EOI Opportunity</button>
-                <div class="table-container">
-                    <table id="eoiTable">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Project</th>
-                                <th>Client</th>
-                                <th>Lead</th>
-                                <th>Support</th>
-                                <th>Date</th>
-                                <th>Other</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Data will be loaded from server -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Ongoing Projects -->
-            <div class="pipeline-section">
-                <h2 class="section-title">Ongoing Projects</h2>
-                <button class="add-row-button" onclick="addOngoingRow()">+ Add New Project</button>
-                <div class="table-container">
-                    <table id="ongoingTable">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Project</th>
-                                <th>Client</th>
-                                <th>Date</th>
-                                <th>BST</th>
-                                <th>Fees USD</th>
-                                <th>UA Fees USD</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Data will be loaded from server -->
-                            <tr class="total-row">
-                                <td><strong>#</strong></td>
-                                <td><strong>TOTAL ONGOING</strong></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td id="totalProjectFees"><strong>$0</strong></td>
-                                <td id="totalOngoing"><strong>$0</strong></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Lost Opportunities -->
-            <div class="pipeline-section">
-                <h2 class="section-title">Lost Opportunities / Decided not to go</h2>
-                <button class="add-row-button" onclick="addLostRow()">+ Add Lost Opportunity</button>
-                <div class="table-container">
-                    <table id="lostTable">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Project</th>
-                                <th>Client</th>
-                                <th>Lead</th>
-                                <th>Support</th>
-                                <th>Date Lost</th>
-                                <th>Value (USD)</th>
-                                <th>Motive</th>
-                                <th>Comments</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Data will be loaded from server -->
-                            <tr class="total-row">
-                                <td><strong>#</strong></td>
-                                <td><strong>TOTAL LOST VALUE</strong></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td id="totalLost"><strong>$0</strong></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <!-- Loss Analysis Summary -->
-                <div style="margin-top: 20px; background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #dc3545;">
-                    <h3 style="color: #dc3545; margin-bottom: 15px;">📊 Loss Analysis Summary</h3>
-                    <div id="lossAnalysis" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                        <!-- Will be populated by JavaScript -->
-                    </div>
-                </div>
-            </div>
+        <div class="metric-divider"></div>
+        <div class="metric highlight">
+          <span class="metric-label">Target USD</span>
+          <span class="metric-value orange-bold">$380,000</span>
         </div>
-
-        <div id="minuta" class="tab-content">
-            <div class="minuta-container">
-                <h2 class="section-title">Weekly Minutes - Team Progress Tracking</h2>
-                <div class="week-header">
-                    <h3>Week of: <span id="currentWeek"></span></h3>
-                </div>
-                
-                <div class="minuta-layout">
-                    <!-- Left Column: Input Forms -->
-                    <div class="minuta-input-section">
-                        <h3>📝 This Week's Progress</h3>
-                        
-                        <!-- Octavio Jiménez -->
-                        <div class="team-minute-input">
-                            <div class="member-input-header">
-                                <h4>Octavio Jiménez</h4>
-                                <span class="char-counter" id="octavio-counter">0/800</span>
-                            </div>
-                            <textarea 
-                                id="octavio-input" 
-                                class="minute-textarea" 
-                                placeholder="Enter weekly progress bullets for Octavio..."
-                                maxlength="800"
-                                oninput="updateCharCounter('octavio')"></textarea>
-                        </div>
-
-                        <!-- Roberto Ascencio -->
-                        <div class="team-minute-input">
-                            <div class="member-input-header">
-                                <h4>Roberto Ascencio</h4>
-                                <span class="char-counter" id="roberto-counter">0/800</span>
-                            </div>
-                            <textarea 
-                                id="roberto-input" 
-                                class="minute-textarea" 
-                                placeholder="Enter weekly progress bullets for Roberto..."
-                                maxlength="800"
-                                oninput="updateCharCounter('roberto')"></textarea>
-                        </div>
-
-                        <!-- Noé Osorio -->
-                        <div class="team-minute-input">
-                            <div class="member-input-header">
-                                <h4>Noé Osorio</h4>
-                                <span class="char-counter" id="noe-counter">0/800</span>
-                            </div>
-                            <textarea 
-                                id="noe-input" 
-                                class="minute-textarea" 
-                                placeholder="Enter weekly progress bullets for Noé..."
-                                maxlength="800"
-                                oninput="updateCharCounter('noe')"></textarea>
-                        </div>
-
-                        <!-- Ricardo Sánchez -->
-                        <div class="team-minute-input">
-                            <div class="member-input-header">
-                                <h4>Ricardo Sánchez</h4>
-                                <span class="char-counter" id="ricardo-counter">0/800</span>
-                            </div>
-                            <textarea 
-                                id="ricardo-input" 
-                                class="minute-textarea" 
-                                placeholder="Enter weekly progress bullets for Ricardo..."
-                                maxlength="800"
-                                oninput="updateCharCounter('ricardo')"></textarea>
-                        </div>
-                        
-                        <button class="save-button" onclick="saveAllMinutes()">Save All Minutes</button>
-                    </div>
-
-                    <!-- Right Column: Minutes Log -->
-                    <div class="minuta-log-section">
-                        <h3>📋 Minutes Log - 2025</h3>
-                        <div class="log-controls">
-                            <button class="clear-log-button" onclick="clearMinutesLog()">Clear All Logs</button>
-                            <button class="export-log-button" onclick="exportMinutesLog()">Export Log</button>
-                        </div>
-                        <div id="minutesLog" class="minutes-log">
-                            <div class="log-placeholder">
-                                <p>📅 Weekly minutes will appear here once saved.</p>
-                                <p>Each entry includes date, team member, and their weekly progress bullets.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="evaluation" class="tab-content">
-            <div class="evaluation-container">
-                <h2>Go/No Go Opportunity Evaluation</h2>
-                <h3 style="color: #FF6600; margin-bottom: 20px;">🎯 Urban Analytics Mexico Practice Group Decision Framework</h3>
-                
-                <div class="evaluation-instructions">
-                    <h3>Instructions for Completing the Evaluation</h3>
-                    <ul>
-                        <li><strong>Priority Focus:</strong> This evaluation is designed to balance Urban Analytics Mexico group objectives with broader Arcadis strategic goals</li>
-                        <li><strong>Weight (%):</strong> Assign a percentage weight to each criterion based on its importance to our decision (total should equal 100%)</li>
-                        <li><strong>Score (1-10):</strong> Rate each criterion from 1 (very poor) to 10 (excellent) based on how well the opportunity meets this criterion</li>
-                        <li><strong>Weighted Score:</strong> Automatically calculated as (Weight × Score) ÷ 100</li>
-                        <li><strong>Final Score:</strong> Sum of all weighted scores; 7.5+ = GO, 6.0-7.4 = CONDITIONAL GO, <6.0 = NO GO</li>
-                    </ul>
-                </div>
-                
-                <div class="opportunity-header">
-                    <label for="opportunityName"><strong>Opportunity Name:</strong></label>
-                    <input type="text" id="opportunityName" class="opportunity-name" placeholder="Enter opportunity name..." value="">
-                </div>
-
-                <div class="evaluation-form">
-                    <div class="evaluation-headers">
-                        <div>Evaluation Criteria - Urban Analytics Mexico</div>
-                        <div>Weight (%)</div>
-                        <div>Score (1-10)</div>
-                    </div>
-
-                    <div class="evaluation-item">
-                        <div>
-                            <div class="criterion">1. Strategic alignment with Urban Analytics Mexico objectives</div>
-                            <div class="criterion-description">How well does this opportunity align with our specific growth targets and technical development goals in urban analytics?</div>
-                        </div>
-                        <input type="number" class="weight-input" value="18" min="0" max="100" onchange="calculateScore()">
-                        <input type="number" class="score-input" value="5" min="1" max="10" onchange="calculateScore()">
-                    </div>
-
-                    <div class="evaluation-item">
-                        <div>
-                            <div class="criterion">2. Financial viability and contribution to revenue targets</div>
-                            <div class="criterion-description">Expected profitability, budget adequacy, and direct contribution to our $300K annual revenue goal.</div>
-                        </div>
-                        <input type="number" class="weight-input" value="16" min="0" max="100" onchange="calculateScore()">
-                        <input type="number" class="score-input" value="5" min="1" max="10" onchange="calculateScore()">
-                    </div>
-
-                    <div class="evaluation-item">
-                        <div>
-                            <div class="criterion">3. Technical capability and team expertise available</div>
-                            <div class="criterion-description">Team's technical competence and availability of required skills for successful delivery within our practice group.</div>
-                        </div>
-                        <input type="number" class="weight-input" value="14" min="0" max="100" onchange="calculateScore()">
-                        <input type="number" class="score-input" value="5" min="1" max="10" onchange="calculateScore()">
-                    </div>
-
-                    <div class="evaluation-item">
-                        <div>
-                            <div class="criterion">4. Alignment with broader Arcadis strategic objectives</div>
-                            <div class="criterion-description">Coherence with Arcadis global strategy and potential for cross-office collaboration and knowledge sharing.</div>
-                        </div>
-                        <input type="number" class="weight-input" value="12" min="0" max="100" onchange="calculateScore()">
-                        <input type="number" class="score-input" value="5" min="1" max="10" onchange="calculateScore()">
-                    </div>
-
-                    <div class="evaluation-item">
-                        <div>
-                            <div class="criterion">5. Client relationship strength and market positioning</div>
-                            <div class="criterion-description">Quality of existing relationship, past performance, and opportunity to strengthen our position in the Mexican market.</div>
-                        </div>
-                        <input type="number" class="weight-input" value="10" min="0" max="100" onchange="calculateScore()">
-                        <input type="number" class="score-input" value="5" min="1" max="10" onchange="calculateScore()">
-                    </div>
-
-                    <div class="evaluation-item">
-                        <div>
-                            <div class="criterion">6. Cross-collaboration potential and revenue sharing</div>
-                            <div class="criterion-description">Opportunity for meaningful collaboration with other Arcadis offices generating significant shared revenue (>30% collaboration).</div>
-                        </div>
-                        <input type="number" class="weight-input" value="8" min="0" max="100" onchange="calculateScore()">
-                        <input type="number" class="score-input" value="5" min="1" max="10" onchange="calculateScore()">
-                    </div>
-
-                    <div class="evaluation-item">
-                        <div>
-                            <div class="criterion">7. Resource availability and capacity management</div>
-                            <div class="criterion-description">Availability of required human resources and capacity to deliver without compromising other priority projects.</div>
-                        </div>
-                        <input type="number" class="weight-input" value="8" min="0" max="100" onchange="calculateScore()">
-                        <input type="number" class="score-input" value="5" min="1" max="10" onchange="calculateScore()">
-                    </div>
-
-                    <div class="evaluation-item">
-                        <div>
-                            <div class="criterion">8. Market competitiveness and winning probability</div>
-                            <div class="criterion-description">Our competitive advantage and realistic probability of winning against other bidders in the market.</div>
-                        </div>
-                        <input type="number" class="weight-input" value="6" min="0" max="100" onchange="calculateScore()">
-                        <input type="number" class="score-input" value="5" min="1" max="10" onchange="calculateScore()">
-                    </div>
-
-                    <div class="evaluation-item">
-                        <div>
-                            <div class="criterion">9. Regional expertise and local knowledge requirements</div>
-                            <div class="criterion-description">Team's familiarity with local regulations, culture, and market conditions in the target region or country.</div>
-                        </div>
-                        <input type="number" class="weight-input" value="4" min="0" max="100" onchange="calculateScore()">
-                        <input type="number" class="score-input" value="5" min="1" max="10" onchange="calculateScore()">
-                    </div>
-
-                    <div class="evaluation-item">
-                        <div>
-                            <div class="criterion">10. Innovation and learning potential</div>
-                            <div class="criterion-description">Opportunity to develop new capabilities, technologies, or methodologies that benefit future projects and team growth.</div>
-                        </div>
-                        <input type="number" class="weight-input" value="4" min="0" max="100" onchange="calculateScore()">
-                        <input type="number" class="score-input" value="5" min="1" max="10" onchange="calculateScore()">
-                    </div>
-
-                    <div class="weight-total" id="weightTotal">
-                        Total Weight: <span id="totalWeight">100</span>%
-                    </div>
-
-                    <div class="final-score score-conditional" id="finalScoreContainer">
-                        <div>Total Weighted Score: <span id="finalScore">5.00</span> / 10</div>
-                        <div style="margin-top: 10px; font-size: 1rem;">
-                            Recommendation: <span id="recommendation">NO GO - High risk, poor alignment</span>
-                        </div>
-                    </div>
-                    
-                    <button class="save-button" onclick="saveEvaluation()">Save Evaluation</button>
-                    <button class="save-button" onclick="generatePDF()" style="background: #28a745; margin-left: 15px;">Generate PDF Report</button>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
 
-    <!-- Include Storage System -->
-    <script src="urban-analytics-storage.js"></script>
-    <script src="script.js"></script>
+    <div class="progress-track-wrap">
+      <div class="progress-track" id="progressTrack">
+        <div class="prog-exercised" id="progExercised" style="width:0%"></div>
+        <div class="prog-backlog" id="progBacklog" style="width:0%"></div>
+        <div class="prog-potential" id="progPotential" style="width:0%"></div>
+        <div class="prog-remaining" id="progRemaining" style="width:100%"></div>
+      </div>
+      <div class="progress-needle" id="progressNeedle"></div>
+    </div>
+
+    <div class="progress-scale">
+      <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span>
+      <span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span>
+      <span>Nov</span><span>Dec</span>
+    </div>
+    <div class="progress-legend">
+      <span><i class="leg-dot" style="background:#22c55e"></i>Exercised</span>
+      <span><i class="leg-dot" style="background:#3b82f6"></i>Backlog</span>
+      <span><i class="leg-dot" style="background:#E3610F"></i>Potential</span>
+      <span><i class="leg-dot" style="background:#d1d5db"></i>Remaining</span>
+      <span><i class="leg-dot" style="background:#ef4444;border-radius:50%"></i>Current Month</span>
+    </div>
+  </div>
+</section>
+
+<!-- TABS -->
+<nav class="tab-nav">
+  <div class="tab-nav-inner">
+    <button class="tab-btn active" data-tab="pipeline">Project Pipeline</button>
+    <button class="tab-btn" data-tab="utilization">Resource Utilization</button>
+    <button class="tab-btn" data-tab="gongo">Go / No Go</button>
+  </div>
+</nav>
+
+<!-- TAB: PIPELINE -->
+<div id="tab-pipeline" class="tab-panel active">
+  <div class="panel-inner">
+
+    <div class="panel-topbar">
+      <h2 class="panel-title">Project Pipeline</h2>
+      <button class="btn btn-outline" onclick="exportPipelineToCSV()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export CSV
+      </button>
+    </div>
+
+    <!-- PROPOSALS -->
+    <div class="pipeline-block">
+      <div class="block-header">
+        <h3 class="block-title">Current Proposal Pipeline</h3>
+        <button class="btn btn-add" onclick="addPipelineRow()">+ Add Proposal</button>
+      </div>
+      <div class="table-wrap">
+        <table id="pipelineTable">
+          <thead>
+            <tr>
+              <th class="col-num">#</th>
+              <th>Project</th>
+              <th>Topic</th>
+              <th>Client</th>
+              <th>Lead</th>
+              <th>Support</th>
+              <th>Date</th>
+              <th class="col-num">Price (USD)</th>
+              <th class="col-num">Prob. %</th>
+              <th class="col-num">Weighted (USD)</th>
+              <th class="col-action"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="total-row">
+              <td colspan="7"><strong>TOTAL PIPELINE</strong></td>
+              <td id="totalPipeline"><strong>$0</strong></td>
+              <td></td>
+              <td id="totalWeighted"><strong>$0</strong></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="lead-summary" id="pipelineLeadSummary"></div>
+    </div>
+
+    <!-- EOI -->
+    <div class="pipeline-block">
+      <div class="block-header">
+        <h3 class="block-title">EOI's and Leads <span class="badge">No Fee</span></h3>
+        <button class="btn btn-add" onclick="addEOIRow()">+ Add EOI</button>
+      </div>
+      <div class="table-wrap">
+        <table id="eoiTable">
+          <thead>
+            <tr>
+              <th class="col-num">#</th>
+              <th>Project</th>
+              <th>Client</th>
+              <th>Lead</th>
+              <th>Support</th>
+              <th>Date</th>
+              <th>Notes</th>
+              <th class="col-action"></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ONGOING -->
+    <div class="pipeline-block">
+      <div class="block-header">
+        <h3 class="block-title">Ongoing Projects</h3>
+        <button class="btn btn-add" onclick="addOngoingRow()">+ Add Project</button>
+      </div>
+      <div class="table-wrap">
+        <table id="ongoingTable">
+          <thead>
+            <tr>
+              <th class="col-num">#</th>
+              <th>Project</th>
+              <th>Client</th>
+              <th>Date</th>
+              <th>BST</th>
+              <th class="col-num">Fees USD</th>
+              <th class="col-num">UA Fees USD</th>
+              <th>Status</th>
+              <th class="col-action"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="total-row">
+              <td colspan="5"><strong>TOTAL ONGOING</strong></td>
+              <td id="totalProjectFees"><strong>$0</strong></td>
+              <td id="totalOngoing"><strong>$0</strong></td>
+              <td colspan="2"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- LOST -->
+    <div class="pipeline-block">
+      <div class="block-header">
+        <h3 class="block-title">Lost Opportunities</h3>
+        <button class="btn btn-add" onclick="addLostRow()">+ Add</button>
+      </div>
+      <div class="table-wrap">
+        <table id="lostTable">
+          <thead>
+            <tr>
+              <th class="col-num">#</th>
+              <th>Project</th>
+              <th>Client</th>
+              <th>Lead</th>
+              <th>Support</th>
+              <th>Date Lost</th>
+              <th class="col-num">Value (USD)</th>
+              <th>Motive</th>
+              <th>Comments</th>
+              <th class="col-action"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="total-row">
+              <td colspan="6"><strong>TOTAL LOST</strong></td>
+              <td id="totalLost"><strong>$0</strong></td>
+              <td colspan="3"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="lead-summary" id="lossAnalysis"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TAB: RESOURCE UTILIZATION -->
+<div id="tab-utilization" class="tab-panel">
+  <div class="panel-inner">
+    <div class="panel-topbar">
+      <h2 class="panel-title">Resource Utilization</h2>
+      <div class="topbar-right">
+        <label class="field-label">Week of</label>
+        <input type="date" id="utilizationWeek" class="input-field narrow" onchange="renderUtilizationTable()">
+        <button class="btn btn-add" onclick="addUtilizationRow()">+ Add Row</button>
+      </div>
+    </div>
+
+    <div class="util-info-bar">
+      <p>Track weekly hours per resource per project. Billable value = Hours × Hourly Rate × Multiplier.</p>
+    </div>
+
+    <div class="table-wrap">
+      <table id="utilizationTable">
+        <thead>
+          <tr>
+            <th class="col-num">#</th>
+            <th>Resource</th>
+            <th>Project</th>
+            <th class="col-num">Hours</th>
+            <th class="col-num">Rate/hr (USD)</th>
+            <th class="col-num">Multiplier</th>
+            <th class="col-num">Billable (USD)</th>
+            <th class="col-action"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="total-row">
+            <td colspan="6"><strong>TOTAL WEEK</strong></td>
+            <td id="totalUtilization"><strong>$0</strong></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="util-summary" id="utilizationSummary"></div>
+  </div>
+</div>
+
+<!-- TAB: GO/NO GO -->
+<div id="tab-gongo" class="tab-panel">
+  <div class="panel-inner">
+    <div class="panel-topbar">
+      <h2 class="panel-title">Go / No Go Evaluation</h2>
+      <button class="btn btn-primary" onclick="generatePDF()">Export PDF</button>
+    </div>
+
+    <div class="gongo-header">
+      <label class="field-label">Opportunity Name</label>
+      <input type="text" id="opportunityName" class="input-field" placeholder="Enter opportunity name..." style="max-width:500px">
+    </div>
+
+    <div class="gongo-instructions">
+      <strong>How to score:</strong> Assign weight (%) and score (1–10) per criterion. Weighted score = (Weight × Score) / 100. Final ≥7.5 = GO · 6.0–7.4 = CONDITIONAL · &lt;6.0 = NO GO. Total weight must equal 100%.
+    </div>
+
+    <div class="gongo-form">
+      <div class="gongo-head-row">
+        <span>Criterion</span>
+        <span>Weight %</span>
+        <span>Score 1–10</span>
+        <span>Weighted</span>
+      </div>
+      <!-- Criteria rows -->
+      <div class="gongo-row" data-id="1">
+        <div>
+          <div class="criterion-title">1. Strategic alignment with Urban Analytics Mexico</div>
+          <div class="criterion-desc">Alignment with growth targets and technical development goals in urban analytics.</div>
+        </div>
+        <input type="number" class="input-field narrow weight-input" value="18" min="0" max="100" onchange="calcScore()">
+        <input type="number" class="input-field narrow score-input" value="5" min="1" max="10" onchange="calcScore()">
+        <span class="weighted-cell" id="w1">0.00</span>
+      </div>
+      <div class="gongo-row" data-id="2">
+        <div>
+          <div class="criterion-title">2. Financial viability & revenue contribution</div>
+          <div class="criterion-desc">Profitability and contribution to the $380K annual revenue goal.</div>
+        </div>
+        <input type="number" class="input-field narrow weight-input" value="16" min="0" max="100" onchange="calcScore()">
+        <input type="number" class="input-field narrow score-input" value="5" min="1" max="10" onchange="calcScore()">
+        <span class="weighted-cell" id="w2">0.00</span>
+      </div>
+      <div class="gongo-row" data-id="3">
+        <div>
+          <div class="criterion-title">3. Technical capability & team expertise</div>
+          <div class="criterion-desc">Team competence and availability of required skills for delivery.</div>
+        </div>
+        <input type="number" class="input-field narrow weight-input" value="14" min="0" max="100" onchange="calcScore()">
+        <input type="number" class="input-field narrow score-input" value="5" min="1" max="10" onchange="calcScore()">
+        <span class="weighted-cell" id="w3">0.00</span>
+      </div>
+      <div class="gongo-row" data-id="4">
+        <div>
+          <div class="criterion-title">4. Alignment with Arcadis global strategy</div>
+          <div class="criterion-desc">Cross-office collaboration potential and global knowledge sharing.</div>
+        </div>
+        <input type="number" class="input-field narrow weight-input" value="12" min="0" max="100" onchange="calcScore()">
+        <input type="number" class="input-field narrow score-input" value="5" min="1" max="10" onchange="calcScore()">
+        <span class="weighted-cell" id="w4">0.00</span>
+      </div>
+      <div class="gongo-row" data-id="5">
+        <div>
+          <div class="criterion-title">5. Client relationship & market positioning</div>
+          <div class="criterion-desc">Existing relationship quality and opportunity to strengthen our Mexico position.</div>
+        </div>
+        <input type="number" class="input-field narrow weight-input" value="10" min="0" max="100" onchange="calcScore()">
+        <input type="number" class="input-field narrow score-input" value="5" min="1" max="10" onchange="calcScore()">
+        <span class="weighted-cell" id="w5">0.00</span>
+      </div>
+      <div class="gongo-row" data-id="6">
+        <div>
+          <div class="criterion-title">6. Cross-collaboration & revenue sharing potential</div>
+          <div class="criterion-desc">Meaningful collaboration with other Arcadis offices (&gt;30% shared revenue).</div>
+        </div>
+        <input type="number" class="input-field narrow weight-input" value="8" min="0" max="100" onchange="calcScore()">
+        <input type="number" class="input-field narrow score-input" value="5" min="1" max="10" onchange="calcScore()">
+        <span class="weighted-cell" id="w6">0.00</span>
+      </div>
+      <div class="gongo-row" data-id="7">
+        <div>
+          <div class="criterion-title">7. Resource availability & capacity</div>
+          <div class="criterion-desc">Capacity to deliver without compromising other priority projects.</div>
+        </div>
+        <input type="number" class="input-field narrow weight-input" value="8" min="0" max="100" onchange="calcScore()">
+        <input type="number" class="input-field narrow score-input" value="5" min="1" max="10" onchange="calcScore()">
+        <span class="weighted-cell" id="w7">0.00</span>
+      </div>
+      <div class="gongo-row" data-id="8">
+        <div>
+          <div class="criterion-title">8. Market competitiveness & win probability</div>
+          <div class="criterion-desc">Competitive advantage and realistic win probability against other bidders.</div>
+        </div>
+        <input type="number" class="input-field narrow weight-input" value="6" min="0" max="100" onchange="calcScore()">
+        <input type="number" class="input-field narrow score-input" value="5" min="1" max="10" onchange="calcScore()">
+        <span class="weighted-cell" id="w8">0.00</span>
+      </div>
+      <div class="gongo-row" data-id="9">
+        <div>
+          <div class="criterion-title">9. Regional expertise & local knowledge</div>
+          <div class="criterion-desc">Familiarity with local regulations, culture, and market conditions.</div>
+        </div>
+        <input type="number" class="input-field narrow weight-input" value="4" min="0" max="100" onchange="calcScore()">
+        <input type="number" class="input-field narrow score-input" value="5" min="1" max="10" onchange="calcScore()">
+        <span class="weighted-cell" id="w9">0.00</span>
+      </div>
+      <div class="gongo-row" data-id="10">
+        <div>
+          <div class="criterion-title">10. Innovation & learning potential</div>
+          <div class="criterion-desc">Opportunity to develop new capabilities benefiting future projects.</div>
+        </div>
+        <input type="number" class="input-field narrow weight-input" value="4" min="0" max="100" onchange="calcScore()">
+        <input type="number" class="input-field narrow score-input" value="5" min="1" max="10" onchange="calcScore()">
+        <span class="weighted-cell" id="w10">0.00</span>
+      </div>
+
+      <div class="gongo-total-row">
+        <span>Total Weight: <strong id="totalWeight">100</strong>%</span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <div class="gongo-result" id="gongoResult">
+        <div class="result-score" id="finalScore">5.00</div>
+        <div class="result-label">
+          <div class="result-decision" id="gongoDecision">— NO GO —</div>
+          <div class="result-sub" id="gongoRec">High risk, poor strategic alignment</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY MODAL -->
+<div class="modal-backdrop" id="historyModal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Save History</h3>
+      <button class="modal-close" onclick="closeHistoryModal()">✕</button>
+    </div>
+    <div class="modal-body" id="historyList">
+      <p class="empty-state">No saves yet. Data will appear here after saving.</p>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="script.js"></script>
 </body>
 </html>
