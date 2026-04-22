@@ -835,3 +835,128 @@ tbody tr:hover { background: var(--gray-50); }
 @media (max-width: 1100px) {
   .util-layout { grid-template-columns: 1fr; }
 }
+
+/* ===== SEGUIMIENTO A PAGOS ===== */
+
+.pagos-summary-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.pagos-summary-item {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.pagos-summary-item.green-card { border-left: 4px solid var(--green); }
+.pagos-summary-item.red-card   { border-left: 4px solid var(--red); }
+.pagos-summary-item.positive   { border-left: 4px solid var(--green); }
+.pagos-summary-item.negative   { border-left: 4px solid var(--red); }
+.pagos-summary-label { font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.07em; }
+.pagos-summary-value { font-family: var(--mono); font-size: 22px; font-weight: 700; color: var(--gray-900); }
+.pagos-summary-item.green-card .pagos-summary-value { color: var(--green); }
+.pagos-summary-item.red-card   .pagos-summary-value { color: var(--red); }
+.pagos-summary-item.positive   .pagos-summary-value { color: var(--green); }
+.pagos-summary-item.negative   .pagos-summary-value { color: var(--red); }
+
+.estatus-pill {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.estatus-enviada  { background: #dcfce7; color: #15803d; }
+.estatus-pendiente{ background: #fef3c7; color: #b45309; }
+.estatus-pagado   { background: #dbeafe; color: #1d4ed8; }
+.estatus-otro     { background: var(--gray-100); color: var(--gray-600); }
+
+/* ===== VACACIONES ===== */
+
+.vac-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  margin-bottom: 8px;
+}
+.vac-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  position: relative;
+}
+.vac-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.vac-card-name { font-size: 16px; font-weight: 700; color: var(--gray-900); }
+.vac-days-remaining {
+  font-family: var(--mono);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--orange);
+  line-height: 1;
+}
+.vac-days-label { font-size: 10px; color: var(--gray-400); text-align: right; text-transform: uppercase; letter-spacing: 0.06em; }
+
+.vac-progress-track {
+  height: 6px;
+  background: var(--gray-100);
+  border-radius: 100px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.vac-progress-fill {
+  height: 100%;
+  border-radius: 100px;
+  background: var(--orange);
+  transition: width 0.5s ease;
+}
+.vac-progress-fill.low { background: var(--green); }
+.vac-progress-fill.mid { background: #f59e0b; }
+.vac-progress-fill.high{ background: var(--red); }
+
+.vac-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 16px;
+  margin-bottom: 14px;
+}
+.vac-meta-item { display: flex; flex-direction: column; gap: 2px; }
+.vac-meta-label { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+.vac-meta-value { font-size: 13px; font-weight: 500; color: var(--gray-900); }
+
+.vac-editable-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--gray-100);
+}
+.vac-field { display: flex; flex-direction: column; gap: 4px; }
+.vac-field label { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+.vac-field input {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  padding: 6px 8px;
+  font-family: var(--font);
+  font-size: 13px;
+  color: var(--gray-900);
+  transition: all var(--transition);
+}
+.vac-field input:focus { outline: none; border-color: var(--orange); background: var(--white); box-shadow: 0 0 0 2px var(--orange-dim); }
+
+@media (max-width: 768px) {
+  .pagos-summary-bar { grid-template-columns: 1fr; }
+  .vac-cards { grid-template-columns: 1fr; }
+}
