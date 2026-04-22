@@ -649,3 +649,189 @@ tbody tr:hover { background: var(--gray-50); }
   .gongo-total-row { grid-template-columns: 1fr 80px 80px 80px; }
   .tab-btn { padding: 12px 14px; font-size: 12px; }
 }
+
+/* ===== UTILIZATION — MONTHLY SYSTEM ===== */
+
+.month-tabs-wrap {
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--gray-200);
+}
+.month-tabs-row {
+  display: flex;
+  gap: 2px;
+  flex-wrap: wrap;
+}
+.month-tab {
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  padding: 10px 14px;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gray-500);
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+  margin-bottom: -1px;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+.month-tab:hover { color: var(--gray-900); background: var(--gray-100); }
+.month-tab.active { color: var(--orange); border-bottom-color: var(--orange); font-weight: 600; background: var(--white); }
+
+.util-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 20px;
+  align-items: start;
+}
+
+.util-col-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-400);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+
+/* Weekly entry blocks */
+.week-block {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.week-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-100);
+}
+.week-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-700);
+}
+.util-week-table { min-width: 700px; }
+.util-week-table thead th { font-size: 10px; padding: 8px 10px; }
+.util-week-table tbody td { padding: 6px 10px; }
+
+/* Monthly summary */
+.monthly-summary-header {
+  margin-bottom: 14px;
+}
+.monthly-summary-header h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+.member-summary-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.member-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+}
+.member-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.member-card-name { font-size: 14px; font-weight: 600; color: var(--gray-900); }
+.member-card-fee  { font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--orange); }
+
+/* Billable bar */
+.billable-bar-wrap { margin-bottom: 8px; }
+.billable-bar-track {
+  position: relative;
+  height: 6px;
+  background: var(--gray-100);
+  border-radius: 100px;
+  overflow: visible;
+  margin-bottom: 6px;
+}
+.billable-bar-fill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 0.5s ease;
+}
+.billable-target-marker {
+  position: absolute;
+  top: -3px;
+  width: 2px;
+  height: 12px;
+  background: var(--gray-700);
+  transform: translateX(-50%);
+  border-radius: 1px;
+}
+.billable-bar-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: var(--gray-500);
+}
+.billable-target-input {
+  width: 44px;
+  background: transparent;
+  border: 1px solid var(--gray-200);
+  border-radius: 3px;
+  padding: 1px 4px;
+  font-size: 11px;
+  font-family: var(--mono);
+  color: var(--gray-700);
+  text-align: center;
+}
+.billable-target-input:focus { outline: none; border-color: var(--orange); }
+
+.member-hours-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--gray-400);
+  margin-bottom: 10px;
+}
+
+.proj-breakdown { border-top: 1px solid var(--gray-100); padding-top: 8px; }
+.proj-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  padding: 3px 0;
+  color: var(--gray-600);
+}
+.proj-row span:first-child { font-weight: 500; }
+.empty-proj { color: var(--gray-400); font-style: italic; }
+
+/* Month totals bar */
+.month-totals {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background: var(--gray-900);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.month-total-item {
+  padding: 14px 16px;
+  border-right: 1px solid rgba(255,255,255,0.06);
+}
+.month-total-item:last-child { border-right: none; }
+.month-total-label { display: block; font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
+.month-total-value { display: block; font-family: var(--mono); font-size: 16px; font-weight: 600; color: var(--white); }
+.month-total-value.orange { color: var(--orange); }
+
+@media (max-width: 1100px) {
+  .util-layout { grid-template-columns: 1fr; }
+}
