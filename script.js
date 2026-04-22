@@ -8,7 +8,7 @@
 // ===== CONFIG =====
 const CONFIG = {
   TARGET: 380000,
-  WEBHOOK_URL: '', // Set your Google Apps Script Web App URL here
+  WEBHOOK_URL: 'https://script.google.com/macros/s/AKfycbwatNhtMxATY02zjSYpkI8TeB7dNPTa0-gPaKtjH9Afp8siiAJSXYmw_IAeW08Jyxmy/exec', // Set your Google Apps Script Web App URL here
   TOKEN: 'UA-MX-2026-SEC', // Security token — change this
   MAX_HISTORY: 20,
   STORAGE_KEY: 'ua_mx_dashboard_v2',
