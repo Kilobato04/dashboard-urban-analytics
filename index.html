@@ -262,43 +262,36 @@
 <div id="tab-utilization" class="tab-panel">
   <div class="panel-inner">
     <div class="panel-topbar">
-      <h2 class="panel-title">Resource Utilization</h2>
+      <h2 class="panel-title">Resource Utilization · 2026</h2>
       <div class="topbar-right">
-        <label class="field-label">Week of</label>
-        <input type="date" id="utilizationWeek" class="input-field narrow" onchange="renderUtilizationTable()">
-        <button class="btn btn-add" onclick="addUtilizationRow()">+ Add Row</button>
+        <button class="btn btn-outline" onclick="exportPipelineToCSV()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export CSV
+        </button>
       </div>
     </div>
 
     <div class="util-info-bar">
-      <p>Track weekly hours per resource per project. Billable value = Hours × Hourly Rate × Multiplier.</p>
+      Fee = Hours × Base Rate/hr × Multiplier. Projects populated from Ongoing Projects. Billable % targets are editable per resource.
     </div>
 
-    <div class="table-wrap">
-      <table id="utilizationTable">
-        <thead>
-          <tr>
-            <th class="col-num">#</th>
-            <th>Resource</th>
-            <th>Project</th>
-            <th class="col-num">Hours</th>
-            <th class="col-num">Rate/hr (USD)</th>
-            <th class="col-num">Multiplier</th>
-            <th class="col-num">Billable (USD)</th>
-            <th class="col-action"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="total-row">
-            <td colspan="6"><strong>TOTAL WEEK</strong></td>
-            <td id="totalUtilization"><strong>$0</strong></td>
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- Month tabs -->
+    <div class="month-tabs-wrap">
+      <div id="monthTabsRow" class="month-tabs-row"></div>
     </div>
 
-    <div class="util-summary" id="utilizationSummary"></div>
+    <!-- Two-column layout: weekly entry left, monthly summary right -->
+    <div class="util-layout">
+      <div class="util-entry-col">
+        <div class="util-col-label">Weekly Entries</div>
+        <div id="weeklyEntrySection"></div>
+      </div>
+      <div class="util-summary-col">
+        <div class="util-col-label">Monthly Summary</div>
+        <div id="monthlySummaryView"></div>
+      </div>
+    </div>
+
   </div>
 </div>
 
