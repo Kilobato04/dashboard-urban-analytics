@@ -5,7 +5,7 @@
 
 const CONFIG = {
   TARGET: 380000,
-  WEBHOOK_URL: 'https://script.google.com/macros/s/AKfycbwatNhtMxATY02zjSYpkI8TeB7dNPTa0-gPaKtjH9Afp8siiAJSXYmw_IAeW08Jyxmy/exec',
+  WEBHOOK_URL: '',
   TOKEN: 'UA-MX-2026-SEC',
   MAX_HISTORY: 20,
   STORAGE_KEY: 'ua_mx_dashboard_v3',
@@ -890,3 +890,324 @@ function autoSave() {
   clearTimeout(_asSave);
   _asSave = setTimeout(() => { saveToStorage(getCurrentData()); }, 1500);
 }
+
+// ==============================================
+// ===== SEGUIMIENTO A PAGOS ===================
+// ==============================================
+
+const ESTATUS_PAGO = ['Factura Enviada', 'Factura Pendiente', 'Pagado', 'Otro'];
+const TIPO_PAGO    = ['Externo', 'InterOpco', 'Mixto'];
+
+function addPagoRow(data) {
+  const d      = data || {};
+  const tbody    = document.querySelector('#pagosTable tbody');
+  const totalRow = tbody.querySelector('.total-row');
+  const n        = tbody.querySelectorAll('tr:not(.total-row)').length + 1;
+  const projects = getOngoingProjectNames();
+
+  const selProj = '<option value="">— Seleccionar Proyecto —</option>' +
+    projects.map(p => '<option value="' + htmlEsc(p) + '"' + (p === d.col_1 ? ' selected' : '') + '>' + htmlEsc(p) + '</option>').join('') +
+    (d.col_1 && !projects.includes(d.col_1) ? '<option value="' + htmlEsc(d.col_1) + '" selected>' + htmlEsc(d.col_1) + ' (removed)</option>' : '');
+
+  const selEstatus = ESTATUS_PAGO.map(e =>
+    '<option value="' + e + '"' + (e === (d.col_7 || 'Factura Pendiente') ? ' selected' : '') + '>' + e + '</option>'
+  ).join('');
+
+  const selTipo = TIPO_PAGO.map(t =>
+    '<option value="' + t + '"' + (t === (d.col_4 || 'Externo') ? ' selected' : '') + '>' + t + '</option>'
+  ).join('');
+
+  const tr = document.createElement('tr');
+  tr.innerHTML =
+    '<td class="col-num" style="color:var(--gray-400);font-size:12px;">' + n + '</td>' +
+    '<td style="min-width:160px"><select class="cell-select pagos-proj-sel" onchange="updatePagos()">' + selProj + '</select></td>' +
+    '<td><input class="cell-input" value="' + htmlEsc(d.col_2 || '') + '" placeholder="Concepto / descripción"></td>' +
+    '<td><input type="number" class="cell-input num" value="' + (d.col_3 || 0) + '" min="0" onchange="updatePagos()"></td>' +
+    '<td><select class="cell-select" onchange="updatePagos()">' + selTipo + '</select></td>' +
+    '<td><input type="number" class="cell-input num" value="' + (d.col_5 || 0) + '" min="0" onchange="updatePagos()"></td>' +
+    '<td><input type="number" class="cell-input num" value="' + (d.col_6 || 0) + '" min="0" onchange="updatePagos()" placeholder="InterOpco"></td>' +
+    '<td><select class="cell-select" onchange="updatePagos()">' + selEstatus + '</select></td>' +
+    '<td><input type="date" class="cell-input narrow-date" value="' + (d.col_8 || '') + '"></td>' +
+    '<td><input class="cell-input" value="' + htmlEsc(d.col_9 || '') + '" placeholder="Notas..." style="min-width:160px"></td>' +
+    '<td class="col-action"><button class="btn-del" onclick="deleteRow(this,updatePagos)">✕</button></td>';
+  tbody.insertBefore(tr, totalRow);
+  if (!isLoading) updatePagos();
+}
+
+function updatePagos() {
+  let totCobrar = 0, totPagar = 0, totInterOpco = 0;
+  document.querySelectorAll('#pagosTable tbody tr:not(.total-row)').forEach((row, i) => {
+    const c = row.querySelectorAll('td');
+    const cobrar    = parseFloat(c[3]?.querySelector('input')?.value)  || 0;
+    const pagar     = parseFloat(c[5]?.querySelector('input')?.value)  || 0;
+    const interOpco = parseFloat(c[6]?.querySelector('input')?.value)  || 0;
+    const estatus   = c[7]?.querySelector('select')?.value || '';
+    totCobrar    += cobrar;
+    totPagar     += pagar;
+    totInterOpco += interOpco;
+    c[0].textContent = i + 1;
+
+    // Color-code estatus cell
+    const sel = c[7]?.querySelector('select');
+    if (sel) {
+      sel.className = 'cell-select estatus-sel';
+      if (estatus === 'Factura Enviada') sel.style.color = '#15803d';
+      else if (estatus === 'Factura Pendiente') sel.style.color = '#b45309';
+      else if (estatus === 'Pagado') sel.style.color = '#1d4ed8';
+      else sel.style.color = '';
+    }
+  });
+
+  const fmt = n => '$' + Math.round(n).toLocaleString('en-US');
+  const balance = totCobrar - totPagar - totInterOpco;
+
+  // Summary bar
+  setText('totalPorCobrar', fmt(totCobrar));
+  setText('totalPorPagar',  fmt(totPagar + totInterOpco));
+  setText('totalBalance',   (balance < 0 ? '-' : '') + '$' + Math.abs(Math.round(balance)).toLocaleString('en-US'));
+
+  const balCard = document.getElementById('balanceCard');
+  if (balCard) {
+    balCard.className = 'pagos-summary-item ' + (balance >= 0 ? 'positive' : 'negative');
+  }
+
+  // Footer totals
+  setText('footerPorCobrar', fmt(totCobrar));
+  setText('footerPorPagar',  fmt(totPagar));
+  setText('footerInterOpco', fmt(totInterOpco));
+
+  if (!isLoading) autoSave();
+}
+
+function refreshPagoProjectDropdowns() {
+  const projects = getOngoingProjectNames();
+  document.querySelectorAll('.pagos-proj-sel').forEach(sel => {
+    const current = sel.value;
+    sel.innerHTML = '<option value="">— Seleccionar Proyecto —</option>' +
+      projects.map(p => '<option value="' + htmlEsc(p) + '"' + (p === current ? ' selected' : '') + '>' + htmlEsc(p) + '</option>').join('') +
+      (current && !projects.includes(current) ? '<option value="' + htmlEsc(current) + '" selected>' + htmlEsc(current) + ' (removed)</option>' : '');
+  });
+}
+
+// ==============================================
+// ===== VACACIONES ============================
+// ==============================================
+
+// Default staff config — entry date and annual days editable in UI
+const DEFAULT_VAC_CONFIG = {
+  Octavio: { entryDate: '2020-01-01', annualDays: 20 },
+  Roberto: { entryDate: '2021-06-01', annualDays: 18 },
+  'Noé':   { entryDate: '2022-03-15', annualDays: 15 },
+};
+
+let vacConfig = JSON.parse(JSON.stringify(DEFAULT_VAC_CONFIG));
+
+function initVacaciones() {
+  renderVacCards();
+  renderVacacionesTable();
+}
+
+function renderVacCards() {
+  const container = document.getElementById('vacCards');
+  if (!container) return;
+
+  const today = new Date();
+  const yearStart = new Date(today.getFullYear(), 0, 1);
+  const dayOfYear = Math.floor((today - yearStart) / 86400000) + 1;
+
+  container.innerHTML = MEMBERS.map(m => {
+    const cfg       = vacConfig[m] || { entryDate: '2020-01-01', annualDays: 15 };
+    const entry     = new Date(cfg.entryDate + 'T12:00:00');
+    const annualDays= cfg.annualDays || 15;
+
+    // Years of seniority
+    const yearsMs   = today - entry;
+    const years     = Math.max(0, yearsMs / (365.25 * 86400000));
+
+    // Days accrued this year (pro-rata from Jan 1 to today)
+    const accrued   = Math.floor(annualDays * (dayOfYear / 365));
+
+    // Days taken this year from the log table
+    const taken     = getVacTakenForMember(m);
+
+    // Remaining
+    const remaining = Math.max(0, accrued - taken);
+    const usedPct   = accrued > 0 ? Math.min((taken / annualDays) * 100, 100) : 0;
+    const fillClass = usedPct >= 80 ? 'high' : usedPct >= 50 ? 'mid' : 'low';
+
+    const entryFmt  = entry.toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: 'numeric' });
+    const seniority = years < 1
+      ? Math.floor(years * 12) + ' meses'
+      : years.toFixed(1) + ' años';
+
+    return '<div class="vac-card">' +
+      '<div class="vac-card-header">' +
+        '<span class="vac-card-name">' + m + '</span>' +
+        '<div style="text-align:right">' +
+          '<div class="vac-days-remaining">' + remaining + '</div>' +
+          '<div class="vac-days-label">días disponibles</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="vac-progress-track">' +
+        '<div class="vac-progress-fill ' + fillClass + '" style="width:' + usedPct.toFixed(1) + '%"></div>' +
+      '</div>' +
+      '<div class="vac-meta-grid">' +
+        '<div class="vac-meta-item"><span class="vac-meta-label">Devengados (año)</span><span class="vac-meta-value">' + accrued + ' días</span></div>' +
+        '<div class="vac-meta-item"><span class="vac-meta-label">Tomados (año)</span><span class="vac-meta-value">' + taken + ' días</span></div>' +
+        '<div class="vac-meta-item"><span class="vac-meta-label">Antigüedad</span><span class="vac-meta-value">' + seniority + '</span></div>' +
+        '<div class="vac-meta-item"><span class="vac-meta-label">Días anuales</span><span class="vac-meta-value">' + annualDays + ' días</span></div>' +
+      '</div>' +
+      '<div class="vac-editable-row">' +
+        '<div class="vac-field">' +
+          '<label>Fecha de ingreso</label>' +
+          '<input type="date" value="' + cfg.entryDate + '" onchange="setVacConfig(\'' + m + '\',\'entryDate\',this.value)">' +
+        '</div>' +
+        '<div class="vac-field">' +
+          '<label>Días anuales asignados</label>' +
+          '<input type="number" value="' + annualDays + '" min="0" max="365" onchange="setVacConfig(\'' + m + '\',\'annualDays\',this.value)">' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function setVacConfig(member, field, value) {
+  if (!vacConfig[member]) vacConfig[member] = { entryDate: '2020-01-01', annualDays: 15 };
+  vacConfig[member][field] = field === 'annualDays' ? parseInt(value) || 0 : value;
+  renderVacCards();
+  if (!isLoading) autoSave();
+}
+
+function getVacTakenForMember(member) {
+  let total = 0;
+  const currentYear = new Date().getFullYear();
+  document.querySelectorAll('#vacacionesTable tbody tr').forEach(row => {
+    const c    = row.querySelectorAll('td');
+    const res  = c[1]?.querySelector('select')?.value;
+    const from = c[2]?.querySelector('input')?.value;
+    const to   = c[3]?.querySelector('input')?.value;
+    const tipo = c[5]?.querySelector('select')?.value || '';
+    if (res !== member || !from || !to) return;
+    if (new Date(from).getFullYear() !== currentYear) return;
+    if (tipo === 'Permiso / Ausencia') return; // don't count as vacation days
+    const days = parseInt(c[4]?.querySelector('input')?.value) || calcBusinessDays(from, to);
+    total += days;
+  });
+  return total;
+}
+
+function addVacacionRow(data) {
+  const d     = data || {};
+  const tbody = document.querySelector('#vacacionesTable tbody');
+  const n     = tbody.querySelectorAll('tr').length + 1;
+  const selMem = MEMBERS.map(m => '<option value="' + m + '"' + (m === (d.col_1 || 'Octavio') ? ' selected' : '') + '>' + m + '</option>').join('');
+  const TIPOS_VAC = ['Vacaciones', 'Permiso / Ausencia', 'Día Personal'];
+  const selTipo = TIPOS_VAC.map(t => '<option value="' + t + '"' + (t === (d.col_5 || 'Vacaciones') ? ' selected' : '') + '>' + t + '</option>').join('');
+
+  const from = d.col_2 || '';
+  const to   = d.col_3 || '';
+  const days = d.col_4 || (from && to ? calcBusinessDays(from, to) : 0);
+
+  const tr = document.createElement('tr');
+  tr.innerHTML =
+    '<td class="col-num" style="color:var(--gray-400);font-size:12px;">' + n + '</td>' +
+    '<td><select class="cell-select" onchange="renderVacCards()">' + selMem + '</select></td>' +
+    '<td><input type="date" class="cell-input narrow-date" value="' + from + '" onchange="calcVacRow(this);renderVacCards()"></td>' +
+    '<td><input type="date" class="cell-input narrow-date" value="' + to   + '" onchange="calcVacRow(this);renderVacCards()"></td>' +
+    '<td><input type="number" class="cell-input num" value="' + days + '" min="0" onchange="renderVacCards()" title="Días hábiles (editable)"></td>' +
+    '<td><select class="cell-select" onchange="renderVacCards()">' + selTipo + '</select></td>' +
+    '<td><input class="cell-input" value="' + htmlEsc(d.col_6 || '') + '" placeholder="Notas..."></td>' +
+    '<td class="col-action"><button class="btn-del" onclick="deleteVacRow(this)">✕</button></td>';
+  tbody.appendChild(tr);
+  if (!isLoading) { renderVacCards(); autoSave(); }
+}
+
+function calcVacRow(input) {
+  const row  = input.closest('tr');
+  const c    = row.querySelectorAll('td');
+  const from = c[2]?.querySelector('input')?.value;
+  const to   = c[3]?.querySelector('input')?.value;
+  if (from && to) {
+    const daysInput = c[4]?.querySelector('input');
+    if (daysInput) daysInput.value = calcBusinessDays(from, to);
+  }
+}
+
+function deleteVacRow(btn) {
+  btn.closest('tr')?.remove();
+  renderVacCards();
+  if (!isLoading) autoSave();
+}
+
+// Count Mon–Fri business days between two ISO date strings (inclusive)
+function calcBusinessDays(fromStr, toStr) {
+  const from = new Date(fromStr + 'T12:00:00');
+  const to   = new Date(toStr   + 'T12:00:00');
+  if (from > to) return 0;
+  let count = 0;
+  const cur = new Date(from);
+  while (cur <= to) {
+    const dow = cur.getDay();
+    if (dow !== 0 && dow !== 6) count++;
+    cur.setDate(cur.getDate() + 1);
+  }
+  return count;
+}
+
+function renderVacacionesTable() { /* placeholder — rows loaded from storage */ }
+
+// ==============================================
+// ===== PATCH getCurrentData & populateAll =====
+// ==============================================
+
+// Override getCurrentData to include new tabs
+const _origGetCurrentData = getCurrentData;
+getCurrentData = function() {
+  const base = _origGetCurrentData();
+  base.pagos      = extractTableData('pagosTable');
+  base.vacaciones = extractTableData('vacacionesTable');
+  base.vacConfig  = JSON.parse(JSON.stringify(vacConfig));
+  return base;
+};
+
+// Override populateAll to restore new tabs
+const _origPopulateAll = populateAll;
+populateAll = function(data) {
+  _origPopulateAll(data);
+  if (data.pagos) {
+    const tbody = document.querySelector('#pagosTable tbody');
+    if (tbody) tbody.querySelectorAll('tr:not(.total-row)').forEach(r => r.remove());
+    (data.pagos || []).forEach(r => addPagoRow(r));
+  }
+  if (data.vacaciones) {
+    const tbody = document.querySelector('#vacacionesTable tbody');
+    if (tbody) tbody.querySelectorAll('tr').forEach(r => r.remove());
+    (data.vacaciones || []).forEach(r => addVacacionRow(r));
+  }
+  if (data.vacConfig) vacConfig = { ...JSON.parse(JSON.stringify(DEFAULT_VAC_CONFIG)), ...data.vacConfig };
+  setTimeout(() => {
+    updatePagos();
+    refreshPagoProjectDropdowns();
+    renderVacCards();
+  }, 100);
+};
+
+// Hook ongoing updates to also refresh pagos dropdowns
+const _origUpdateOngoing = updateOngoing;
+updateOngoing = function() {
+  _origUpdateOngoing();
+  refreshPagoProjectDropdowns();
+  refreshOngoingProjectDropdowns();
+};
+
+// Init vacaciones on DOMContentLoaded supplement
+document.addEventListener('DOMContentLoaded', () => {
+  renderVacCards();
+  // Hook utilization tab switch to also init vac tab if needed
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.dataset.tab === 'vacaciones') renderVacCards();
+      if (btn.dataset.tab === 'pagos') { updatePagos(); refreshPagoProjectDropdowns(); }
+    });
+  });
+});
