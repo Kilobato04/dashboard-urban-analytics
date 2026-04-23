@@ -992,3 +992,34 @@ tbody tr:hover { background: var(--gray-50); }
 .estatus-sent    { color: #b45309; }
 .estatus-pending { color: #dc2626; }
 .estatus-paid    { color: #15803d; }
+
+/* ===== EDITABLE BILLABILITY TARGET ===== */
+.target-editable-wrap {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: 2px;
+}
+.target-editable-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px dashed rgba(243,131,79,0.5);
+  color: var(--orange);
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 700;
+  width: 90px;
+  padding: 2px 0;
+  text-align: left;
+  transition: border-color var(--transition);
+  /* hide spinner arrows */
+  -moz-appearance: textfield;
+}
+.target-editable-input::-webkit-outer-spin-button,
+.target-editable-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.target-editable-input:focus {
+  outline: none;
+  border-bottom-color: var(--orange);
+  border-bottom-style: solid;
+}
+.target-editable-input:hover { border-bottom-color: var(--orange-light); }
