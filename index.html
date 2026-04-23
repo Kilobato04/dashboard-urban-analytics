@@ -44,13 +44,13 @@
   </div>
 </header>
 
-<!-- REVENUE PROGRESS -->
+<!-- BILLABILITY PROGRESS -->
 <section class="revenue-section">
   <div class="section-inner">
     <div class="revenue-header">
       <div>
-        <h2 class="section-heading">Revenue Progress 2026</h2>
-        <p class="section-sub">Annual target: Jan — Dec 2026</p>
+        <h2 class="section-heading">Billability Progress 2026</h2>
+        <p class="section-sub">Billed hours this year — Jan to Dec 2026 (incl. prior-year backlog)</p>
       </div>
       <div class="revenue-metrics">
         <div class="metric">
@@ -74,8 +74,20 @@
         </div>
         <div class="metric-divider"></div>
         <div class="metric highlight">
-          <span class="metric-label">Target USD</span>
-          <span class="metric-value orange-bold">$380,000</span>
+          <span class="metric-label" style="color:var(--orange-light)">Target USD</span>
+          <div class="target-editable-wrap">
+            <span style="color:var(--orange-light);font-size:12px;font-weight:500;line-height:1">$</span>
+            <input
+              type="number"
+              id="billabilityTarget"
+              class="target-editable-input"
+              value="380000"
+              min="0"
+              step="10000"
+              onchange="onTargetChange()"
+              title="Edit billability target"
+            >
+          </div>
         </div>
       </div>
     </div>
