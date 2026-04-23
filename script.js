@@ -4,8 +4,8 @@
 'use strict';
 
 const CONFIG = {
-  TARGET: 380000,
-  WEBHOOK_URL: 'https://script.google.com/macros/s/AKfycbwatNhtMxATY02zjSYpkI8TeB7dNPTa0-gPaKtjH9Afp8siiAJSXYmw_IAeW08Jyxmy/exec',
+  TARGET: 380000,          // default; overridden by #billabilityTarget input at runtime
+  WEBHOOK_URL: '',
   TOKEN: 'UA-MX-2026-SEC',
   MAX_HISTORY: 20,
   STORAGE_KEY: 'ua_mx_dashboard_v3',
@@ -25,6 +25,17 @@ let currentUtilMonth = new Date().getMonth();
 let currentUtilYear  = new Date().getFullYear();
 let utilData = {};
 let billableTargets = { ...DEFAULT_BILLABLE };
+
+// ===== BILLABILITY TARGET =====
+function getTarget() {
+  const el = document.getElementById('billabilityTarget');
+  return el ? (parseFloat(el.value) || CONFIG.TARGET) : CONFIG.TARGET;
+}
+
+function onTargetChange() {
+  updateProgress();
+  if (!isLoading) autoSave();
+}
 
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
@@ -67,6 +78,7 @@ function loadFromStorage() {
 function getCurrentData() {
   return {
     timestamp: new Date().toISOString(),
+    billabilityTarget: getTarget(),
     pipeline:  extractTableData('pipelineTable'),
     eoi:       extractTableData('eoiTable'),
     ongoing:   extractTableData('ongoingTable'),
@@ -98,6 +110,11 @@ function extractTableData(tableId) {
 
 function populateAll(data) {
   if (!data) return;
+  // Restore target first so updateProgress uses the correct value
+  if (data.billabilityTarget) {
+    const el = document.getElementById('billabilityTarget');
+    if (el) el.value = data.billabilityTarget;
+  }
   if (data.pipeline) restoreTable('pipelineTable', data.pipeline, addPipelineRow);
   if (data.eoi)      restoreTable('eoiTable',      data.eoi,      addEOIRow);
   if (data.ongoing)  restoreTable('ongoingTable',  data.ongoing,  addOngoingRow);
@@ -242,7 +259,7 @@ function updateProgress() {
   const exercised = getOngoingUAFees('Completed');
   const backlog   = getOngoingUAFees('In Progress');
   const potential = getPipelineWeighted();
-  const target    = CONFIG.TARGET;
+  const target    = getTarget();
   const total     = exercised + backlog + potential;
   const remaining = Math.max(0, target - total);
   const fmt = n => '$' + Math.round(n).toLocaleString('en-US');
