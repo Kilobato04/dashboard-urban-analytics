@@ -5,7 +5,7 @@
 
 const CONFIG = {
   TARGET: 380000,          // default; overridden by #billabilityTarget input at runtime
-  WEBHOOK_URL: '',
+  WEBHOOK_URL: 'https://script.google.com/macros/s/AKfycbwatNhtMxATY02zjSYpkI8TeB7dNPTa0-gPaKtjH9Afp8siiAJSXYmw_IAeW08Jyxmy/exec',
   TOKEN: 'UA-MX-2026-SEC',
   MAX_HISTORY: 20,
   STORAGE_KEY: 'ua_mx_dashboard_v3',
