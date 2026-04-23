@@ -110,8 +110,8 @@
   <div class="tab-nav-inner">
     <button class="tab-btn active" data-tab="pipeline">Project Pipeline</button>
     <button class="tab-btn" data-tab="utilization">Resource Utilization</button>
-    <button class="tab-btn" data-tab="pagos">Seguimiento a Pagos</button>
-    <button class="tab-btn" data-tab="vacaciones">Vacaciones</button>
+    <button class="tab-btn" data-tab="pagos">Collections & Payments</button>
+    <button class="tab-btn" data-tab="vacaciones">Time Off</button>
     <button class="tab-btn" data-tab="gongo">Go / No Go</button>
   </div>
 </nav>
@@ -297,30 +297,30 @@
   </div>
 </div>
 
-<!-- TAB: SEGUIMIENTO A PAGOS -->
+<!-- TAB: COLLECTIONS & PAYMENTS -->
 <div id="tab-pagos" class="tab-panel">
   <div class="panel-inner">
     <div class="panel-topbar">
-      <h2 class="panel-title">Seguimiento a Pagos</h2>
-      <button class="btn btn-add" onclick="addPagoRow()">+ Agregar Registro</button>
+      <h2 class="panel-title">Collections & Payments</h2>
+      <button class="btn btn-add" onclick="addPagoRow()">+ Add Record</button>
     </div>
 
     <div class="util-info-bar">
-      Registra montos por cobrar y por pagar por proyecto. Balance = Por Cobrar − Por Pagar. Los proyectos se cargan desde Ongoing Projects.
+      Track receivables and payables per project. Net Balance = Receivable − Payable. Projects are loaded from Ongoing Projects.
     </div>
 
     <!-- Summary bar -->
     <div class="pagos-summary-bar">
       <div class="pagos-summary-item green-card">
-        <span class="pagos-summary-label">Total Por Cobrar</span>
+        <span class="pagos-summary-label">Total Receivable</span>
         <span class="pagos-summary-value" id="totalPorCobrar">$0</span>
       </div>
       <div class="pagos-summary-item red-card">
-        <span class="pagos-summary-label">Total Por Pagar</span>
+        <span class="pagos-summary-label">Total Payable</span>
         <span class="pagos-summary-value" id="totalPorPagar">$0</span>
       </div>
       <div class="pagos-summary-item" id="balanceCard">
-        <span class="pagos-summary-label">Balance Neto</span>
+        <span class="pagos-summary-label">Net Balance</span>
         <span class="pagos-summary-value" id="totalBalance">$0</span>
       </div>
     </div>
@@ -331,25 +331,23 @@
           <thead>
             <tr>
               <th class="col-num">#</th>
-              <th>Proyecto</th>
-              <th>Concepto</th>
-              <th class="col-num">Por Cobrar (USD)</th>
-              <th>Tipo Pago</th>
-              <th class="col-num">Por Pagar (USD)</th>
-              <th class="col-num">InterOpco (USD)</th>
-              <th>Estatus</th>
-              <th>Fecha Estimada</th>
-              <th>Notas</th>
+              <th>Project</th>
+              <th>Description</th>
+              <th class="col-num">Receivable (USD)</th>
+              <th>Payment Type</th>
+              <th class="col-num">Payable (USD)</th>
+              <th>Status</th>
+              <th>Collection / Payment Date</th>
+              <th>Notes</th>
               <th class="col-action"></th>
             </tr>
           </thead>
           <tbody>
             <tr class="total-row">
-              <td colspan="3"><strong>BALANCE TOTAL</strong></td>
+              <td colspan="3"><strong>NET BALANCE</strong></td>
               <td id="footerPorCobrar"><strong>$0</strong></td>
               <td></td>
               <td id="footerPorPagar"><strong>$0</strong></td>
-              <td id="footerInterOpco"><strong>$0</strong></td>
               <td colspan="4"></td>
             </tr>
           </tbody>
@@ -359,15 +357,15 @@
   </div>
 </div>
 
-<!-- TAB: VACACIONES -->
+<!-- TAB: TIME OFF -->
 <div id="tab-vacaciones" class="tab-panel">
   <div class="panel-inner">
     <div class="panel-topbar">
-      <h2 class="panel-title">Vacaciones · Staff 2026</h2>
+      <h2 class="panel-title">Time Off · Staff 2026</h2>
     </div>
 
     <div class="util-info-bar">
-      Los días disponibles se calculan desde la fecha de ingreso. Días devengados = días anuales asignados × (días transcurridos en año actual / 365). Días restantes = Devengados − Tomados.
+      Available days = Prior year carry-over + Current year accrued − Days taken. Prior year days are consumed first. Accrued this year = Annual days × (day of year / 365).
     </div>
 
     <div class="vac-cards" id="vacCards">
@@ -377,20 +375,20 @@
     <!-- Vacation log table -->
     <div class="pipeline-block" style="margin-top:20px">
       <div class="block-header">
-        <h3 class="block-title">Registro de Períodos de Vacaciones</h3>
-        <button class="btn btn-add" onclick="addVacacionRow()">+ Agregar Período</button>
+        <h3 class="block-title">Time Off Log</h3>
+        <button class="btn btn-add" onclick="addVacacionRow()">+ Add Period</button>
       </div>
       <div class="table-wrap">
         <table id="vacacionesTable">
           <thead>
             <tr>
               <th>#</th>
-              <th>Recurso</th>
-              <th>Fecha Inicio</th>
-              <th>Fecha Fin</th>
-              <th class="col-num">Días Hábiles</th>
-              <th>Tipo</th>
-              <th>Notas</th>
+              <th>Resource</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th class="col-num">Business Days</th>
+              <th>Type</th>
+              <th>Notes</th>
               <th class="col-action"></th>
             </tr>
           </thead>
