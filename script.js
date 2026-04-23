@@ -5,7 +5,7 @@
 
 const CONFIG = {
   TARGET: 380000,
-  WEBHOOK_URL: 'https://script.google.com/macros/s/AKfycbwatNhtMxATY02zjSYpkI8TeB7dNPTa0-gPaKtjH9Afp8siiAJSXYmw_IAeW08Jyxmy/exec',
+  WEBHOOK_URL: '',
   TOKEN: 'UA-MX-2026-SEC',
   MAX_HISTORY: 20,
   STORAGE_KEY: 'ua_mx_dashboard_v3',
@@ -895,8 +895,11 @@ function autoSave() {
 // ===== COLLECTIONS & PAYMENTS ================
 // ==============================================
 
-const ESTATUS_PAGO = ['Invoice Sent', 'Invoice Pending', 'Paid', 'Other'];
-const TIPO_PAGO    = ['External', 'InterOpco'];
+// Collection status options (receivable side)
+const ESTATUS_COBRO  = ['Invoice Sent', 'Invoice Pending', 'Payment Received', 'Overdue', 'Other'];
+// Payable status options (payable side)
+const ESTATUS_PAGO_P = ['InterOpco Invoice', 'Invoice Received', 'Invoice Pending', 'Payment Sent', 'On Hold', 'Other'];
+const TIPO_PAGO      = ['External', 'InterOpco'];
 
 function addPagoRow(data) {
   const d        = data || {};
@@ -909,51 +912,81 @@ function addPagoRow(data) {
     projects.map(p => '<option value="' + htmlEsc(p) + '"' + (p === d.col_1 ? ' selected' : '') + '>' + htmlEsc(p) + '</option>').join('') +
     (d.col_1 && !projects.includes(d.col_1) ? '<option value="' + htmlEsc(d.col_1) + '" selected>' + htmlEsc(d.col_1) + ' (removed)</option>' : '');
 
-  const selEstatus = ESTATUS_PAGO.map(e =>
-    '<option value="' + e + '"' + (e === (d.col_6 || 'Invoice Pending') ? ' selected' : '') + '>' + e + '</option>'
+  // col mapping:
+  // col_1=project col_2=desc col_3=receivable col_4=collectionStatus
+  // col_5=paymentType col_6=payable col_7=payableStatus col_8=date col_9=notes
+  const selCollStatus = ESTATUS_COBRO.map(e =>
+    '<option value="' + e + '"' + (e === (d.col_4 || 'Invoice Pending') ? ' selected' : '') + '>' + e + '</option>'
   ).join('');
 
   const selTipo = TIPO_PAGO.map(t =>
-    '<option value="' + t + '"' + (t === (d.col_4 || 'External') ? ' selected' : '') + '>' + t + '</option>'
+    '<option value="' + t + '"' + (t === (d.col_5 || 'External') ? ' selected' : '') + '>' + t + '</option>'
+  ).join('');
+
+  const selPayStatus = ESTATUS_PAGO_P.map(e =>
+    '<option value="' + e + '"' + (e === (d.col_7 || 'Invoice Pending') ? ' selected' : '') + '>' + e + '</option>'
   ).join('');
 
   const tr = document.createElement('tr');
-  // Columns: # | Project | Description | Receivable | Type | Payable | Status | Date | Notes | Del
-  // col indices in data: col_1=proj col_2=desc col_3=recv col_4=type col_5=payable col_6=status col_7=date col_8=notes
+  // Columns: # | Project | Description | Receivable | CollStatus | PayType | Payable | PayStatus | Date | Notes | Del
   tr.innerHTML =
     '<td class="col-num" style="color:var(--gray-400);font-size:12px;">' + n + '</td>' +
-    '<td style="min-width:160px"><select class="cell-select pagos-proj-sel" onchange="updatePagos()">' + selProj + '</select></td>' +
-    '<td><input class="cell-input" value="' + htmlEsc(d.col_2 || '') + '" placeholder="Description / concept"></td>' +
+    '<td style="min-width:150px"><select class="cell-select pagos-proj-sel" onchange="updatePagos()">' + selProj + '</select></td>' +
+    '<td><input class="cell-input" value="' + htmlEsc(d.col_2 || '') + '" placeholder="Description / concept" style="min-width:140px"></td>' +
     '<td><input type="number" class="cell-input num" value="' + (d.col_3 || 0) + '" min="0" onchange="updatePagos()"></td>' +
+    '<td><select class="cell-select coll-status-sel" onchange="styleStatusSel(this,\'coll\')">' + selCollStatus + '</select></td>' +
     '<td><select class="cell-select" onchange="updatePagos()">' + selTipo + '</select></td>' +
-    '<td><input type="number" class="cell-input num" value="' + (d.col_5 || 0) + '" min="0" onchange="updatePagos()"></td>' +
-    '<td><select class="cell-select" onchange="updatePagos()">' + selEstatus + '</select></td>' +
-    '<td><input type="date" class="cell-input narrow-date" value="' + (d.col_7 || '') + '"></td>' +
-    '<td><input class="cell-input" value="' + htmlEsc(d.col_8 || '') + '" placeholder="Notes..." style="min-width:160px"></td>' +
+    '<td><input type="number" class="cell-input num" value="' + (d.col_6 || 0) + '" min="0" onchange="updatePagos()"></td>' +
+    '<td><select class="cell-select pay-status-sel" onchange="styleStatusSel(this,\'pay\')">' + selPayStatus + '</select></td>' +
+    '<td><input type="date" class="cell-input narrow-date" value="' + (d.col_8 || '') + '"></td>' +
+    '<td><input class="cell-input" value="' + htmlEsc(d.col_9 || '') + '" placeholder="Notes..." style="min-width:140px"></td>' +
     '<td class="col-action"><button class="btn-del" onclick="deleteRow(this,updatePagos)">✕</button></td>';
   tbody.insertBefore(tr, totalRow);
+
+  // Apply initial status colors
+  const collSel = tr.querySelector('.coll-status-sel');
+  const paySel  = tr.querySelector('.pay-status-sel');
+  if (collSel) styleStatusSel(collSel, 'coll');
+  if (paySel)  styleStatusSel(paySel,  'pay');
+
   if (!isLoading) updatePagos();
+}
+
+function styleStatusSel(sel, side) {
+  if (!sel) return;
+  const v = sel.value;
+  // Collection side
+  if (side === 'coll') {
+    if (v === 'Payment Received')  { sel.style.color = '#15803d'; sel.style.fontWeight = '600'; }
+    else if (v === 'Invoice Sent') { sel.style.color = '#2563eb'; sel.style.fontWeight = '500'; }
+    else if (v === 'Overdue')      { sel.style.color = '#dc2626'; sel.style.fontWeight = '700'; }
+    else if (v === 'Invoice Pending') { sel.style.color = '#b45309'; sel.style.fontWeight = '500'; }
+    else { sel.style.color = ''; sel.style.fontWeight = ''; }
+  }
+  // Payable side
+  if (side === 'pay') {
+    if (v === 'Payment Sent')        { sel.style.color = '#15803d'; sel.style.fontWeight = '600'; }
+    else if (v === 'Invoice Received'){ sel.style.color = '#2563eb'; sel.style.fontWeight = '500'; }
+    else if (v === 'InterOpco Invoice'){ sel.style.color = '#7c3aed'; sel.style.fontWeight = '600'; }
+    else if (v === 'Invoice Pending') { sel.style.color = '#b45309'; sel.style.fontWeight = '500'; }
+    else if (v === 'On Hold')         { sel.style.color = '#dc2626'; sel.style.fontWeight = '500'; }
+    else { sel.style.color = ''; sel.style.fontWeight = ''; }
+  }
 }
 
 function updatePagos() {
   let totCobrar = 0, totPagar = 0;
+  // Cols: 0=# 1=proj 2=desc 3=recv 4=collStatus 5=type 6=payable 7=payStatus 8=date 9=notes
   document.querySelectorAll('#pagosTable tbody tr:not(.total-row)').forEach((row, i) => {
-    const c       = row.querySelectorAll('td');
-    const cobrar  = parseFloat(c[3]?.querySelector('input')?.value) || 0;
-    const pagar   = parseFloat(c[5]?.querySelector('input')?.value) || 0;
-    const estatus = c[6]?.querySelector('select')?.value || '';
+    const c      = row.querySelectorAll('td');
+    const cobrar = parseFloat(c[3]?.querySelector('input')?.value)  || 0;
+    const pagar  = parseFloat(c[6]?.querySelector('input')?.value)  || 0;
     totCobrar += cobrar;
     totPagar  += pagar;
     c[0].textContent = i + 1;
-
-    // Color-code status
-    const sel = c[6]?.querySelector('select');
-    if (sel) {
-      if (estatus === 'Invoice Sent')    sel.style.color = '#b45309';
-      else if (estatus === 'Paid')       sel.style.color = '#15803d';
-      else if (estatus === 'Invoice Pending') sel.style.color = '#dc2626';
-      else sel.style.color = '';
-    }
+    // Re-apply colors on each update
+    styleStatusSel(c[4]?.querySelector('select'), 'coll');
+    styleStatusSel(c[7]?.querySelector('select'), 'pay');
   });
 
   const fmt     = v => '$' + Math.round(v).toLocaleString('en-US');
@@ -1043,13 +1076,13 @@ function renderVacCards() {
       // Prior year + current year breakdown
       '<div class="vac-balance-row">' +
         '<div class="vac-balance-item prior">' +
-          '<span class="vac-balance-label">Prior Year Carry-over</span>' +
-          '<span class="vac-balance-num">' + priorLeft + ' <small>/ ' + priorDays + ' days</small></span>' +
+          '<span class="vac-balance-label">Prior Yr D/Off</span>' +
+          '<span class="vac-balance-num">' + priorLeft + ' <small>/ ' + priorDays + ' d</small></span>' +
         '</div>' +
         '<div class="vac-balance-sep">+</div>' +
         '<div class="vac-balance-item current">' +
-          '<span class="vac-balance-label">Current Year Accrued</span>' +
-          '<span class="vac-balance-num">' + currentLeft + ' <small>/ ' + accrued + ' days</small></span>' +
+          '<span class="vac-balance-label">Current Yr Accrued</span>' +
+          '<span class="vac-balance-num">' + currentLeft + ' <small>/ ' + accrued + ' d</small></span>' +
         '</div>' +
       '</div>' +
       '<div class="vac-meta-grid">' +
@@ -1068,7 +1101,7 @@ function renderVacCards() {
           '<input type="number" value="' + annualDays + '" min="0" max="365" onchange="setVacConfig(\'' + m + '\',\'annualDays\',this.value)">' +
         '</div>' +
         '<div class="vac-field">' +
-          '<label>Prior Year Carry-over</label>' +
+          '<label>Prior Yr D/Off</label>' +
           '<input type="number" value="' + priorDays + '" min="0" max="365" onchange="setVacConfig(\'' + m + '\',\'priorYearDays\',this.value)">' +
         '</div>' +
       '</div>' +
