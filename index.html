@@ -122,6 +122,7 @@
   <div class="tab-nav-inner">
     <button class="tab-btn active" data-tab="pipeline">Project Pipeline</button>
     <button class="tab-btn" data-tab="utilization">Resource Utilization</button>
+    <button class="tab-btn" data-tab="expenses">Expenses</button>
     <button class="tab-btn" data-tab="pagos">Collections & Payments</button>
     <button class="tab-btn" data-tab="vacaciones">Time Off</button>
     <button class="tab-btn" data-tab="gongo">Go / No Go</button>
@@ -411,6 +412,74 @@
         </table>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- TAB: EXPENSES -->
+<div id="tab-expenses" class="tab-panel">
+  <div class="panel-inner">
+
+    <div class="panel-topbar">
+      <h2 class="panel-title">Expenses · 2026</h2>
+      <div class="topbar-right">
+        <button class="btn btn-outline" onclick="exportExpensesCSV()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export CSV
+        </button>
+      </div>
+    </div>
+
+    <div class="util-info-bar">
+      Corporate card expenses reported monthly per staff member. Linked to an ongoing project or defaulted to Business Development (BD). All amounts in USD.
+    </div>
+
+    <!-- Month tabs -->
+    <div class="month-tabs-wrap">
+      <div id="expMonthTabsRow" class="month-tabs-row"></div>
+    </div>
+
+    <!-- Summary cards -->
+    <div class="exp-summary-bar" id="expSummaryBar"></div>
+
+    <!-- Entry table -->
+    <div class="pipeline-block">
+      <div class="block-header">
+        <h3 class="block-title" id="expMonthLabel">Expenses — Jan 2026</h3>
+        <button class="btn btn-add" onclick="addExpenseRow()">+ Add Expense</button>
+      </div>
+      <div class="table-wrap">
+        <table id="expensesTable">
+          <thead>
+            <tr>
+              <th class="col-num">#</th>
+              <th>Staff Member</th>
+              <th>Date</th>
+              <th>Category</th>
+              <th>Project / BD</th>
+              <th>Vendor / Description</th>
+              <th class="col-num">Amount (USD)</th>
+              <th>Receipt</th>
+              <th>Notes</th>
+              <th class="col-action"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="total-row">
+              <td colspan="6"><strong>TOTAL MONTH</strong></td>
+              <td id="expTotalMonth"><strong>$0</strong></td>
+              <td colspan="3"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- YTD summary by member -->
+    <div class="exp-ytd-wrap">
+      <div class="util-col-label" style="margin-bottom:12px">Year-to-Date by Staff Member</div>
+      <div class="exp-ytd-grid" id="expYTDGrid"></div>
+    </div>
+
   </div>
 </div>
 
