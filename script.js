@@ -5,7 +5,7 @@
 
 const CONFIG = {
   TARGET: 380000,          // default; overridden by #billabilityTarget input at runtime
-  WEBHOOK_URL: 'https://script.google.com/macros/s/AKfycbwatNhtMxATY02zjSYpkI8TeB7dNPTa0-gPaKtjH9Afp8siiAJSXYmw_IAeW08Jyxmy/exec',
+  WEBHOOK_URL: '',
   TOKEN: 'UA-MX-2026-SEC',
   MAX_HISTORY: 20,
   STORAGE_KEY: 'ua_mx_dashboard_v3',
@@ -1264,6 +1264,365 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', () => {
       if (btn.dataset.tab === 'vacaciones') renderVacCards();
       if (btn.dataset.tab === 'pagos') { updatePagos(); refreshPagoProjectDropdowns(); }
+    });
+  });
+});
+
+// ==============================================
+// ===== EXPENSES ===============================
+// ==============================================
+
+const EXP_CATEGORIES = [
+  'Transportation',
+  'Accommodation',
+  'Meals & Entertainment',
+  'Office Supplies',
+  'Software & Subscriptions',
+  'Printing & Materials',
+  'Communications',
+  'Training & Conferences',
+  'Business Development',
+  'Other',
+];
+
+const RECEIPT_STATUS = ['Submitted', 'Pending', 'Missing'];
+
+let expData  = {};        // expData[year-month] = array of row objects
+let currentExpMonth = new Date().getMonth();
+let currentExpYear  = new Date().getFullYear();
+
+// ---- INIT ----
+function initExpenses() {
+  currentExpMonth = new Date().getMonth();
+  currentExpYear  = new Date().getFullYear();
+  renderExpMonthTabs();
+  renderExpTable();
+  renderExpSummaryBar();
+  renderExpYTD();
+}
+
+function renderExpMonthTabs() {
+  const container = document.getElementById('expMonthTabsRow');
+  if (!container) return;
+  container.innerHTML = MONTHS.map((m, i) =>
+    '<button class="month-tab' + (i === currentExpMonth ? ' active' : '') +
+    '" onclick="switchExpMonth(' + i + ')">' + m + '</button>'
+  ).join('');
+}
+
+function switchExpMonth(idx) {
+  currentExpMonth = idx;
+  renderExpMonthTabs();
+  renderExpTable();
+  renderExpSummaryBar();
+}
+
+// ---- TABLE ----
+function renderExpTable() {
+  const label = document.getElementById('expMonthLabel');
+  if (label) label.textContent = 'Expenses — ' + MONTHS[currentExpMonth] + ' ' + currentExpYear;
+
+  // Clear existing data rows
+  const tbody    = document.querySelector('#expensesTable tbody');
+  const totalRow = tbody.querySelector('.total-row');
+  tbody.querySelectorAll('tr:not(.total-row)').forEach(r => r.remove());
+
+  // Reload from expData
+  const monthKey = currentExpYear + '-' + currentExpMonth;
+  (expData[monthKey] || []).forEach(r => addExpenseRow(r));
+  updateExpTotals();
+}
+
+function addExpenseRow(data) {
+  const d        = data || {};
+  const tbody    = document.querySelector('#expensesTable tbody');
+  if (!tbody) return;
+  const totalRow = tbody.querySelector('.total-row');
+  const n        = tbody.querySelectorAll('tr:not(.total-row)').length + 1;
+
+  const selMember = MEMBERS.map(m =>
+    '<option value="' + m + '"' + (m === (d.member || 'Octavio') ? ' selected' : '') + '>' + m + '</option>'
+  ).join('');
+
+  const selCat = EXP_CATEGORIES.map(c =>
+    '<option value="' + c + '"' + (c === (d.category || 'Business Development') ? ' selected' : '') + '>' + c + '</option>'
+  ).join('');
+
+  // Project dropdown: ongoing projects + BD as first/default
+  const projects = getOngoingProjectNames();
+  const selProj  = '<option value="BD" ' + (!d.project || d.project === 'BD' ? 'selected' : '') + '>BD — Business Development</option>' +
+    projects.map(p => '<option value="' + htmlEsc(p) + '"' + (p === d.project ? ' selected' : '') + '>' + htmlEsc(p) + '</option>').join('');
+
+  const selReceipt = RECEIPT_STATUS.map(s =>
+    '<option value="' + s + '"' + (s === (d.receipt || 'Pending') ? ' selected' : '') + '>' + s + '</option>'
+  ).join('');
+
+  const tr = document.createElement('tr');
+  tr.innerHTML =
+    '<td class="col-num" style="color:var(--gray-400);font-size:12px;">' + n + '</td>' +
+    '<td><select class="cell-select exp-member-sel" onchange="saveExpRow(this)">' + selMember + '</select></td>' +
+    '<td><input type="date" class="cell-input narrow-date" value="' + (d.date || todayISO()) + '" onchange="saveExpRow(this)"></td>' +
+    '<td><select class="cell-select exp-cat-sel" onchange="saveExpRow(this)">' + selCat + '</select></td>' +
+    '<td><select class="cell-select exp-proj-sel" onchange="saveExpRow(this)">' + selProj + '</select></td>' +
+    '<td><input class="cell-input" value="' + htmlEsc(d.vendor || '') + '" placeholder="Vendor / description" style="min-width:160px" onchange="saveExpRow(this)"></td>' +
+    '<td><input type="number" class="cell-input num exp-amount" value="' + (d.amount || 0) + '" min="0" step="0.01" onchange="saveExpRow(this)"></td>' +
+    '<td><select class="cell-select exp-receipt-sel" onchange="styleReceiptSel(this);saveExpRow(this)">' + selReceipt + '</select></td>' +
+    '<td><input class="cell-input" value="' + htmlEsc(d.notes || '') + '" placeholder="Notes..." style="min-width:120px" onchange="saveExpRow(this)"></td>' +
+    '<td class="col-action"><button class="btn-del" onclick="deleteExpRow(this)">✕</button></td>';
+  tbody.insertBefore(tr, totalRow);
+
+  // Style receipt on load
+  styleReceiptSel(tr.querySelector('.exp-receipt-sel'));
+  if (!isLoading) { saveExpRow(tr.querySelector('.exp-amount')); }
+}
+
+function styleReceiptSel(sel) {
+  if (!sel) return;
+  const v = sel.value;
+  if (v === 'Submitted')    { sel.style.color = '#15803d'; sel.style.fontWeight = '600'; }
+  else if (v === 'Pending') { sel.style.color = '#b45309'; sel.style.fontWeight = '500'; }
+  else if (v === 'Missing') { sel.style.color = '#dc2626'; sel.style.fontWeight = '700'; }
+  else { sel.style.color = ''; sel.style.fontWeight = ''; }
+}
+
+function saveExpRow(el) {
+  // Serialize all rows of current month back to expData
+  const monthKey = currentExpYear + '-' + currentExpMonth;
+  const tbody    = document.querySelector('#expensesTable tbody');
+  if (!tbody) return;
+  const rows = [];
+  tbody.querySelectorAll('tr:not(.total-row)').forEach(row => {
+    const c = row.querySelectorAll('td');
+    rows.push({
+      member:   c[1]?.querySelector('select')?.value  || '',
+      date:     c[2]?.querySelector('input')?.value   || '',
+      category: c[3]?.querySelector('select')?.value  || '',
+      project:  c[4]?.querySelector('select')?.value  || 'BD',
+      vendor:   c[5]?.querySelector('input')?.value   || '',
+      amount:   parseFloat(c[6]?.querySelector('input')?.value)  || 0,
+      receipt:  c[7]?.querySelector('select')?.value  || 'Pending',
+      notes:    c[8]?.querySelector('input')?.value   || '',
+    });
+  });
+  expData[monthKey] = rows;
+  updateExpTotals();
+  renderExpSummaryBar();
+  renderExpYTD();
+  if (!isLoading) autoSave();
+}
+
+function deleteExpRow(btn) {
+  btn.closest('tr')?.remove();
+  renumberExpRows();
+  saveExpRow(btn); // triggers re-serialize
+}
+
+function renumberExpRows() {
+  document.querySelectorAll('#expensesTable tbody tr:not(.total-row)').forEach((row, i) => {
+    row.querySelector('td').textContent = i + 1;
+  });
+}
+
+function updateExpTotals() {
+  let total = 0;
+  document.querySelectorAll('#expensesTable tbody tr:not(.total-row)').forEach(row => {
+    total += parseFloat(row.querySelectorAll('td')[6]?.querySelector('input')?.value) || 0;
+  });
+  setText('expTotalMonth', '$' + total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+}
+
+// ---- SUMMARY BAR (current month by member) ----
+function renderExpSummaryBar() {
+  const container = document.getElementById('expSummaryBar');
+  if (!container) return;
+  const monthKey  = currentExpYear + '-' + currentExpMonth;
+  const rows      = expData[monthKey] || [];
+
+  const memberTotals = {};
+  MEMBERS.forEach(m => { memberTotals[m] = { amount: 0, count: 0 }; });
+  let grandTotal = 0, grandCount = 0;
+
+  rows.forEach(r => {
+    if (memberTotals[r.member]) {
+      memberTotals[r.member].amount += r.amount;
+      memberTotals[r.member].count++;
+    }
+    grandTotal += r.amount;
+    grandCount++;
+  });
+
+  const fmt = n => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+
+  container.innerHTML = MEMBERS.map(m =>
+    '<div class="exp-summary-card">' +
+      '<span class="exp-summary-label">' + m + '</span>' +
+      '<span class="exp-summary-amount">' + fmt(memberTotals[m].amount) + '</span>' +
+      '<span class="exp-summary-count">' + memberTotals[m].count + ' item' + (memberTotals[m].count !== 1 ? 's' : '') + '</span>' +
+    '</div>'
+  ).join('') +
+  '<div class="exp-summary-card total-card">' +
+    '<span class="exp-summary-label">Month Total</span>' +
+    '<span class="exp-summary-amount">' + fmt(grandTotal) + '</span>' +
+    '<span class="exp-summary-count">' + grandCount + ' items · ' + MONTHS[currentExpMonth] + '</span>' +
+  '</div>';
+}
+
+// ---- YTD GRID ----
+function renderExpYTD() {
+  const container = document.getElementById('expYTDGrid');
+  if (!container) return;
+
+  // Aggregate all months this year per member + category
+  const memberStats = {};
+  MEMBERS.forEach(m => { memberStats[m] = { total: 0, byCategory: {}, byProject: {} }; });
+
+  Object.keys(expData).forEach(monthKey => {
+    const parts = monthKey.split('-');
+    if (parseInt(parts[0]) !== currentExpYear) return;
+    (expData[monthKey] || []).forEach(r => {
+      if (!memberStats[r.member]) return;
+      const amt = r.amount || 0;
+      memberStats[r.member].total += amt;
+      // by category
+      if (!memberStats[r.member].byCategory[r.category]) memberStats[r.member].byCategory[r.category] = 0;
+      memberStats[r.member].byCategory[r.category] += amt;
+      // by project
+      const proj = r.project || 'BD';
+      if (!memberStats[r.member].byProject[proj]) memberStats[r.member].byProject[proj] = 0;
+      memberStats[r.member].byProject[proj] += amt;
+    });
+  });
+
+  const fmt = n => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+
+  container.innerHTML = MEMBERS.map(m => {
+    const s = memberStats[m];
+    const topCats = Object.entries(s.byCategory)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 4);
+    const topProjs = Object.entries(s.byProject)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3);
+
+    const catRows = topCats.map(([cat, amt]) =>
+      '<div class="exp-ytd-row"><span>' + cat + '</span><span>' + fmt(amt) + '</span></div>'
+    ).join('') || '<div class="exp-ytd-row" style="color:var(--gray-400);font-style:italic"><span>No expenses yet</span></div>';
+
+    const projRows = topProjs.map(([proj, amt]) =>
+      '<div class="exp-ytd-row"><span>' + proj + '</span><span>' + fmt(amt) + '</span></div>'
+    ).join('');
+
+    return '<div class="exp-ytd-card">' +
+      '<div class="exp-ytd-name">' + m + '</div>' +
+      '<div class="exp-ytd-total">' + fmt(s.total) + ' <small style="font-size:11px;color:var(--gray-400);font-weight:400">YTD</small></div>' +
+      '<div class="exp-ytd-breakdown">' +
+        '<div style="font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">By Category</div>' +
+        catRows +
+        (projRows ? '<div style="font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin:8px 0 4px">By Project</div>' + projRows : '') +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ---- REFRESH PROJECT DROPDOWNS IN EXPENSES ----
+function refreshExpProjectDropdowns() {
+  const projects = getOngoingProjectNames();
+  document.querySelectorAll('.exp-proj-sel').forEach(sel => {
+    const current = sel.value;
+    sel.innerHTML = '<option value="BD"' + (current === 'BD' || !current ? ' selected' : '') + '>BD — Business Development</option>' +
+      projects.map(p => '<option value="' + htmlEsc(p) + '"' + (p === current ? ' selected' : '') + '>' + htmlEsc(p) + '</option>').join('') +
+      (current && current !== 'BD' && !projects.includes(current) ? '<option value="' + htmlEsc(current) + '" selected>' + htmlEsc(current) + ' (removed)</option>' : '');
+  });
+}
+
+// ---- CSV EXPORT ----
+function exportExpensesCSV() {
+  let csv = '\uFEFFUrban Analytics Mexico — Expenses Export\nGenerated: ' + new Date().toLocaleString('es-MX') + '\n\n';
+
+  MONTHS.forEach((m, mi) => {
+    const monthKey = currentExpYear + '-' + mi;
+    const rows     = expData[monthKey] || [];
+    if (!rows.length) return;
+    csv += m + ' ' + currentExpYear + '\n';
+    csv += 'Staff Member,Date,Category,Project,Vendor / Description,Amount (USD),Receipt,Notes\n';
+    let monthTotal = 0;
+    rows.forEach(r => {
+      monthTotal += r.amount || 0;
+      csv += '"' + esc(r.member) + '","' + (r.date||'') + '","' + esc(r.category) + '","' +
+        esc(r.project) + '","' + esc(r.vendor) + '",' + (r.amount||0) + ',"' +
+        esc(r.receipt) + '","' + esc(r.notes) + '"\n';
+    });
+    csv += 'MONTH TOTAL,,,,,' + monthTotal.toFixed(2) + ',,\n\n';
+  });
+
+  // YTD summary
+  csv += 'YEAR-TO-DATE SUMMARY BY STAFF MEMBER\nStaff,Category,Total (USD)\n';
+  const ytd = {};
+  MEMBERS.forEach(m => { ytd[m] = {}; });
+  Object.keys(expData).forEach(mk => {
+    const parts = mk.split('-');
+    if (parseInt(parts[0]) !== currentExpYear) return;
+    (expData[mk] || []).forEach(r => {
+      if (!ytd[r.member]) return;
+      if (!ytd[r.member][r.category]) ytd[r.member][r.category] = 0;
+      ytd[r.member][r.category] += r.amount || 0;
+    });
+  });
+  MEMBERS.forEach(m => {
+    Object.entries(ytd[m]).forEach(([cat, amt]) => {
+      csv += '"' + m + '","' + cat + '",' + amt.toFixed(2) + '\n';
+    });
+  });
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = 'UA_MX_Expenses_' + currentExpYear + '_' + new Date().toISOString().split('T')[0] + '.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+  showToast('Expenses CSV exported ✓', 'success');
+}
+
+// ---- HELPERS ----
+function todayISO() { return new Date().toISOString().split('T')[0]; }
+
+// ---- PATCH getCurrentData & populateAll ----
+const _origGetDataExp = getCurrentData;
+getCurrentData = function() {
+  const base = _origGetDataExp();
+  base.expenses = expData;
+  return base;
+};
+
+const _origPopulateExp = populateAll;
+populateAll = function(data) {
+  _origPopulateExp(data);
+  if (data.expenses) {
+    expData = data.expenses;
+    renderExpTable();
+    renderExpSummaryBar();
+    renderExpYTD();
+  }
+};
+
+// Patch updateOngoing to also refresh expense project dropdowns
+const _origUpdateOngoingExp = updateOngoing;
+updateOngoing = function() {
+  _origUpdateOngoingExp();
+  refreshExpProjectDropdowns();
+};
+
+// Init on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+  initExpenses();
+  // Hook tab switch
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.dataset.tab === 'expenses') {
+        renderExpMonthTabs();
+        renderExpTable();
+        renderExpSummaryBar();
+        renderExpYTD();
+      }
     });
   });
 });
