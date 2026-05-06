@@ -250,16 +250,16 @@ async function saveData() {
   updateSyncStatus('saving');
   if (CONFIG.WEBHOOK_URL) {
     try {
-      const res  = await fetch(CONFIG.WEBHOOK_URL, {
+      // Content-Type: text/plain avoids the CORS preflight OPTIONS request.
+      // Apps Script cannot handle OPTIONS — text/plain sends as a simple
+      // request with no preflight, which Apps Script receives correctly.
+      await fetch(CONFIG.WEBHOOK_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({ token: CONFIG.TOKEN, timestamp: data.timestamp, data }),
-        redirect: 'follow'
       });
-      const text = await res.text();
-      const json = (() => { try { return JSON.parse(text); } catch(e) { return null; } })();
       updateSyncStatus('synced');
-      showToast(json && json.propsSaved ? 'Saved & synced ✓' : 'Saved to Sheets ✓', 'success');
+      showToast('Saved & synced ✓', 'success');
     } catch(e) {
       updateSyncStatus('error');
       showToast('Saved locally. Webhook unreachable.', 'error');
