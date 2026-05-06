@@ -46,62 +46,34 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function bootLoad() {
-  console.log('[UA] ═══════════════════════════════════');
-  console.log('[UA] bootLoad() started');
-  console.log('[UA] WEBHOOK_URL:', CONFIG.WEBHOOK_URL ? CONFIG.WEBHOOK_URL.slice(0, 60) + '...' : '⚠️ NOT SET');
   isLoading = true;
   updateSyncStatus('syncing');
-
-  // Step 1 — Local storage
   const local = getLocalData();
-  console.log('[UA] Step 1 — localStorage:', local ? 'Found (ts=' + local.timestamp + ')' : '⚠️ Empty (incognito or new machine)');
   if (local) { populateAll(local); updateProgress(); }
-
-  // Step 2 — Remote fetch
   if (CONFIG.WEBHOOK_URL) {
-    console.log('[UA] Step 2 — Fetching remote data...');
     try {
       const remote = await fetchRemoteData();
-      console.log('[UA] Step 2 — Remote response received:', remote ? 'OK (ts=' + remote.timestamp + ')' : '⚠️ null/empty');
-
       if (remote && remote.timestamp) {
         const remoteTs = new Date(remote.timestamp).getTime();
         const localTs  = local && local.timestamp ? new Date(local.timestamp).getTime() : 0;
-        console.log('[UA] Step 3 — remoteTs:', remoteTs, '/ localTs:', localTs, '/ remote newer?', remoteTs > localTs);
-
         if (remoteTs > localTs) {
-          console.log('[UA] Step 3 — Loading remote data into dashboard...');
           isLoading = true;
           saveToStorage(remote);
           populateAll(remote);
           updateProgress();
           setTimeout(() => { isLoading = false; }, 300);
-          showToast('Loaded latest data from Google Sheets ✓', 'success');
-          console.log('[UA] Step 3 — ✅ Remote data loaded successfully');
-        } else {
-          console.log('[UA] Step 3 — Local is up to date, no reload needed');
-          showToast('Dashboard up to date ✓', 'success');
+          showToast('Loaded latest data ✓', 'success');
         }
         showRecentEditWarning(remote.timestamp);
-      } else {
-        console.warn('[UA] Step 2 — ⚠️ Remote returned no data (PropertiesService empty? First time saving?)');
-        showToast('No remote data found. Save from your main machine first.', '');
       }
     } catch(e) {
-      const msg = e && e.message ? e.message : String(e);
-      console.error('[UA] Step 2 — ❌ Remote fetch FAILED:', msg);
-      console.error('[UA]   Full error:', e);
-      showToast('Remote load failed: ' + msg.slice(0, 80), 'error');
+      if (!local) showToast('Could not load remote data. Check connection.', 'error');
     }
   } else {
-    console.warn('[UA] Step 2 — SKIPPED: WEBHOOK_URL not set');
     if (!local) showToast('No saved data yet. Add records and click Save.', '');
   }
-
   updateSyncStatus('synced');
   isLoading = false;
-  console.log('[UA] bootLoad() complete');
-  console.log('[UA] ═══════════════════════════════════');
 }
 
 // Show a dismissible banner if the remote was saved very recently
@@ -156,28 +128,11 @@ function dismissRecentEditBanner() {
 
 async function fetchRemoteData() {
   const url = CONFIG.WEBHOOK_URL + '?token=' + encodeURIComponent(CONFIG.TOKEN) + '&action=load';
-  console.log('[UA] fetchRemoteData() → GET', url.slice(0, 80) + '...');
-
-  let res;
-  try {
-    res = await fetch(url, { method: 'GET', redirect: 'follow' });
-  } catch(netErr) {
-    console.error('[UA] fetch() network error (DNS? CORS preflight? offline?):', netErr);
-    throw netErr;
-  }
-
-  console.log('[UA] fetch() response — status:', res.status, '/ type:', res.type, '/ url:', res.url.slice(0, 80));
-
-  if (!res.ok) throw new Error('HTTP ' + res.status + ' from ' + res.url);
-
+  const res  = await fetch(url, { method: 'GET', redirect: 'follow' });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
   const text = await res.text();
-  console.log('[UA] response body (first 200 chars):', text.slice(0, 200));
-
   let json;
-  try { json = JSON.parse(text); }
-  catch(e) { throw new Error('Bad JSON from remote: ' + text.slice(0, 200)); }
-
-  console.log('[UA] parsed JSON — status:', json.status, '/ has data:', !!json.data);
+  try { json = JSON.parse(text); } catch(e) { throw new Error('Bad response from remote'); }
   if (json.status !== 'ok') throw new Error(json.message || 'Remote load error');
   return json.data;
 }
@@ -295,15 +250,20 @@ async function saveData() {
   updateSyncStatus('saving');
   if (CONFIG.WEBHOOK_URL) {
     try {
-      await fetch(CONFIG.WEBHOOK_URL, {
+      const res  = await fetch(CONFIG.WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: CONFIG.TOKEN, timestamp: data.timestamp, data }),
-        mode: 'no-cors'
+        redirect: 'follow'
       });
+      const text = await res.text();
+      const json = (() => { try { return JSON.parse(text); } catch(e) { return null; } })();
       updateSyncStatus('synced');
-      showToast('Saved & synced to Google Sheets ✓', 'success');
-    } catch(e) { updateSyncStatus('error'); showToast('Saved locally. Webhook unreachable.', 'error'); }
+      showToast(json && json.propsSaved ? 'Saved & synced ✓' : 'Saved to Sheets ✓', 'success');
+    } catch(e) {
+      updateSyncStatus('error');
+      showToast('Saved locally. Webhook unreachable.', 'error');
+    }
   } else {
     updateSyncStatus('synced');
     showToast('Saved locally. Set WEBHOOK_URL to sync.', 'success');
