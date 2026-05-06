@@ -70,8 +70,10 @@ async function bootLoad() {
         showRecentEditWarning(remote.timestamp);
       }
     } catch(e) {
-      console.warn('Remote fetch failed:', e);
-      if (!local) showToast('Could not reach remote. Add data and Save.', '');
+      // Show the actual error so it's diagnosable — not just a console.warn
+      const msg = e && e.message ? e.message : String(e);
+      console.error('Remote fetch failed:', msg);
+      showToast('Remote load failed: ' + msg.slice(0, 80), 'error');
     }
   } else {
     if (!local) showToast('No saved data yet. Add records and click Save.', '');
@@ -132,9 +134,15 @@ function dismissRecentEditBanner() {
 
 async function fetchRemoteData() {
   const url = CONFIG.WEBHOOK_URL + '?token=' + encodeURIComponent(CONFIG.TOKEN) + '&action=load';
-  const res = await fetch(url, { method: 'GET', mode: 'cors' });
+  // Apps Script always issues a redirect before the real response.
+  // Omitting 'mode' lets the browser follow that redirect and read the JSON.
+  // Using mode:'cors' blocks on the preflight — that's the silent failure.
+  const res = await fetch(url, { method: 'GET', redirect: 'follow' });
   if (!res.ok) throw new Error('HTTP ' + res.status);
-  const json = await res.json();
+  const text = await res.text();
+  let json;
+  try { json = JSON.parse(text); }
+  catch(e) { throw new Error('Bad JSON from remote: ' + text.slice(0, 200)); }
   if (json.status !== 'ok') throw new Error(json.message || 'Remote load error');
   return json.data;
 }
