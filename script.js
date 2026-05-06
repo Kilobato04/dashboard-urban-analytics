@@ -5,7 +5,7 @@
 
 const CONFIG = {
   TARGET: 380000,          // default; overridden by #billabilityTarget input at runtime
-  WEBHOOK_URL: 'https://script.google.com/macros/s/AKfycbwatNhtMxATY02zjSYpkI8TeB7dNPTa0-gPaKtjH9Afp8siiAJSXYmw_IAeW08Jyxmy/exec',
+  WEBHOOK_URL: '',
   TOKEN: 'UA-MX-2026-SEC',
   MAX_HISTORY: 20,
   STORAGE_KEY: 'ua_mx_dashboard_v3',
@@ -41,11 +41,103 @@ function onTargetChange() {
 document.addEventListener('DOMContentLoaded', () => {
   setupTabs();
   initUtilizationControls();
-  loadFromStorage();
-  updateProgress();
+  bootLoad();
   calcScore();
-  setTimeout(() => { isLoading = false; }, 300);
 });
+
+async function bootLoad() {
+  isLoading = true;
+  updateSyncStatus('syncing');
+  const local = getLocalData();
+  if (local) { populateAll(local); updateProgress(); }
+  if (CONFIG.WEBHOOK_URL) {
+    try {
+      const remote = await fetchRemoteData();
+      if (remote && remote.timestamp) {
+        const remoteTs = new Date(remote.timestamp).getTime();
+        const localTs  = local && local.timestamp ? new Date(local.timestamp).getTime() : 0;
+        if (remoteTs > localTs) {
+          isLoading = true;
+          saveToStorage(remote);
+          populateAll(remote);
+          updateProgress();
+          setTimeout(() => { isLoading = false; }, 300);
+          showToast('Loaded latest data from Google Sheets ✓', 'success');
+        } else {
+          showToast('Dashboard up to date ✓', 'success');
+        }
+        // Warn if someone saved recently (within 10 min) — possible concurrent edit
+        showRecentEditWarning(remote.timestamp);
+      }
+    } catch(e) {
+      console.warn('Remote fetch failed:', e);
+      if (!local) showToast('Could not reach remote. Add data and Save.', '');
+    }
+  } else {
+    if (!local) showToast('No saved data yet. Add records and click Save.', '');
+  }
+  updateSyncStatus('synced');
+  isLoading = false;
+}
+
+// Show a dismissible banner if the remote was saved very recently
+// (indicates another team member may be actively editing)
+const RECENT_EDIT_THRESHOLD_MS = 10 * 60 * 1000; // 10 minutes
+
+function showRecentEditWarning(remoteTimestamp) {
+  if (!remoteTimestamp) return;
+  const ageMs = Date.now() - new Date(remoteTimestamp).getTime();
+  if (ageMs > RECENT_EDIT_THRESHOLD_MS) return; // not recent, no warning needed
+
+  const minutesAgo = Math.max(1, Math.round(ageMs / 60000));
+  const timeLabel  = minutesAgo === 1 ? 'just now' : minutesAgo + ' min ago';
+  const savedAt    = new Date(remoteTimestamp).toLocaleTimeString('en-MX', { hour: '2-digit', minute: '2-digit' });
+
+  // Don't show if banner already visible
+  if (document.getElementById('recentEditBanner')) return;
+
+  const banner = document.createElement('div');
+  banner.id = 'recentEditBanner';
+  banner.innerHTML =
+    '<div class="recent-edit-icon">⚠️</div>' +
+    '<div class="recent-edit-text">' +
+      '<strong>Recently edited</strong> — last save was at ' + savedAt + ' (' + timeLabel + '). ' +
+      'A teammate may be actively editing. Reload before making changes to avoid overwriting their work.' +
+    '</div>' +
+    '<div class="recent-edit-actions">' +
+      '<button class="recent-edit-reload" onclick="location.reload()">Reload now</button>' +
+      '<button class="recent-edit-dismiss" onclick="dismissRecentEditBanner()">Dismiss</button>' +
+    '</div>';
+  banner.className = 'recent-edit-banner';
+
+  // Insert right after the header
+  const header = document.querySelector('.site-header');
+  if (header && header.nextSibling) {
+    header.parentNode.insertBefore(banner, header.nextSibling);
+  } else {
+    document.body.prepend(banner);
+  }
+
+  // Auto-dismiss after 60 seconds
+  setTimeout(dismissRecentEditBanner, 60000);
+}
+
+function dismissRecentEditBanner() {
+  const banner = document.getElementById('recentEditBanner');
+  if (banner) {
+    banner.classList.add('recent-edit-banner-out');
+    setTimeout(() => banner.remove(), 400);
+  }
+}
+
+async function fetchRemoteData() {
+  const url = CONFIG.WEBHOOK_URL + '?token=' + encodeURIComponent(CONFIG.TOKEN) + '&action=load';
+  const res = await fetch(url, { method: 'GET', mode: 'cors' });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const json = await res.json();
+  if (json.status !== 'ok') throw new Error(json.message || 'Remote load error');
+  return json.data;
+}
 
 // ===== TABS =====
 function setupTabs() {
@@ -65,13 +157,18 @@ function saveToStorage(data) {
   try { localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
 }
 
-function loadFromStorage() {
-  isLoading = true;
+function getLocalData() {
   try {
     const raw = localStorage.getItem(CONFIG.STORAGE_KEY);
-    if (!raw) { isLoading = false; return; }
-    populateAll(JSON.parse(raw));
-  } catch(e) { console.warn('Load failed:', e); }
+    return raw ? JSON.parse(raw) : null;
+  } catch(e) { return null; }
+}
+
+// Kept for compatibility (history restore etc.)
+function loadFromStorage() {
+  isLoading = true;
+  const data = getLocalData();
+  if (data) populateAll(data);
   setTimeout(() => { isLoading = false; }, 150);
 }
 
@@ -175,7 +272,10 @@ function updateSyncStatus(state) {
   const txt  = document.getElementById('statusText');
   if (!pill || !txt) return;
   pill.className = 'status-pill' + (state !== 'synced' ? ' ' + state : '');
-  txt.textContent = state === 'saving' ? 'Saving…' : state === 'error' ? 'Sync error' : 'Synced';
+  if      (state === 'saving')  txt.textContent = 'Saving…';
+  else if (state === 'syncing') txt.textContent = 'Loading…';
+  else if (state === 'error')   txt.textContent = 'Sync error';
+  else                          txt.textContent = 'Synced';
 }
 
 // ===== HISTORY =====
