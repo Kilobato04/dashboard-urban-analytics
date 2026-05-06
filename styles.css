@@ -1094,3 +1094,57 @@ tbody tr:hover { background: var(--gray-50); }
   .exp-summary-bar { grid-template-columns: 1fr 1fr; }
   .exp-ytd-grid    { grid-template-columns: 1fr; }
 }
+
+/* ===== RECENT EDIT WARNING BANNER ===== */
+.recent-edit-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fefce8;
+  border-bottom: 2px solid #fbbf24;
+  padding: 10px 24px;
+  font-size: 13px;
+  color: #78350f;
+  animation: bannerSlideIn 300ms ease;
+  position: relative;
+  z-index: 95;
+}
+@keyframes bannerSlideIn {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+.recent-edit-banner-out {
+  animation: bannerSlideOut 400ms ease forwards;
+}
+@keyframes bannerSlideOut {
+  to { transform: translateY(-100%); opacity: 0; }
+}
+.recent-edit-icon { font-size: 16px; flex-shrink: 0; }
+.recent-edit-text { flex: 1; line-height: 1.4; }
+.recent-edit-text strong { color: #92400e; }
+.recent-edit-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.recent-edit-reload {
+  background: #f59e0b;
+  color: white;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: background var(--transition);
+}
+.recent-edit-reload:hover { background: #d97706; }
+.recent-edit-dismiss {
+  background: transparent;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: all var(--transition);
+}
+.recent-edit-dismiss:hover { background: #fef3c7; }
