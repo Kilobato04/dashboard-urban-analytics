@@ -47,6 +47,19 @@ const AUTH_SESSION_KEY = 'ua_mx_auth_ok';
   });
 })();
 
+// Toggle password visibility (eye icon)
+function toggleAuthVisibility() {
+  const input  = document.getElementById('authInput');
+  const open   = document.getElementById('authEyeOpen');
+  const closed = document.getElementById('authEyeClosed');
+  if (!input) return;
+  const showing = input.type === 'text';
+  input.type = showing ? 'password' : 'text';
+  if (open)   open.style.display   = showing ? '' : 'none';
+  if (closed) closed.style.display = showing ? 'none' : '';
+  input.focus();
+}
+
 const MEMBERS = ['Octavio', 'Roberto', 'Noé'];
 const TOPICS  = ['AI', 'Demand Modeling', 'BigData', 'Urban Analytics', 'Financial Modeling', 'Transport', 'Other'];
 const MOTIVES = ['Price', 'Technical', 'Price/Technical', 'Deadline', 'Corruption', 'Lack of Funds', 'Political Environment', 'Client Stepback', 'Administrative Issues', 'Decided not to go', 'Others'];
