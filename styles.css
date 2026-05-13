@@ -1203,3 +1203,28 @@ tbody tr:hover { background: var(--gray-50); }
   text-align: left;
   padding-left: 2px;
 }
+
+.auth-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.auth-input-wrap .auth-input {
+  flex: 1;
+  padding-right: 42px;
+}
+.auth-toggle {
+  position: absolute;
+  right: 4px;
+  background: transparent;
+  border: none;
+  color: var(--gray-400);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition);
+}
+.auth-toggle:hover { color: var(--orange); }
