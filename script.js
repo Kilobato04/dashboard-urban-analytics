@@ -12,6 +12,41 @@ const CONFIG = {
   HISTORY_KEY: 'ua_mx_history_v3',
 };
 
+// ===== AUTH GATE =====
+const AUTH_PASSWORD = 'ArcadisUAMX2026!';        // cámbialo a tu password
+const AUTH_SESSION_KEY = 'ua_mx_auth_ok';
+
+(function authGate() {
+  // Si ya está autenticado en esta sesión, oculta el gate y sigue
+  if (sessionStorage.getItem(AUTH_SESSION_KEY) === '1') {
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('authGate')?.classList.add('hidden');
+    });
+    return;
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const gate  = document.getElementById('authGate');
+    const form  = document.getElementById('authForm');
+    const input = document.getElementById('authInput');
+    const errEl = document.getElementById('authError');
+    if (!gate || !form) return;
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (input.value === AUTH_PASSWORD) {
+        sessionStorage.setItem(AUTH_SESSION_KEY, '1');
+        gate.classList.add('hidden');
+        errEl.textContent = '';
+      } else {
+        errEl.textContent = 'Incorrect password';
+        input.value = '';
+        input.focus();
+      }
+    });
+  });
+})();
+
 const MEMBERS = ['Octavio', 'Roberto', 'Noé'];
 const TOPICS  = ['AI', 'Demand Modeling', 'BigData', 'Urban Analytics', 'Financial Modeling', 'Transport', 'Other'];
 const MOTIVES = ['Price', 'Technical', 'Price/Technical', 'Deadline', 'Corruption', 'Lack of Funds', 'Political Environment', 'Client Stepback', 'Administrative Issues', 'Decided not to go', 'Others'];
