@@ -11,6 +11,26 @@
 </head>
 <body>
 
+<!-- AUTH GATE -->
+<div id="authGate" class="auth-gate">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
+        <rect width="32" height="32" rx="4" fill="#E3610F"/>
+        <path d="M8 24L16 8L24 24" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M11 19H21" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h1 class="auth-title">Urban Analytics Mexico</h1>
+    <p class="auth-sub">Enter password to access the dashboard</p>
+    <form id="authForm" class="auth-form">
+      <input type="password" id="authInput" class="auth-input" placeholder="Password" autocomplete="current-password" autofocus>
+      <button type="submit" class="auth-btn">Sign in</button>
+      <div id="authError" class="auth-error"></div>
+    </form>
+  </div>
+</div>
+
 <!-- HEADER -->
 <header class="site-header">
   <div class="header-inner">
